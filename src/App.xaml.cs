@@ -11,10 +11,8 @@ namespace Aspenlaub.Net.GitHub.CSharp.Oust;
 public partial class App {
     protected override void OnStartup(StartupEventArgs e) {
         base.OnStartup(e);
-#if DEBUG
         if (e.Args.Any(a => a == "/UnitTest")) {
             Context.DefaultEnvironmentType = EnvironmentType.UnitTest;
         }
-#endif
     }
 }
