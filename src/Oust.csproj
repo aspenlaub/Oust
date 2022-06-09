@@ -20,6 +20,7 @@
     <RepositoryUrl>https://github.com/aspenlaub/Oust.git</RepositoryUrl>
     <RepositoryBranch>master</RepositoryBranch>
     <PackageId>Oust</PackageId>
+    <StartupObject>Aspenlaub.Net.GitHub.CSharp.Oust.App</StartupObject>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">

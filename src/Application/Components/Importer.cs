@@ -52,6 +52,11 @@ public class Importer : IImporter {
         importAFileResult.CheckForMore = true;
         SerializableScript deserializedScript;
         try {
+            var contents = await File.ReadAllTextAsync(fileInfo.FullName);
+            if (contents.Contains("xmlns=\"http://www.viperfisch.de\"")) {
+                contents = contents.Replace("xmlns=\"http://www.viperfisch.de\"", "xmlns=\"http://www.aspenlaub.net\"");
+                await File.WriteAllTextAsync(fileInfo.FullName, contents);
+            }
             deserializedScript = new SerializableScript(_XmlSerializer, SerializableScript.ReadScriptFromFile(_XmlDeserializer, inFolder, fileInfo.Name));
         } catch {
             fileNamesToExclude.Add(fileInfo.FullName);
