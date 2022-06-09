@@ -1,0 +1,113 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net6.0-windows</TargetFramework>
+    <Nullable>disable</Nullable>
+    <UseWPF>true</UseWPF>
+    <GenerateBuildInfoConfigFile>false</GenerateBuildInfoConfigFile>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <Deterministic>false</Deterministic>
+    <AssemblyTitle>Aspenlaub.Net.GitHub.CSharp.Oust</AssemblyTitle>
+    <AssemblyProduct>Aspenlaub.Net.GitHub.CSharp.Oust</AssemblyProduct>
+    <VersionDays>$([System.DateTime]::UtcNow.Subtract($([System.DateTime]::Parse("2019-07-24"))).Days.ToString())</VersionDays>
+    <VersionMinutes>$([System.Math]::Floor($([System.DateTime]::UtcNow.Subtract($([System.DateTime]::UtcNow.Date)).TotalMinutes)).ToString())</VersionMinutes>
+    <Version>2.0.$(VersionDays).$(VersionMinutes)</Version>
+    <RootNamespace>Aspenlaub.Net.GitHub.CSharp.Oust</RootNamespace>
+    <AssemblyName>Aspenlaub.Net.GitHub.CSharp.Oust</AssemblyName>
+    <ApplicationIcon>oust.ico</ApplicationIcon>
+    <RepositoryType>git</RepositoryType>
+    <RepositoryUrl>https://github.com/aspenlaub/Oust.git</RepositoryUrl>
+    <RepositoryBranch>master</RepositoryBranch>
+    <PackageId>Oust</PackageId>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
+    <NuspecFile>Oust.nuspec</NuspecFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="Application\**" />
+    <Compile Remove="Integration\**" />
+    <Compile Remove="Model\**" />
+    <Compile Remove="TestResults\**" />
+    <EmbeddedResource Remove="Application\**" />
+    <EmbeddedResource Remove="Integration\**" />
+    <EmbeddedResource Remove="Model\**" />
+    <EmbeddedResource Remove="TestResults\**" />
+    <None Remove="Application\**" />
+    <None Remove="Integration\**" />
+    <None Remove="Model\**" />
+    <None Remove="TestResults\**" />
+    <Page Remove="Application\**" />
+    <Page Remove="Integration\**" />
+    <Page Remove="Model\**" />
+    <Page Remove="TestResults\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="GUI\Resources\codecov_20.png" />
+    <None Remove="GUI\Resources\consolidate_20.png" />
+    <None Remove="GUI\Resources\delete_20.png" />
+    <None Remove="GUI\Resources\extract_20.png" />
+    <None Remove="GUI\Resources\oust.ico" />
+    <None Remove="GUI\Resources\play_20.png" />
+    <None Remove="GUI\Resources\stack_20.png" />
+    <None Remove="GUI\Resources\stepinto_20.png" />
+    <None Remove="GUI\Resources\stepover_20.png" />
+    <None Remove="GUI\Resources\stopcodecov_20.png" />
+    <None Remove="GUI\Resources\up_20.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="GUI\Resources\codecov_20.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="GUI\Resources\consolidate_20.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="GUI\Resources\delete_20.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="GUI\Resources\extract_20.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="GUI\Resources\oust.ico">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="GUI\Resources\play_20.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="GUI\Resources\stack_20.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="GUI\Resources\stepinto_20.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="GUI\Resources\stepover_20.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="GUI\Resources\stopcodecov_20.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="GUI\Resources\up_20.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="oust.ico">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="Application\Oust.Application.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Update="Properties\Resources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Update="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+</Project>

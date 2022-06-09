@@ -1,0 +1,1 @@
+dotnet cake integrationtest.cake --className=OustWindowUploadTest

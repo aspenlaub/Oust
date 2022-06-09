@@ -1,0 +1,6 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!-- V=103 -->
+<Script xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" guid="BF50F71C-54E3-E6B1-3E7F-92B8220323F5" name="Test Script 3" xmlns="http://www.aspenlaub.net">
+  <ScriptStep guid="6AD7DF80-FAFA-BAEE-C78F-B25289699AD0" stepnumber="1" steptype="GoToUrl" url="SodWat" />
+  <ScriptStep guid="DF70BD87-99E8-43DF-7555-6765A72B3BAC" stepnumber="2" steptype="GoToUrl" url="ViperAdmin" />
+</Script>

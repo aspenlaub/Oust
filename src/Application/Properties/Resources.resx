@@ -1,0 +1,282 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AdvancedToNextStep" xml:space="preserve">
+    <value>Advanced to next step</value>
+  </data>
+  <data name="AdvancingToNextStep" xml:space="preserve">
+    <value>Advancing to next step</value>
+  </data>
+  <data name="CallingScriptNotFound" xml:space="preserve">
+    <value>Calling script "{0}" not found</value>
+  </data>
+  <data name="CallingScriptStepNotFound" xml:space="preserve">
+    <value>Calling script step not found in calling script "{0}"</value>
+  </data>
+  <data name="CheckBoxNotFoundOrNotUnique" xml:space="preserve">
+    <value>Check box not found or not unique in instance {0} of {1}</value>
+  </data>
+  <data name="ConsolidateProgressCaption" xml:space="preserve">
+    <value>Consolidate Scripts And Sub Scripts</value>
+  </data>
+  <data name="ControlNotFound" xml:space="preserve">
+    <value>Control {0} not found in instance {1} of {2}</value>
+  </data>
+  <data name="ControlTitle" xml:space="preserve">
+    <value>Control</value>
+  </data>
+  <data name="CouldNotDetermineFormContext" xml:space="preserve">
+    <value>Could not determine if there is a form context or not</value>
+  </data>
+  <data name="CouldNotDetermineIfInstanceXOfYIsThereOrNot" xml:space="preserve">
+    <value>Could not determine if instance {0} of {1} is there or not</value>
+  </data>
+  <data name="CouldNotExtractSubScript" xml:space="preserve">
+    <value>Could not extract sub script</value>
+  </data>
+  <data name="CouldNotInput" xml:space="preserve">
+    <value>Could not input into {0} in instance {1} of {2}</value>
+  </data>
+  <data name="CouldNotInputIntoInstanceXOfY" xml:space="preserve">
+    <value>Could not input into instance {0} of {1}</value>
+  </data>
+  <data name="CouldNotNavigateToUrl" xml:space="preserve">
+    <value>Could not navigate to "{0}"</value>
+  </data>
+  <data name="CouldNotPressSelectFileButton" xml:space="preserve">
+    <value>Could press the Select File button</value>
+  </data>
+  <data name="CouldNotVerifyIfDocumentContainsDeprecatedBootstrapClasses" xml:space="preserve">
+    <value>Could not verify if whe document contains deprecated bootstrap class/-es</value>
+  </data>
+  <data name="DocumentContainsDeprecatedBootstrapClasses" xml:space="preserve">
+    <value>Document contains deprecated bootstrap class/-es: {0}</value>
+  </data>
+  <data name="Done" xml:space="preserve">
+    <value>Done</value>
+  </data>
+  <data name="ElementNotFoundOrNotAnAnchor" xml:space="preserve">
+    <value>The element was not found or is not an anchor</value>
+  </data>
+  <data name="ElementWithIdOrClassNotFound" xml:space="preserve">
+    <value>Element is not a div, an anchor or an input element</value>
+  </data>
+  <data name="ErrorSteppingOver" xml:space="preserve">
+    <value>Step over failed, script step to be executed again</value>
+  </data>
+  <data name="ExpectedContentsNotFound" xml:space="preserve">
+    <value>Control {0} in instance {1} of {2} does not have the expected contents '{3}'</value>
+  </data>
+  <data name="ExpectedContentsNotFoundInstead" xml:space="preserve">
+    <value>Control {0} in instance {1} of {2} does not have the expected contents '{3}'. Actual contents is '{4}'</value>
+  </data>
+  <data name="ExpectedContentsTitle" xml:space="preserve">
+    <value>Exp. contents</value>
+  </data>
+  <data name="FileDoesNotExist" xml:space="preserve">
+    <value>File "{0}" does not exist</value>
+  </data>
+  <data name="FileNameHasBeenEntered" xml:space="preserve">
+    <value>File name has been entered</value>
+  </data>
+  <data name="FormOrControlOrIdOrClassTitle" xml:space="preserve">
+    <value>Form/Control/Id/Class</value>
+  </data>
+  <data name="FormTitle" xml:space="preserve">
+    <value>Form</value>
+  </data>
+  <data name="FreeTextTitle" xml:space="preserve">
+    <value>Free Text</value>
+  </data>
+  <data name="IdOrClassTitle" xml:space="preserve">
+    <value>Id or .Class</value>
+  </data>
+  <data name="InputElementNotFoundOrNotUnique" xml:space="preserve">
+    <value>The input element was not found or more than one was found</value>
+  </data>
+  <data name="InputTitle" xml:space="preserve">
+    <value>Input text</value>
+  </data>
+  <data name="InstanceXOfYNotFound" xml:space="preserve">
+    <value>Instance {0} of {1} not found</value>
+  </data>
+  <data name="MarkupValidationFailed" xml:space="preserve">
+    <value>Markup validation failed</value>
+  </data>
+  <data name="NoFormContext" xml:space="preserve">
+    <value>No form context identified in preceding step/-s</value>
+  </data>
+  <data name="NoIdOrClassContext" xml:space="preserve">
+    <value>No id or class context identified in preceding step/-s</value>
+  </data>
+  <data name="NotExpectedContentsTitle" xml:space="preserve">
+    <value>Unexp. contents</value>
+  </data>
+  <data name="OpenButtonWasNotPressed" xml:space="preserve">
+    <value>Open button was not pressed</value>
+  </data>
+  <data name="OptionToSelectNotFound" xml:space="preserve">
+    <value>Could not select option for '{0}'</value>
+  </data>
+  <data name="OucidResponseShouldNotSayMarkupValidation" xml:space="preserve">
+    <value>Markup validation is denied for {0}</value>
+  </data>
+  <data name="OustUnitTestWindowName" xml:space="preserve">
+    <value>OustUnitTest</value>
+  </data>
+  <data name="OustWindowName" xml:space="preserve">
+    <value>Oust</value>
+  </data>
+  <data name="ProcessingSubScripts" xml:space="preserve">
+    <value>Processing sub script {0}-{1}/{2}</value>
+  </data>
+  <data name="RetrievingSubScripts" xml:space="preserve">
+    <value>Retrieving sub scripts</value>
+  </data>
+  <data name="ScriptCallFailed" xml:space="preserve">
+    <value>Script call failed</value>
+  </data>
+  <data name="ScriptExecutedWithoutErrors" xml:space="preserve">
+    <value>Script executed without errors</value>
+  </data>
+  <data name="ScriptIsObsoleteOrSubScript" xml:space="preserve">
+    <value>Script is obsolete or a sub script</value>
+  </data>
+  <data name="SubmitOrAnchorControlNotFoundOrNotUnique" xml:space="preserve">
+    <value>Button in instance {0} of {1} not found or not unique</value>
+  </data>
+  <data name="SubScriptCouldBeUsedInScript" xml:space="preserve">
+    <value>Sub script "{0}" could be used in script "{1}"</value>
+  </data>
+  <data name="SubScriptNotFound" xml:space="preserve">
+    <value>Sub script "{0}" not found</value>
+  </data>
+  <data name="ThisIsWindows11NeedUploadFileDisplayedInputButNotFound" xml:space="preserve">
+    <value>This is Windows 11, so we need the displayed upload file input, but it was not found</value>
+  </data>
+  <data name="UnexpectedContentsFound" xml:space="preserve">
+    <value>Instance {0} of {1} contains the unexpected contents '{2}'</value>
+  </data>
+  <data name="UnexpectedInstanceXOfYFound" xml:space="preserve">
+    <value>Unexpected instance {0} of {1} was found</value>
+  </data>
+  <data name="UrlTitle" xml:space="preserve">
+    <value>URL</value>
+  </data>
+</root>
