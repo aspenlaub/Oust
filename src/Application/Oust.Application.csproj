@@ -20,9 +20,6 @@
     <None Remove="Test\**" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="VishizhukelNetWeb" Version="2.0.1053.605" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\Model\Oust.Model.csproj" />
   </ItemGroup>
   <ItemGroup>
@@ -37,5 +34,8 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="VishizhukelNetWeb" Version="2.0.1053.1210" />
   </ItemGroup>
 </Project>
