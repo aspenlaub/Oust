@@ -46,7 +46,6 @@ public class Application : WebViewApplicationBase<IGuiAndApplicationSynchronizer
     private readonly IExtractSubScriptPopup _ExtractSubScriptPopup;
     private readonly IOustScriptStatementFactory _OustScriptStatementFactory;
     private readonly IProgressWindow _ProgressWindow;
-    private readonly IOucidLogAccessor _OucidLogAccessor;
     private readonly ILogicalUrlRepository _LogicalUrlRepository;
 
     public Application(IButtonNameToCommandMapper buttonNameToCommandMapper, IToggleButtonNameToHandlerMapper toggleButtonNameToHandlerMapper,
@@ -58,7 +57,7 @@ public class Application : WebViewApplicationBase<IGuiAndApplicationSynchronizer
             IFileDialogTrickster fileDialogTrickster, IExtractSubScriptPopup extractSubScriptPopup, IOustScriptStatementFactory oustScriptStatementFactory,
             IProgressWindow progressWindow, IOucidLogAccessor oucidLogAccessor, IMethodNamesFromStackFramesExtractor methodNamesFromStackFramesExtractor,
             ILogicalUrlRepository logicalUrlRepository)
-        : base(buttonNameToCommandMapper, toggleButtonNameToHandlerMapper, guiAndApplicationSynchronizer, model, simpleLogger, methodNamesFromStackFramesExtractor) {
+        : base(buttonNameToCommandMapper, toggleButtonNameToHandlerMapper, guiAndApplicationSynchronizer, model, simpleLogger, methodNamesFromStackFramesExtractor, oucidLogAccessor) {
         _DumperNameConverter = dumperNameConverter;
         _TashAccessor = tashAccessor;
         _SecuredHttpGate = securedHttpGate;
@@ -74,7 +73,6 @@ public class Application : WebViewApplicationBase<IGuiAndApplicationSynchronizer
         _ExtractSubScriptPopup = extractSubScriptPopup;
         _OustScriptStatementFactory = oustScriptStatementFactory;
         _ProgressWindow = progressWindow;
-        _OucidLogAccessor = oucidLogAccessor;
         _LogicalUrlRepository = logicalUrlRepository;
     }
 
@@ -85,10 +83,10 @@ public class Application : WebViewApplicationBase<IGuiAndApplicationSynchronizer
             { ScriptStepType.Check, new CheckOrUncheckStep(Model, SimpleLogger, this, oucoHelper, _OustScriptStatementFactory, ScriptStepType.Check) },
             { ScriptStepType.CheckSingle, new CheckOrUncheckSingleStep(Model, SimpleLogger, this, _OustScriptStatementFactory, ScriptStepType.CheckSingle) },
             { ScriptStepType.EndOfScript, new EndOfScriptStep(Model) },
-            { ScriptStepType.GoToUrl, new GoToUrlStep(Model, SimpleLogger, this, _WampLogScanner, _SecuredHttpGate, _SecretRepository, _OucidLogAccessor, MethodNamesFromStackFramesExtractor, false) },
+            { ScriptStepType.GoToUrl, new GoToUrlStep(Model, SimpleLogger, this, _WampLogScanner, _SecuredHttpGate, _SecretRepository, MethodNamesFromStackFramesExtractor, false) },
             { ScriptStepType.Input, new InputStep(Model, SimpleLogger, this, oucoHelper, _FileDialogTrickster, _OustScriptStatementFactory, oustSettingsHelper) },
             { ScriptStepType.InputIntoSingle, new InputIntoSingleStep(Model, SimpleLogger, this, _OustScriptStatementFactory) },
-            { ScriptStepType.InvokeUrl, new GoToUrlStep(Model, SimpleLogger, this, _WampLogScanner, _SecuredHttpGate, _SecretRepository, _OucidLogAccessor, MethodNamesFromStackFramesExtractor, true) },
+            { ScriptStepType.InvokeUrl, new GoToUrlStep(Model, SimpleLogger, this, _WampLogScanner, _SecuredHttpGate, _SecretRepository, MethodNamesFromStackFramesExtractor, true) },
             { ScriptStepType.NotExpectedIdOrClass, new NotExpectedIdOrClassStep(Model, SimpleLogger, this, oucoHelper, _OustScriptStatementFactory) },
             { ScriptStepType.NotExpectedContents, new RecognizeOrNotExpectedContentsStep(Model, SimpleLogger, this, oucoHelper, _OustScriptStatementFactory, ScriptStepType.NotExpectedContents) },
             { ScriptStepType.Press, new PressStep(Model, SimpleLogger, this, oucoHelper, _WampLogScanner, _OustScriptStatementFactory) },

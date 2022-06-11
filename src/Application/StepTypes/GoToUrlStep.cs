@@ -21,14 +21,13 @@ public class GoToUrlStep : IScriptStepLogic {
     private readonly ISecuredHttpGate _SecuredHttpGate;
     private readonly ISecretRepository _SecretRepository;
     private readonly bool _JustInvoke;
-    private readonly IOucidLogAccessor _OucidLogAccessor;
     private readonly IMethodNamesFromStackFramesExtractor _MethodNamesFromStackFramesExtractor;
 
     public string FreeCodeLabelText => Properties.Resources.UrlTitle;
 
     public GoToUrlStep(IApplicationModel model, ISimpleLogger simpleLogger,
                 IGuiAndWebViewAppHandler<ApplicationModel> guiAndAppHandler, IWampLogScanner wampLogScanner, ISecuredHttpGate securedHttpGate,
-                ISecretRepository secretRepository, IOucidLogAccessor oucidLogAccessor,
+                ISecretRepository secretRepository,
                 IMethodNamesFromStackFramesExtractor methodNamesFromStackFramesExtractor, bool justInvoke) {
         _Model = model;
         _SimpleLogger = simpleLogger;
@@ -38,7 +37,6 @@ public class GoToUrlStep : IScriptStepLogic {
         _SecretRepository = secretRepository;
         _JustInvoke = justInvoke;
         _MethodNamesFromStackFramesExtractor = methodNamesFromStackFramesExtractor;
-        _OucidLogAccessor = oucidLogAccessor;
     }
 
     public async Task<bool> CanBeAddedOrReplaceExistingStepAsync() {
@@ -77,41 +75,18 @@ public class GoToUrlStep : IScriptStepLogic {
             if (_JustInvoke) {
                 _SimpleLogger.LogInformationWithCallStack($"Invoking {_Model.ScriptStepUrl.Text}", methodNamesFromStack);
             } else {
-                var errorsAndInfos = new ErrorsAndInfos();
-
-                var oucid = await _OucidLogAccessor.GenerateOucidAsync(errorsAndInfos);
-                if (errorsAndInfos.AnyErrors()) {
-                    _SimpleLogger.LogInformationWithCallStack("Error generating oucid and writing to oucid log", methodNamesFromStack);
-                    _Model.Status.Text = errorsAndInfos.ErrorsToString();
-                    _Model.Status.Type = StatusType.Error;
-                    return;
-                }
-
-                var url = _OucidLogAccessor.AppendOucidToUrl(_Model.ScriptStepUrl.Text, oucid, errorsAndInfos);
-                if (errorsAndInfos.AnyErrors()) {
-                    _SimpleLogger.LogInformationWithCallStack("Error appending oucid to url", methodNamesFromStack);
-                    _Model.Status.Text = errorsAndInfos.ErrorsToString();
-                    _Model.Status.Type = StatusType.Error;
-                    return;
-                }
-
-                if (!await _GuiAndAppHandler.NavigateToUrlAsync(url)) {
+                var url = _Model.ScriptStepUrl.Text;
+                var result = await _GuiAndAppHandler.NavigateToUrlAsync(url);
+                if (!result.Succeeded) {
                     _SimpleLogger.LogInformationWithCallStack($"Could not navigate to {url}", methodNamesFromStack);
                     _Model.Status.Text = string.Format(Properties.Resources.CouldNotNavigateToUrl, url);
                     _Model.Status.Type = StatusType.Error;
                     return;
                 }
 
-                var oucidAggregatedResponse = await _OucidLogAccessor.ReadAndDeleteOucidAsync(oucid, errorsAndInfos);
-                if (errorsAndInfos.AnyErrors()) {
-                    _SimpleLogger.LogInformationWithCallStack("Error writing to oucid log", methodNamesFromStack);
-                    _Model.Status.Text = errorsAndInfos.ErrorsToString();
-                    _Model.Status.Type = StatusType.Error;
-                    return;
-                }
-
                 _SimpleLogger.LogInformationWithCallStack($"App navigated to {_Model.ScriptStepUrl.Text}", methodNamesFromStack);
 
+                var oucidAggregatedResponse = result.OucidResponse;
                 if (oucidAggregatedResponse.WaitForLocalhostLogs) {
                     _SimpleLogger.LogInformationWithCallStack("Waiting for stable log folder", methodNamesFromStack);
                     _GuiAndAppHandler.IndicateBusy(true);
