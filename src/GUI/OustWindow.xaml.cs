@@ -168,11 +168,15 @@ public partial class OustWindow : IAsyncDisposable {
     }
 
     private async void OnOustWindowClosingAsync(object sender, CancelEventArgs e) {
+        var window = (Window)sender;
         e.Cancel = true;
+        window.IsEnabled = false;
+        await Task.Yield();
 
         var errorsAndInfos = new ErrorsAndInfos();
         await Container.Resolve<IDumper>().DumpAsync(errorsAndInfos);
         if (errorsAndInfos.AnyErrors()) {
+            window.IsEnabled = true;
             MessageBox.Show(string.Join("\r\n", errorsAndInfos.Errors));
             return;
         }
