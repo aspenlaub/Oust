@@ -92,7 +92,7 @@ public class Application : WebViewApplicationBase<IGuiAndApplicationSynchronizer
             { ScriptStepType.Press, new PressStep(Model, SimpleLogger, this, oucoHelper, _WampLogScanner, _OustScriptStatementFactory) },
             { ScriptStepType.PressSingle, new PressSingleStep(Model, SimpleLogger, this, _WampLogScanner, _OustScriptStatementFactory) },
             { ScriptStepType.Recognize, new RecognizeOrNotExpectedContentsStep(Model, SimpleLogger, this, oucoHelper, _OustScriptStatementFactory, ScriptStepType.Recognize) },
-            { ScriptStepType.Select, new SelectStep(Model, SimpleLogger, this, oucoHelper, _OustScriptStatementFactory) },
+            { ScriptStepType.Select, new SelectStep(Model, SimpleLogger, this, oucoHelper, _OustScriptStatementFactory, _WampLogScanner) },
             { ScriptStepType.SubScript, new SubScriptStep(Model) },
             { ScriptStepType.Uncheck, new CheckOrUncheckStep(Model, SimpleLogger, this, oucoHelper, _OustScriptStatementFactory, ScriptStepType.Uncheck) },
             { ScriptStepType.UncheckSingle, new CheckOrUncheckSingleStep(Model, SimpleLogger, this, _OustScriptStatementFactory, ScriptStepType.UncheckSingle) },

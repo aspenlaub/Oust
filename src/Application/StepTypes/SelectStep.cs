@@ -17,15 +17,18 @@ public class SelectStep : IScriptStepLogic {
     public ISimpleLogger SimpleLogger { get; init; }
     private readonly IOucoHelper _OucoHelper;
     private readonly IOustScriptStatementFactory _OustScriptStatementFactory;
+    private readonly IWampLogScanner _WampLogScanner;
 
     public string FreeCodeLabelText => Properties.Resources.FreeTextTitle;
 
-    public SelectStep(IApplicationModel model, ISimpleLogger simpleLogger, IGuiAndWebViewAppHandler<ApplicationModel> guiAndAppHandler, IOucoHelper oucoHelper, IOustScriptStatementFactory oustScriptStatementFactory) {
+    public SelectStep(IApplicationModel model, ISimpleLogger simpleLogger, IGuiAndWebViewAppHandler<ApplicationModel> guiAndAppHandler, IOucoHelper oucoHelper,
+                      IOustScriptStatementFactory oustScriptStatementFactory, IWampLogScanner wampLogScanner) {
         Model = model;
         SimpleLogger = simpleLogger;
         GuiAndAppHandler = guiAndAppHandler;
         _OucoHelper = oucoHelper;
         _OustScriptStatementFactory = oustScriptStatementFactory;
+        _WampLogScanner = wampLogScanner;
     }
 
     public async Task<bool> CanBeAddedOrReplaceExistingStepAsync() {
@@ -63,6 +66,8 @@ public class SelectStep : IScriptStepLogic {
             return;
         }
 
+        var startOfExecutionTimeStamp = DateTime.Now;
+
         var domElementJson = JsonSerializer.Serialize(scriptCallResponse.DomElement);
         scriptStatement = new ScriptStatement {
             Statement = "OustActions.SelectAnOption(" + domElementJson + ", \"" + Model.SelectedValue.SelectedItem.Guid + "\")",
@@ -70,6 +75,13 @@ public class SelectStep : IScriptStepLogic {
         };
         scriptCallResponse = await GuiAndAppHandler.RunScriptAsync<ScriptCallResponse>(scriptStatement, false, true);
         if (scriptCallResponse.Success.Inconclusive || !scriptCallResponse.Success.YesNo) { return; }
+
+        _WampLogScanner.WaitUntilLogFolderIsStable(startOfExecutionTimeStamp, out var errorMessage);
+        if (!string.IsNullOrEmpty(errorMessage)) {
+            Model.Status.Text = errorMessage;
+            Model.Status.Type = StatusType.Error;
+            return;
+        }
 
         Model.Status.Text = "";
         Model.Status.Type = StatusType.None;
