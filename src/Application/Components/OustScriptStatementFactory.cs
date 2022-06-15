@@ -71,4 +71,12 @@ public class OustScriptStatementFactory : IOustScriptStatementFactory {
             NoSuccessErrorMessage = Properties.Resources.ElementNotFoundOrNotAnAnchor
         };
     }
+
+    public IScriptStatement CreateIsOptionSelectedOrNot(string domElementJson, string option, bool selected) {
+        return new ScriptStatement {
+            Statement = "OustUtilities.IsOptionSelectedOrNot(" + domElementJson + ", " + JsonSerializer.Serialize(option) + ", " + (selected ? "true" : "false") + ")",
+            InconclusiveErrorMessage = Properties.Resources.CouldNotDetermineSelectedOption,
+            NoSuccessErrorMessage = string.Format(selected ? Properties.Resources.OptionIsNotSelected : Properties.Resources.OptionIsSelected, option)
+        };
+    }
 }

@@ -115,7 +115,8 @@ public class ScriptStep : IGuid, ISetGuid, IScriptStep {
 
                 return string.Format(Properties.Resources.WithNth, FormInstanceNumber, FormName);
             }
-            case ScriptStepType.Recognize: {
+            case ScriptStepType.Recognize:
+            case ScriptStepType.RecognizeSelection: {
                 if (ExpectedContents == "") {
                     return string.Format(Properties.Resources.Recognize, ControlName);
                 }
@@ -124,14 +125,15 @@ public class ScriptStep : IGuid, ISetGuid, IScriptStep {
                     return string.Format(Properties.Resources.RecognizeIdOrClassContents, ExpectedContents);
                 }
 
-                return string.Format(Properties.Resources.RecognizeWithContents, ControlName, ExpectedContents);
+                return string.Format(ScriptStepType == ScriptStepType.RecognizeSelection ? Properties.Resources.RecognizeSelected : Properties.Resources.RecognizeWithContents, ControlName, ExpectedContents);
             }
-            case ScriptStepType.NotExpectedContents: {
+            case ScriptStepType.NotExpectedContents:
+            case ScriptStepType.NotExpectedSelection: {
                 if (string.IsNullOrWhiteSpace(ControlName)) {
                     return string.Format(Properties.Resources.NotExpectedContents, ExpectedContents);
                 }
 
-                return string.Format(Properties.Resources.NotExpectedContentsInControl, ExpectedContents, ControlName);
+                return string.Format(ScriptStepType == ScriptStepType.NotExpectedSelection ? Properties.Resources.NotExpectedSelection : Properties.Resources.NotExpectedContentsInControl, ExpectedContents, ControlName);
             }
             case ScriptStepType.Check: {
                 return string.Format(Properties.Resources.Check, ControlName);

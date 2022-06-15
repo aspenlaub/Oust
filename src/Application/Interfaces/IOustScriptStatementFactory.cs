@@ -11,4 +11,5 @@ public interface IOustScriptStatementFactory {
     IScriptStatement CreateInputStatement(string domElementJson, string text);
     IScriptStatement CreateDoesDocumentContainAnchorOrSubmitStatement(string ancestorDomElementJson, int anchorInstanceNumber);
     IScriptStatement CreateClickAnchorStatement(string domElementJson);
+    IScriptStatement CreateIsOptionSelectedOrNot(string domElementJson, string option, bool selected);
 }

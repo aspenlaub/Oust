@@ -9,6 +9,9 @@
 //------------------------------------------------------------------------------
 
 namespace Aspenlaub.Net.GitHub.CSharp.Oust.Application.Properties {
+    using System;
+    
+    
     /// <summary>
     ///   A strongly-typed resource class, for looking up localized strings, etc.
     /// </summary>
@@ -144,6 +147,15 @@ namespace Aspenlaub.Net.GitHub.CSharp.Oust.Application.Properties {
         internal static string CouldNotDetermineIfInstanceXOfYIsThereOrNot {
             get {
                 return ResourceManager.GetString("CouldNotDetermineIfInstanceXOfYIsThereOrNot", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Could not determine the selected option.
+        /// </summary>
+        internal static string CouldNotDetermineSelectedOption {
+            get {
+                return ResourceManager.GetString("CouldNotDetermineSelectedOption", resourceCulture);
             }
         }
         
@@ -391,11 +403,38 @@ namespace Aspenlaub.Net.GitHub.CSharp.Oust.Application.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Not implemented yet.
+        /// </summary>
+        internal static string NotImplementedYet {
+            get {
+                return ResourceManager.GetString("NotImplementedYet", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Open button was not pressed.
         /// </summary>
         internal static string OpenButtonWasNotPressed {
             get {
                 return ResourceManager.GetString("OpenButtonWasNotPressed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Option &apos;{0}&apos; is not selected.
+        /// </summary>
+        internal static string OptionIsNotSelected {
+            get {
+                return ResourceManager.GetString("OptionIsNotSelected", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Option &apos;{0}&apos; is selected.
+        /// </summary>
+        internal static string OptionIsSelected {
+            get {
+                return ResourceManager.GetString("OptionIsSelected", resourceCulture);
             }
         }
         

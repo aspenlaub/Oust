@@ -22,7 +22,8 @@ public class ScriptStepTypeSelectorHandler : IScriptStepTypeSelectorHandler {
 
     public void UpdateSelectableScriptStepTypes() {
         var choices = new List<ScriptStepType> {
-            ScriptStepType.GoToUrl, ScriptStepType.With, ScriptStepType.WithIdOrClass, ScriptStepType.NotExpectedIdOrClass, ScriptStepType.Recognize, ScriptStepType.NotExpectedContents,
+            ScriptStepType.GoToUrl, ScriptStepType.With, ScriptStepType.WithIdOrClass, ScriptStepType.NotExpectedIdOrClass,
+            ScriptStepType.Recognize, ScriptStepType.RecognizeSelection, ScriptStepType.NotExpectedContents, ScriptStepType.NotExpectedSelection,
             ScriptStepType.Check, ScriptStepType.CheckSingle, ScriptStepType.Uncheck, ScriptStepType.UncheckSingle,
             ScriptStepType.Press, ScriptStepType.PressSingle, ScriptStepType.Input, ScriptStepType.InputIntoSingle, ScriptStepType.Select,
             ScriptStepType.SubScript, ScriptStepType.WaitAMinute, ScriptStepType.EndOfScript, ScriptStepType.WaitTenSeconds, ScriptStepType.InvokeUrl

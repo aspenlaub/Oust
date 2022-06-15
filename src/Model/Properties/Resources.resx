@@ -147,6 +147,9 @@
   <data name="NotExpectedSecondIdOrClass" xml:space="preserve">
     <value>Without second {0} element</value>
   </data>
+  <data name="NotExpectedSelection" xml:space="preserve">
+    <value>'{0}' is not selected in {1}</value>
+  </data>
   <data name="NotExpectedThirdIdOrClass" xml:space="preserve">
     <value>Without third {0} element</value>
   </data>
@@ -161,6 +164,9 @@
   </data>
   <data name="RecognizeIdOrClassContents" xml:space="preserve">
     <value>Recognize contents '{0}'</value>
+  </data>
+  <data name="RecognizeSelected" xml:space="preserve">
+    <value>Recognize '{1}' selected in {0}</value>
   </data>
   <data name="RecognizeWithContents" xml:space="preserve">
     <value>Recognize {0} with contents '{1}'</value>

@@ -147,6 +147,9 @@
   <data name="CouldNotDetermineIfInstanceXOfYIsThereOrNot" xml:space="preserve">
     <value>Could not determine if instance {0} of {1} is there or not</value>
   </data>
+  <data name="CouldNotDetermineSelectedOption" xml:space="preserve">
+    <value>Could not determine the selected option</value>
+  </data>
   <data name="CouldNotExtractSubScript" xml:space="preserve">
     <value>Could not extract sub script</value>
   </data>
@@ -228,8 +231,17 @@
   <data name="NotExpectedContentsTitle" xml:space="preserve">
     <value>Unexp. contents</value>
   </data>
+  <data name="NotImplementedYet" xml:space="preserve">
+    <value>Not implemented yet</value>
+  </data>
   <data name="OpenButtonWasNotPressed" xml:space="preserve">
     <value>Open button was not pressed</value>
+  </data>
+  <data name="OptionIsNotSelected" xml:space="preserve">
+    <value>Option '{0}' is not selected</value>
+  </data>
+  <data name="OptionIsSelected" xml:space="preserve">
+    <value>Option '{0}' is selected</value>
   </data>
   <data name="OptionToSelectNotFound" xml:space="preserve">
     <value>Could not select option for '{0}'</value>

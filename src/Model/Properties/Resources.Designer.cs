@@ -9,6 +9,9 @@
 //------------------------------------------------------------------------------
 
 namespace Aspenlaub.Net.GitHub.CSharp.Oust.Model.Properties {
+    using System;
+    
+    
     /// <summary>
     ///   A strongly-typed resource class, for looking up localized strings, etc.
     /// </summary>
@@ -148,6 +151,15 @@ namespace Aspenlaub.Net.GitHub.CSharp.Oust.Model.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to &apos;{0}&apos; is not selected in {1}.
+        /// </summary>
+        internal static string NotExpectedSelection {
+            get {
+                return ResourceManager.GetString("NotExpectedSelection", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Without third {0} element.
         /// </summary>
         internal static string NotExpectedThirdIdOrClass {
@@ -189,6 +201,15 @@ namespace Aspenlaub.Net.GitHub.CSharp.Oust.Model.Properties {
         internal static string RecognizeIdOrClassContents {
             get {
                 return ResourceManager.GetString("RecognizeIdOrClassContents", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Recognize &apos;{1}&apos; selected in {0}.
+        /// </summary>
+        internal static string RecognizeSelected {
+            get {
+                return ResourceManager.GetString("RecognizeSelected", resourceCulture);
             }
         }
         

@@ -19,7 +19,9 @@ public class RecognizeOrNotExpectedContentsStep : IScriptStepLogic {
 
     private readonly ScriptStepType _ScriptStepType;
 
-    public string FreeCodeLabelText => _ScriptStepType == ScriptStepType.Recognize ? Properties.Resources.ExpectedContentsTitle : Properties.Resources.NotExpectedContentsTitle;
+    public string FreeCodeLabelText => _ScriptStepType is ScriptStepType.Recognize or ScriptStepType.RecognizeSelection
+        ? Properties.Resources.ExpectedContentsTitle
+        : Properties.Resources.NotExpectedContentsTitle;
 
     public RecognizeOrNotExpectedContentsStep(IApplicationModel model, ISimpleLogger simpleLogger, IGuiAndWebViewAppHandler<ApplicationModel> guiAndAppHandler, IOucoHelper oucoHelper, IOustScriptStatementFactory oustScriptStatementFactory, ScriptStepType stepType) {
         Model = model;
@@ -47,7 +49,8 @@ public class RecognizeOrNotExpectedContentsStep : IScriptStepLogic {
     }
 
     public async Task<bool> ShouldBeEnabledAsync() {
-        if (_ScriptStepType != ScriptStepType.Recognize && _ScriptStepType != ScriptStepType.NotExpectedContents) { return false; }
+        if (_ScriptStepType != ScriptStepType.Recognize && _ScriptStepType != ScriptStepType.NotExpectedContents
+            && _ScriptStepType != ScriptStepType.RecognizeSelection && _ScriptStepType != ScriptStepType.NotExpectedSelection) { return false; }
         return await Task.FromResult(true);
     }
 
@@ -61,11 +64,14 @@ public class RecognizeOrNotExpectedContentsStep : IScriptStepLogic {
             : _OustScriptStatementFactory.CreateDoesDocumentHaveDivLikeWithIdOrNthOccurrenceOfClassStatement(Model.WithScriptStepOucoOrOutrapForm.Guid, Model.WithScriptStepOucoOrOutrapFormInstanceNumber, Model.WithScriptStepOucoOrOutrapForm.Name);
 
         var scriptCallResponse = await GuiAndAppHandler.RunScriptAsync<ScriptCallResponse>(scriptStatement, false, true);
-        if (scriptCallResponse.Success.Inconclusive || !scriptCallResponse.Success.YesNo) { return; }
+        if (scriptCallResponse.Success.Inconclusive || !scriptCallResponse.Success.YesNo) {
+            return;
+        }
 
         var ancestorDomElementJson = JsonSerializer.Serialize(scriptCallResponse.DomElement);
         var ancestorDomElementInnerHtml = scriptCallResponse.InnerHtml;
         string html;
+        var domElementJson = ancestorDomElementJson;
         if (string.IsNullOrWhiteSpace(Model.ScriptStepOutOfControl?.Guid)) {
             html = ancestorDomElementInnerHtml;
         } else {
@@ -73,6 +79,7 @@ public class RecognizeOrNotExpectedContentsStep : IScriptStepLogic {
             scriptCallResponse = await GuiAndAppHandler.RunScriptAsync<ScriptCallResponse>(scriptStatement, false, true);
             if (scriptCallResponse.Success.Inconclusive || !scriptCallResponse.Success.YesNo) { return; }
 
+            domElementJson = JsonSerializer.Serialize(scriptCallResponse.DomElement);
             html = scriptCallResponse.InnerHtml;
         }
 
@@ -81,29 +88,39 @@ public class RecognizeOrNotExpectedContentsStep : IScriptStepLogic {
 
         if (Model.ExpectedContents.Text == "") { return; }
 
-        if (_ScriptStepType == ScriptStepType.Recognize) {
-            if (html.Contains(Model.ExpectedContents.Text)) { return; }
-            if (html.Contains(Model.ExpectedContents.Text.Replace("'", "\""))) { return; }
+        switch (_ScriptStepType) {
+            case ScriptStepType.RecognizeSelection or ScriptStepType.NotExpectedSelection: {
+                scriptStatement = _OustScriptStatementFactory.CreateIsOptionSelectedOrNot(domElementJson, Model.ExpectedContents.Text, _ScriptStepType == ScriptStepType.RecognizeSelection);
+                scriptCallResponse = await GuiAndAppHandler.RunScriptAsync<ScriptCallResponse>(scriptStatement, false, true);
+                if (scriptCallResponse.Success.Inconclusive || !scriptCallResponse.Success.YesNo) { return; }
 
-            if (html.Length < 20) {
-                Model.Status.Text = string.IsNullOrWhiteSpace(Model.WithScriptStepOucoOrOutrapForm?.Guid) ?
-                    string.Format(Properties.Resources.ExpectedContentsNotFoundInstead, Model.WithScriptStepIdOrClass, Model.WithScriptStepIdOrClassInstanceNumber, Model.WithScriptStepIdOrClass, Model.ExpectedContents.Text, html)
-                    :
-                    string.Format(Properties.Resources.ExpectedContentsNotFoundInstead, Model.ScriptStepOutOfControl?.Name, Model.WithScriptStepOucoOrOutrapFormInstanceNumber, Model.WithScriptStepOucoOrOutrapForm.Name, Model.ExpectedContents.Text, html);
-            } else {
-                Model.Status.Text = string.IsNullOrWhiteSpace(Model.WithScriptStepOucoOrOutrapForm?.Guid) ?
-                    string.Format(Properties.Resources.ExpectedContentsNotFound, Model.WithScriptStepIdOrClass, Model.WithScriptStepIdOrClassInstanceNumber, Model.WithScriptStepIdOrClass, Model.ExpectedContents.Text)
-                    :
-                    string.Format(Properties.Resources.ExpectedContentsNotFound, Model.ScriptStepOutOfControl?.Name, Model.WithScriptStepOucoOrOutrapFormInstanceNumber, Model.WithScriptStepOucoOrOutrapForm.Name, Model.ExpectedContents.Text);
+                return;
             }
-        } else if (html.Contains(Model.ExpectedContents.Text)) {
-            Model.Status.Text = string.IsNullOrWhiteSpace(Model.WithScriptStepOucoOrOutrapForm?.Guid) ?
-                string.Format(Properties.Resources.UnexpectedContentsFound, Model.WithScriptStepIdOrClassInstanceNumber, Model.WithScriptStepIdOrClass, Model.ExpectedContents.Text)
-                :
-                string.Format(Properties.Resources.UnexpectedContentsFound, Model.WithScriptStepOucoOrOutrapFormInstanceNumber, Model.WithScriptStepOucoOrOutrapForm.Name, Model.ExpectedContents.Text);
+            case ScriptStepType.Recognize when html.Contains(Model.ExpectedContents.Text):
+            case ScriptStepType.Recognize when html.Contains(Model.ExpectedContents.Text.Replace("'", "\"")):
+                return;
+            case ScriptStepType.Recognize when html.Length < 20:
+                Model.Status.Text = string.IsNullOrWhiteSpace(Model.WithScriptStepOucoOrOutrapForm?.Guid)
+                    ? string.Format(Properties.Resources.ExpectedContentsNotFoundInstead, Model.WithScriptStepIdOrClass, Model.WithScriptStepIdOrClassInstanceNumber, Model.WithScriptStepIdOrClass, Model.ExpectedContents.Text, html)
+                    : string.Format(Properties.Resources.ExpectedContentsNotFoundInstead, Model.ScriptStepOutOfControl?.Name, Model.WithScriptStepOucoOrOutrapFormInstanceNumber, Model.WithScriptStepOucoOrOutrapForm.Name, Model.ExpectedContents.Text, html);
+                break;
+            case ScriptStepType.Recognize:
+                Model.Status.Text = string.IsNullOrWhiteSpace(Model.WithScriptStepOucoOrOutrapForm?.Guid)
+                    ? string.Format(Properties.Resources.ExpectedContentsNotFound, Model.WithScriptStepIdOrClass, Model.WithScriptStepIdOrClassInstanceNumber, Model.WithScriptStepIdOrClass, Model.ExpectedContents.Text)
+                    : string.Format(Properties.Resources.ExpectedContentsNotFound, Model.ScriptStepOutOfControl?.Name, Model.WithScriptStepOucoOrOutrapFormInstanceNumber, Model.WithScriptStepOucoOrOutrapForm.Name, Model.ExpectedContents.Text);
+                break;
+            default: {
+                if (html.Contains(Model.ExpectedContents.Text)) {
+                    Model.Status.Text = string.IsNullOrWhiteSpace(Model.WithScriptStepOucoOrOutrapForm?.Guid)
+                        ? string.Format(Properties.Resources.UnexpectedContentsFound, Model.WithScriptStepIdOrClassInstanceNumber, Model.WithScriptStepIdOrClass, Model.ExpectedContents.Text)
+                        : string.Format(Properties.Resources.UnexpectedContentsFound, Model.WithScriptStepOucoOrOutrapFormInstanceNumber, Model.WithScriptStepOucoOrOutrapForm.Name, Model.ExpectedContents.Text);
 
-        } else {
-            return;
+                } else {
+                    return;
+                }
+
+                break;
+            }
         }
 
         Model.Status.Type = StatusType.Error;
