@@ -98,6 +98,7 @@ public class OucoHelper : IOucoHelper {
             case ScriptStepType.Press when outOfControl.Type != OucoControlTypes.Button && outOfControl.Type != OucoControlTypes.Upload:
             case ScriptStepType.Input when outOfControl.Type != OucoControlTypes.Input && outOfControl.Type != OucoControlTypes.Restricted && outOfControl.Type != OucoControlTypes.TextArea && outOfControl.Type != OucoControlTypes.Upload:
             case ScriptStepType.Select when outOfControl.Type != OucoControlTypes.DropDown:
+            case ScriptStepType.RecognizeSelection when outOfControl.Type != OucoControlTypes.DropDown:
                 return false;
             default:
                 return true;

@@ -19,9 +19,11 @@ public class RecognizeOrNotExpectedContentsStep : IScriptStepLogic {
 
     private readonly ScriptStepType _ScriptStepType;
 
-    public string FreeCodeLabelText => _ScriptStepType is ScriptStepType.Recognize or ScriptStepType.RecognizeSelection
-        ? Properties.Resources.ExpectedContentsTitle
-        : Properties.Resources.NotExpectedContentsTitle;
+    public string FreeCodeLabelText => _ScriptStepType == ScriptStepType.RecognizeSelection
+        ? Properties.Resources.FreeTextTitle 
+        : _ScriptStepType == ScriptStepType.Recognize
+                ? Properties.Resources.ExpectedContentsTitle
+                : Properties.Resources.NotExpectedContentsTitle;
 
     public RecognizeOrNotExpectedContentsStep(IApplicationModel model, ISimpleLogger simpleLogger, IGuiAndWebViewAppHandler<ApplicationModel> guiAndAppHandler, IOucoHelper oucoHelper, IOustScriptStatementFactory oustScriptStatementFactory, ScriptStepType stepType) {
         Model = model;
@@ -43,7 +45,7 @@ public class RecognizeOrNotExpectedContentsStep : IScriptStepLogic {
             ScriptStepType = _ScriptStepType,
             ControlGuid = Model.ScriptStepOutOfControl?.Guid ?? "",
             ControlName = Model.ScriptStepOutOfControl?.Name ?? "",
-            ExpectedContents = Model.ExpectedContents.Text
+            ExpectedContents = _ScriptStepType == ScriptStepType.RecognizeSelection ? Model.SelectedValue.SelectedItem.Name : Model.ExpectedContents.Text
         };
 
     }
@@ -90,7 +92,9 @@ public class RecognizeOrNotExpectedContentsStep : IScriptStepLogic {
 
         switch (_ScriptStepType) {
             case ScriptStepType.RecognizeSelection or ScriptStepType.NotExpectedSelection: {
-                scriptStatement = _OustScriptStatementFactory.CreateIsOptionSelectedOrNot(domElementJson, Model.ExpectedContents.Text, _ScriptStepType == ScriptStepType.RecognizeSelection);
+                scriptStatement = _OustScriptStatementFactory.CreateIsOptionSelectedOrNot(domElementJson,
+                    _ScriptStepType == ScriptStepType.RecognizeSelection ? Model.SelectedValue.SelectedItem.Guid : Model.ExpectedContents.Text,
+                    _ScriptStepType == ScriptStepType.RecognizeSelection);
                 scriptCallResponse = await GuiAndAppHandler.RunScriptAsync<ScriptCallResponse>(scriptStatement, false, true);
                 if (scriptCallResponse.Success.Inconclusive || !scriptCallResponse.Success.YesNo) { return; }
 

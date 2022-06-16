@@ -121,7 +121,6 @@ public class ScriptStepSelectorHandler : IScriptStepSelectorHandler {
                         break;
                     case ScriptStepType.Recognize:
                     case ScriptStepType.NotExpectedContents:
-                    case ScriptStepType.RecognizeSelection:
                     case ScriptStepType.NotExpectedSelection:
                         _Model.ExpectedContents.Text = scriptStep.ExpectedContents;
                         break;
@@ -149,8 +148,8 @@ public class ScriptStepSelectorHandler : IScriptStepSelectorHandler {
                     case ScriptStepType.Press:
                     case ScriptStepType.Input:
                     case ScriptStepType.Select:
-                    case ScriptStepType.RecognizeSelection:
                     case ScriptStepType.NotExpectedSelection:
+                    case ScriptStepType.RecognizeSelection:
                         selectedIndex = _Model.FormOrControlOrIdOrClass.Selectables.FindIndex(s => s.Guid == scriptStep.ControlGuid);
                         await _FormOrControlOrIdOrClassHandler.FormOrControlOrIdOrClassSelectedIndexChangedAsync(selectedIndex, false);
                         _Model.ScriptStepOutOfControl = new Selectable { Guid = scriptStep.ControlGuid, Name = scriptStep.ControlName };
@@ -180,12 +179,18 @@ public class ScriptStepSelectorHandler : IScriptStepSelectorHandler {
                         throw new NotImplementedException();
                 }
 
-                if (scriptStep.ScriptStepType == ScriptStepType.Select) {
-                    selectedIndex = _Model.SelectedValue.Selectables.FindIndex(s => s.Name == scriptStep.InputText);
-                    await _SelectedValueHandler.SelectedValueSelectedIndexChangedAsync(selectedIndex, false);
-                }
-                else {
-                    await _SelectedValueHandler.SelectedValueSelectedIndexChangedAsync(-1, false);
+                switch (scriptStep.ScriptStepType) {
+                    case ScriptStepType.Select:
+                        selectedIndex = _Model.SelectedValue.Selectables.FindIndex(s => s.Name == scriptStep.InputText);
+                        await _SelectedValueHandler.SelectedValueSelectedIndexChangedAsync(selectedIndex, false);
+                    break;
+                    case ScriptStepType.RecognizeSelection:
+                        selectedIndex = _Model.SelectedValue.Selectables.FindIndex(s => s.Name == scriptStep.ExpectedContents);
+                        await _SelectedValueHandler.SelectedValueSelectedIndexChangedAsync(selectedIndex, false);
+                    break;
+                    default:
+                        await _SelectedValueHandler.SelectedValueSelectedIndexChangedAsync(-1, false);
+                    break;
                 }
 
                 if (scriptStep.ScriptStepType == ScriptStepType.SubScript) {

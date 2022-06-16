@@ -22,7 +22,7 @@ public class SelectedValueSelectorHandler : ISelectedValueSelectorHandler {
 
     private async Task UpdateSelectableSelectedValuesAsync() {
         var scriptStepType = _Model.ScriptStepType.SelectionMade ? (ScriptStepType)int.Parse(_Model.ScriptStepType.SelectedItem.Guid) : ScriptStepType.EndOfScript;
-        var selectables = scriptStepType == ScriptStepType.Select
+        var selectables = scriptStepType is ScriptStepType.Select or ScriptStepType.RecognizeSelection
             ? await _OucoHelper.SelectionChoicesAsync(_Model.WithScriptStepOucoOrOutrapForm?.Guid, _Model.WithScriptStepOucoOrOutrapFormInstanceNumber, _Model.FormOrControlOrIdOrClass?.SelectedItem?.Guid)
             : new List<Selectable>();
         _Model.SelectedValue.UpdateSelectables(selectables);
