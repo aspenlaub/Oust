@@ -205,6 +205,15 @@ namespace Aspenlaub.Net.GitHub.CSharp.Oust.Model.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Recognize OK.
+        /// </summary>
+        internal static string RecognizeOkay {
+            get {
+                return ResourceManager.GetString("RecognizeOkay", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Recognize &apos;{1}&apos; selected in {0}.
         /// </summary>
         internal static string RecognizeSelected {

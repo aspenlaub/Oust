@@ -20,7 +20,7 @@ public class RecognizeOrNotExpectedContentsStep : IScriptStepLogic {
     private readonly ScriptStepType _ScriptStepType;
 
     public string FreeCodeLabelText => _ScriptStepType == ScriptStepType.RecognizeSelection
-        ? Properties.Resources.FreeTextTitle 
+        ? Properties.Resources.FreeTextTitle
         : _ScriptStepType == ScriptStepType.Recognize
                 ? Properties.Resources.ExpectedContentsTitle
                 : Properties.Resources.NotExpectedContentsTitle;

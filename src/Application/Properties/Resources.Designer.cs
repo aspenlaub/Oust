@@ -484,6 +484,15 @@ namespace Aspenlaub.Net.GitHub.CSharp.Oust.Application.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Response is different form OK.
+        /// </summary>
+        internal static string ResponseIsNotOkay {
+            get {
+                return ResourceManager.GetString("ResponseIsNotOkay", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Retrieving sub scripts.
         /// </summary>
         internal static string RetrievingSubScripts {

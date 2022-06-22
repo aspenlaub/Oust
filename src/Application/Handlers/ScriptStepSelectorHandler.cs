@@ -171,6 +171,7 @@ public class ScriptStepSelectorHandler : IScriptStepSelectorHandler {
                     case ScriptStepType.EndOfScript:
                     case ScriptStepType.WaitTenSeconds:
                     case ScriptStepType.InvokeUrl:
+                    case ScriptStepType.RecognizeOkay:
                         await _FormOrControlOrIdOrClassHandler.FormOrControlOrIdOrClassSelectedIndexChangedAsync(-1, false);
                         await _FormOrControlOrIdOrClassHandler.FormOrIdOrClassInstanceNumberChangedAsync("");
                         _Model.ScriptStepOucoOrOutrapForm = null;

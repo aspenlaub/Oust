@@ -165,6 +165,9 @@
   <data name="RecognizeIdOrClassContents" xml:space="preserve">
     <value>Recognize contents '{0}'</value>
   </data>
+  <data name="RecognizeOkay" xml:space="preserve">
+    <value>Recognize OK</value>
+  </data>
   <data name="RecognizeSelected" xml:space="preserve">
     <value>Recognize '{1}' selected in {0}</value>
   </data>

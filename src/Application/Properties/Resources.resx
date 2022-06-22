@@ -258,6 +258,9 @@
   <data name="ProcessingSubScripts" xml:space="preserve">
     <value>Processing sub script {0}-{1}/{2}</value>
   </data>
+  <data name="ResponseIsNotOkay" xml:space="preserve">
+    <value>Response is different form OK</value>
+  </data>
   <data name="RetrievingSubScripts" xml:space="preserve">
     <value>Retrieving sub scripts</value>
   </data>

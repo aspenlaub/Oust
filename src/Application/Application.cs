@@ -102,6 +102,7 @@ public class Application : WebViewApplicationBase<IGuiAndApplicationSynchronizer
             { ScriptStepType.WaitTenSeconds, new WaitTenSecondsStep(Model) },
             { ScriptStepType.With, new WithStep(Model, SimpleLogger, this, oucoHelper, _OustScriptStatementFactory) },
             { ScriptStepType.WithIdOrClass, new WithIdOrClassStep(Model, SimpleLogger, this, oucoHelper, _OustScriptStatementFactory) },
+            { ScriptStepType.RecognizeOkay, new RecognizeOkayStep(Model, _OustScriptStatementFactory, this) },
         };
 
         var selectedValueSelectorHandler = new SelectedValueSelectorHandler(Model, oucoHelper, this);

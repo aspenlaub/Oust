@@ -206,6 +206,9 @@ public class ScriptStep : IGuid, ISetGuid, IScriptStep {
             case ScriptStepType.WaitTenSeconds: {
                 return string.Format(Properties.Resources.WaitTenSeconds);
             }
+            case ScriptStepType.RecognizeOkay: {
+                return string.Format(Properties.Resources.RecognizeOkay);
+            }
             default: {
                 return Properties.Resources.StepTypeCannotBeDisplayed;
             }

@@ -82,6 +82,7 @@ public class FormOrControlOrIdOrClassHandler : IFormOrControlOrIdOrClassHandler 
             case ScriptStepType.EndOfScript:
             case ScriptStepType.WaitTenSeconds:
             case ScriptStepType.InvokeUrl:
+            case ScriptStepType.RecognizeOkay:
                 break;
             default:
                 throw new NotImplementedException();
