@@ -83,6 +83,10 @@ public class OucoOrOutrapFormReader : IOucoOrOutrapFormReader {
                 continue;
             }
 
+            if (!guids.ContainsKey(name)) {
+                continue;
+            }
+
             var guid = guids[name];
             var oclass = attributes.ContainsKey("class") ? attributes["class"] : "";
             if (guid.Length == 0) {
