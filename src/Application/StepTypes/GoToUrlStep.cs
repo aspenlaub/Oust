@@ -114,8 +114,14 @@ public class GoToUrlStep : IScriptStepLogic {
                         Statement = "OustUtilities.DoesDocumentContainDeprecatedBootstrapClasses()",
                         NoSuccessErrorMessage = Properties.Resources.CouldNotVerifyIfDocumentContainsDeprecatedBootstrapClasses
                     };
-                    var scriptCallResponse = await _GuiAndAppHandler.RunScriptAsync<ScriptCallResponse>(scriptStatement, false, true);
-                    if (scriptCallResponse.Success.Inconclusive || !scriptCallResponse.Success.YesNo) { return; }
+                    var scriptCallResponse = await _GuiAndAppHandler.RunScriptAsync<ScriptCallResponse>(scriptStatement, true, true);
+                    if (scriptCallResponse.Success.Inconclusive || !scriptCallResponse.Success.YesNo) {
+                        await Task.Delay(TimeSpan.FromSeconds(5));
+                        scriptCallResponse = await _GuiAndAppHandler.RunScriptAsync<ScriptCallResponse>(scriptStatement, false, true);
+                        if (scriptCallResponse.Success.Inconclusive || !scriptCallResponse.Success.YesNo) {
+                            return;
+                        }
+                    }
                     if (scriptCallResponse.Dictionary.Keys.Count != 0) {
                         _SimpleLogger.LogInformationWithCallStack("Deprecated bootstrap class/-es found", methodNamesFromStack);
                         _Model.Status.Text = string.Format(Properties.Resources.DocumentContainsDeprecatedBootstrapClasses, "." + string.Join(", .", scriptCallResponse.Dictionary.Values));
