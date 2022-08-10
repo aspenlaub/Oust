@@ -1,5 +1,4 @@
-﻿using System.Text.Json;
-using Aspenlaub.Net.GitHub.CSharp.Oust.Application.Entities;
+﻿using Aspenlaub.Net.GitHub.CSharp.Oust.Application.Entities;
 using Aspenlaub.Net.GitHub.CSharp.Oust.Application.Interfaces;
 using Aspenlaub.Net.GitHub.CSharp.Oust.Model.Entities;
 using Aspenlaub.Net.GitHub.CSharp.Oust.Model.Interfaces;
@@ -12,7 +11,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Oust.Application.StepTypes;
 public class RecognizeOkayStep : IScriptStepLogic {
     private readonly IApplicationModel _Model;
     private readonly IOustScriptStatementFactory _OustScriptStatementFactory;
-    private IGuiAndWebViewAppHandler<ApplicationModel> _GuiAndAppHandler;
+    private readonly IGuiAndWebViewAppHandler<ApplicationModel> _GuiAndAppHandler;
 
     public RecognizeOkayStep(IApplicationModel model, IOustScriptStatementFactory oustScriptStatementFactory, IGuiAndWebViewAppHandler<ApplicationModel> guiAndAppHandler) {
         _Model = model;
@@ -37,13 +36,25 @@ public class RecognizeOkayStep : IScriptStepLogic {
     public async Task ExecuteAsync() {
         var scriptStatement = _OustScriptStatementFactory.CreateDoesDocumentHaveNthOccurrenceOfIdOrClassStatement("response", 1);
         var scriptCallResponse = await _GuiAndAppHandler.RunScriptAsync<ScriptCallResponse>(scriptStatement, false, true);
-        if (scriptCallResponse.Success.Inconclusive || !scriptCallResponse.Success.YesNo) { return; }
+        var haveError = false;
+        if (scriptCallResponse.Success.Inconclusive || !scriptCallResponse.Success.YesNo) {
+            scriptStatement = _OustScriptStatementFactory.CreateDoesDocumentHaveNthOccurrenceOfIdOrClassStatement("error", 1);
+            scriptCallResponse = await _GuiAndAppHandler.RunScriptAsync<ScriptCallResponse>(scriptStatement, false, true);
+            if (scriptCallResponse.Success.Inconclusive || !scriptCallResponse.Success.YesNo) {
+                return;
+            }
+
+            haveError = true;
+        }
 
         var domElementInnerHtml = scriptCallResponse.InnerHtml;
-        if (domElementInnerHtml.Contains("OK")) { return; }
+        haveError = haveError || !domElementInnerHtml.Contains("OK");
+        if (!haveError) { return; }
+
+        haveError = !domElementInnerHtml.Contains('<') && !domElementInnerHtml.Contains(Environment.NewLine);
 
         _Model.Status.Type = StatusType.Error;
-        _Model.Status.Text = Properties.Resources.ResponseIsNotOkay;
+        _Model.Status.Text = haveError ? domElementInnerHtml : Properties.Resources.ResponseIsNotOkay;
     }
 
     public void SetFormOrControlOrIdOrClassTitle() {
