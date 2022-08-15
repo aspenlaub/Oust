@@ -22,7 +22,7 @@
     </PackageReference>
     <PackageReference Include="MSTest.TestAdapter" Version="2.2.10" />
     <PackageReference Include="MSTest.TestFramework" Version="2.2.10" />
-    <PackageReference Include="VishnetIntegrationTestTools" Version="2.0.1107.1239" />
+    <PackageReference Include="VishnetIntegrationTestTools" Version="2.0.1118.1132" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Application\Test\Oust.Application.Test.csproj" />
