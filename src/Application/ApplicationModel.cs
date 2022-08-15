@@ -36,6 +36,7 @@ public class ApplicationModel : WebViewApplicationModelBase, IApplicationModel {
     public ITextBox CurrentTaskState { get; } = new TextBox();
 
     public Button RenameScript { get; } = new();
+    public Button DuplicateScript { get; } = new();
     public Button AddOrReplaceStep { get; } = new();
     public Button StepOver { get; } = new();
     public Button StepInto { get; } = new();

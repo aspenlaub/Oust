@@ -32,4 +32,13 @@ public class Script : IGuid, ISetGuid {
     public List<ScriptStep> OrderedScriptSteps() {
         return ScriptSteps.OrderBy(s => s.StepNumber).ToList();
     }
+
+    public Script Duplicate(string guid, string name) {
+        var duplicate = new Script { Guid = guid, Name = name };
+        ScriptSteps
+            .OrderBy(scriptStep => scriptStep.StepNumber)
+            .ToList()
+            .ForEach(scriptStep => duplicate.ScriptSteps.Add(new ScriptStep(scriptStep) { StepNumber = scriptStep.StepNumber }));
+        return duplicate;
+    }
 }

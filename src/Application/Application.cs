@@ -133,6 +133,7 @@ public class Application : WebViewApplicationBase<IGuiAndApplicationSynchronizer
             MoveUpStepCommand = new MoveUpStepCommand(Model, Handlers.ScriptStepSelectorHandler, this, _ContextFactory),
             PlayCommand = new PlayCommand(Model, stepOverCommand),
             RenameCommand = new RenameCommand(Model, Handlers.ScriptSelectorHandler, this, new NewScriptNameValidator(_ContextFactory), _ContextFactory),
+            DuplicateCommand = new DuplicateCommand(Model, Handlers.ScriptSelectorHandler, this, new NewScriptNameValidator(_ContextFactory), _ContextFactory),
             ShowExecutionStackCommand = new ShowExecutionStackCommand(Model, _ExecutionStackPopupFactory, _ExecutionStackFormatter),
             StepIntoCommand = stepIntoCommand,
             StepOverCommand = stepOverCommand,
@@ -220,6 +221,7 @@ public class Application : WebViewApplicationBase<IGuiAndApplicationSynchronizer
         Model.MoveUp.Enabled = await Commands.MoveUpStepCommand.ShouldBeEnabledAsync();
         Model.Play.Enabled = await Commands.PlayCommand.ShouldBeEnabledAsync();
         Model.RenameScript.Enabled = await Commands.RenameCommand.ShouldBeEnabledAsync();
+        Model.DuplicateScript.Enabled = await Commands.DuplicateCommand.ShouldBeEnabledAsync();
         Model.ShowExecutionStack.Enabled = await Commands.ShowExecutionStackCommand.ShouldBeEnabledAsync();
         Model.StepInto.Enabled = await Commands.StepIntoCommand.ShouldBeEnabledAsync();
         Model.StepOver.Enabled = await Commands.StepOverCommand.ShouldBeEnabledAsync();

@@ -36,6 +36,7 @@ public interface IApplicationModel : IWebViewApplicationModelBase {
     ITextBox ScriptStepInput { get; }
 
     Button RenameScript { get; }
+    Button DuplicateScript { get; }
     Button AddOrReplaceStep { get; }
     Button StepOver { get; }
     Button StepInto { get; }

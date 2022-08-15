@@ -12,6 +12,7 @@ public interface IApplicationCommands {
     ICommand PlayCommand { get; set; }
     ICommand ShowExecutionStackCommand { get; set; }
     ICommand RenameCommand { get; set; }
+    ICommand DuplicateCommand { get; set; }
     ICommand StepIntoCommand { get; set; }
     ICommand StepOverCommand { get; set; }
     ICommand StopCodeCoverageCommand { get; set; }

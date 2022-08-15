@@ -35,13 +35,14 @@
         </StackPanel>
         <StackPanel Orientation="Horizontal" Margin="0,5,0,0" Grid.Column="0" Grid.Row="1">
             <Label Margin="5,0,50,0" Width="95">New Name</Label>
-            <TextBox Padding="2,3,2,3" Width="325" Name="NewScriptName" />
-            <Button Margin="5,0,0,0" Width="120" Name="RenameScript" >_Rename</Button>
+            <TextBox Padding="2,3,2,3" Width="300" Name="NewScriptName" />
+            <Button Margin="5,0,0,0" Width="65" Name="RenameScript" >_Rename</Button>
+            <Button Margin="5,0,0,0" Width="75" Name="DuplicateScript" >Duplicate</Button>
         </StackPanel>
         <StackPanel Orientation="Horizontal" Margin="0,5,0,0" Grid.Column="0" Grid.Row="2">
             <Label Margin="5,0,50,0" Width="95">Step Type</Label>
-            <ComboBox Width="325" Name="ScriptStepType" />
-            <Button Margin="5,0,0,0" Width="120" Name="AddOrReplaceStep">_Add/Replace Step</Button>
+            <ComboBox Width="300" Name="ScriptStepType" />
+            <Button Margin="5,0,0,0" Width="145" Name="AddOrReplaceStep">_Add/Replace Step</Button>
         </StackPanel>
         <StackPanel Orientation="Horizontal" Margin="0,5,0,0" Grid.Column="0" Grid.Row="3">
             <Label Margin="5,0,50,0" Width="95" Name="FormOrControlOrIdOrClassLabel">Form/Control</Label>

@@ -12,6 +12,7 @@ public class ApplicationCommands : IApplicationCommands {
     public ICommand MoveUpStepCommand { get; set; }
     public ICommand PlayCommand { get; set; }
     public ICommand RenameCommand { get; set; }
+    public ICommand DuplicateCommand { get; set; }
     public ICommand ShowExecutionStackCommand { get; set; }
     public ICommand StepIntoCommand { get; set; }
     public ICommand StepOverCommand { get; set; }
