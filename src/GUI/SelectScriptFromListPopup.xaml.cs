@@ -27,6 +27,7 @@ public partial class SelectScriptFromListPopup : ISelectScriptFromListPopup {
         _Filter = "";
         SetSelectableScriptsAccordingToFilter();
         Dispatcher.Invoke(() => {
+            Filter.Focus();
             ShowDialog();
             return _Result;
         });

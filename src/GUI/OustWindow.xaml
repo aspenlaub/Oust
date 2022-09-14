@@ -5,7 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:wpf="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf"
         mc:Ignorable="d"
-        Title="Oust" Height="900" Width="1800" MinWidth="1400" 
+        Title="Oust" Height="840" Width="1540" MinWidth="1400" 
+        WindowStartupLocation="CenterScreen"
         Icon="../oust.ico" Loaded="OnLoadedAsync" Closing="OnOustWindowClosingAsync">
     <Window.Resources>
         <Style TargetType="ComboBoxItem">
