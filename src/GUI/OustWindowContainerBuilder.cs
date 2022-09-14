@@ -15,6 +15,7 @@ public static class OustWindowContainerBuilder {
         builder.RegisterType<GuiToApplicationGate>().As<IGuiToWebViewApplicationGate>();
         builder.RegisterType<TashCommunicator>().As<ITashCommunicator<IApplicationModel>>();
         builder.RegisterType<ShowExecutionStackPopupFactory>().As<IShowExecutionStackPopupFactory>();
+        builder.RegisterType<SelectScriptFromListPopupFactory>().As<ISelectScriptFromListPopupFactory>();
 
         builder.RegisterType<Dumper>().WithParameter((p, _) => p.ParameterType == typeof(EnvironmentType), (_, _) => environmentType) .As<IDumper>();
         builder.RegisterType<Importer>().WithParameter((p, _) => p.ParameterType == typeof(EnvironmentType), (_, _) => environmentType).As<IImporter>();

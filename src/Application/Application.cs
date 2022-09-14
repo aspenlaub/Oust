@@ -47,6 +47,7 @@ public class Application : WebViewApplicationBase<IGuiAndApplicationSynchronizer
     private readonly IOustScriptStatementFactory _OustScriptStatementFactory;
     private readonly IProgressWindow _ProgressWindow;
     private readonly ILogicalUrlRepository _LogicalUrlRepository;
+    private readonly ISelectScriptFromListPopupFactory _SelectScriptFromListPopupFactory;
 
     public Application(IButtonNameToCommandMapper buttonNameToCommandMapper, IToggleButtonNameToHandlerMapper toggleButtonNameToHandlerMapper,
             IGuiAndApplicationSynchronizer guiAndApplicationSynchronizer, ApplicationModel model, ISimpleLogger simpleLogger,
@@ -56,7 +57,7 @@ public class Application : WebViewApplicationBase<IGuiAndApplicationSynchronizer
             IExecutionStackFormatter executionStackFormatter, IShowExecutionStackPopupFactory executionStackPopupFactory, IFolderResolver folderResolver,
             IFileDialogTrickster fileDialogTrickster, IExtractSubScriptPopup extractSubScriptPopup, IOustScriptStatementFactory oustScriptStatementFactory,
             IProgressWindow progressWindow, IOucidLogAccessor oucidLogAccessor, IMethodNamesFromStackFramesExtractor methodNamesFromStackFramesExtractor,
-            ILogicalUrlRepository logicalUrlRepository)
+            ILogicalUrlRepository logicalUrlRepository, ISelectScriptFromListPopupFactory selectScriptFromListPopupFactory)
         : base(buttonNameToCommandMapper, toggleButtonNameToHandlerMapper, guiAndApplicationSynchronizer, model, simpleLogger, methodNamesFromStackFramesExtractor, oucidLogAccessor) {
         _DumperNameConverter = dumperNameConverter;
         _TashAccessor = tashAccessor;
@@ -74,6 +75,7 @@ public class Application : WebViewApplicationBase<IGuiAndApplicationSynchronizer
         _OustScriptStatementFactory = oustScriptStatementFactory;
         _ProgressWindow = progressWindow;
         _LogicalUrlRepository = logicalUrlRepository;
+        _SelectScriptFromListPopupFactory = selectScriptFromListPopupFactory;
     }
 
     protected override void CreateCommandsAndHandlers() {
@@ -137,7 +139,8 @@ public class Application : WebViewApplicationBase<IGuiAndApplicationSynchronizer
             ShowExecutionStackCommand = new ShowExecutionStackCommand(Model, _ExecutionStackPopupFactory, _ExecutionStackFormatter),
             StepIntoCommand = stepIntoCommand,
             StepOverCommand = stepOverCommand,
-            StopCodeCoverageCommand = new StopCodeCoverageCommand(Model, _DumperNameConverter, this, _LogicalUrlRepository)
+            StopCodeCoverageCommand = new StopCodeCoverageCommand(Model, _DumperNameConverter, this, _LogicalUrlRepository),
+            SelectScriptFromListCommand = new SelectScriptFromListCommand(Model, _SelectScriptFromListPopupFactory, scriptSelectorHandler)
         };
 
         var selectors = new Dictionary<string, ISelector> {

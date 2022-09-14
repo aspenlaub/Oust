@@ -26,6 +26,8 @@ public class ExtractSubScriptCommand : ICommand {
     }
 
     public async Task ExecuteAsync() {
+        _Model.IsBusy = false;
+
         if (!_Model.ExtractSubScript.Enabled) { return; }
 
         var extractSubScriptSpecification = _Popup.Show(_Model.ScriptSteps);

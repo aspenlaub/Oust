@@ -1,0 +1,29 @@
+﻿<Window x:Class="Aspenlaub.Net.GitHub.CSharp.Oust.GUI.SelectScriptFromListPopup"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        Title="Select Script" Height="600" Width="450" MinWidth="450" WindowStartupLocation="CenterScreen">
+    <Grid Margin="5">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="100"/>
+            <ColumnDefinition Width="300*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Label Grid.Column="0" Grid.Row="0">Filter</Label>
+        <TextBox Name="Filter" Padding="2,3,2,3" Grid.Column="1" Grid.Row="0" TextChanged="Filter_OnTextChanged"></TextBox>
+        <ListBox Name="ScriptNamesList" SelectionChanged="ScriptNamesList_OnSelectionChanged" Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="1" Margin="0,10,0,0">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="{Binding}" />
+                    </StackPanel>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+      </ListBox>
+    </Grid>
+</Window>

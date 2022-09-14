@@ -4,6 +4,6 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        Title="Execution Stack" Height="200" Width="700" MinWidth="500"  WindowStartupLocation="CenterScreen">
+        Title="Execution Stack" Height="200" Width="700" MinWidth="500" WindowStartupLocation="CenterScreen">
     <TextBox Name="FormattedStackTextBox" Margin="10" />
 </Window>

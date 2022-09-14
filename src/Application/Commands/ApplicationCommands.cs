@@ -17,4 +17,5 @@ public class ApplicationCommands : IApplicationCommands {
     public ICommand StepIntoCommand { get; set; }
     public ICommand StepOverCommand { get; set; }
     public ICommand StopCodeCoverageCommand { get; set; }
+    public ICommand SelectScriptFromListCommand { get; set; }
 }

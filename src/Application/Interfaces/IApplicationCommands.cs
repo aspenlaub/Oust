@@ -16,4 +16,5 @@ public interface IApplicationCommands {
     ICommand StepIntoCommand { get; set; }
     ICommand StepOverCommand { get; set; }
     ICommand StopCodeCoverageCommand { get; set; }
+    ICommand SelectScriptFromListCommand { get; set; }
 }

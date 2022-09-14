@@ -136,6 +136,7 @@ public partial class OustWindow : IAsyncDisposable {
         guiToAppGate.WireButtonAndCommand(StepInto, commands.StepIntoCommand, buttonNameToCommandMapper);
         guiToAppGate.WireButtonAndCommand(StepOver, commands.StepOverCommand, buttonNameToCommandMapper);
         guiToAppGate.WireButtonAndCommand(StopCodeCoverage, commands.StopCodeCoverageCommand, buttonNameToCommandMapper);
+        guiToAppGate.WireButtonAndCommand(SelectScriptFromList, commands.SelectScriptFromListCommand, buttonNameToCommandMapper);
 
         var handlers = _OustApp.Handlers;
         guiToAppGate.RegisterAsyncTextBoxCallback(NewScriptName, t => _OustApp.NewScriptNameChangedAsync(t));

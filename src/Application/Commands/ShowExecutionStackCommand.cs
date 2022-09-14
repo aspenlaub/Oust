@@ -19,6 +19,8 @@ public class ShowExecutionStackCommand : ICommand {
     }
 
     public async Task ExecuteAsync() {
+        _Model.IsBusy = false;
+
         var formattedStack = await _Formatter.FormatExecutionStackAsync(_Model.EnvironmentType, _Model.ScriptSteps.SelectedItem.Guid, _Model.ExecutionStackItems.ToList());
         _PopupFactory.Create().ShowDialog(formattedStack);
         await Task.Delay(TimeSpan.FromMilliseconds(10));
