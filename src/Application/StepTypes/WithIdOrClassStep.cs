@@ -15,16 +15,16 @@ public class WithIdOrClassStep : IScriptStepLogic {
     public IApplicationModel Model { get; init; }
     public IGuiAndWebViewAppHandler<ApplicationModel> GuiAndAppHandler { get; init; }
     public ISimpleLogger SimpleLogger { get; init; }
-    private readonly IOucoHelper _OucoHelper;
+    private readonly IOutrapHelper _OutrapHelper;
     private readonly IOustScriptStatementFactory _OustScriptStatementFactory;
 
     public string FreeCodeLabelText => Properties.Resources.FreeTextTitle;
 
-    public WithIdOrClassStep(IApplicationModel model, ISimpleLogger simpleLogger, IGuiAndWebViewAppHandler<ApplicationModel> guiAndAppHandler, IOucoHelper oucoHelper, IOustScriptStatementFactory oustScriptStatementFactory) {
+    public WithIdOrClassStep(IApplicationModel model, ISimpleLogger simpleLogger, IGuiAndWebViewAppHandler<ApplicationModel> guiAndAppHandler, IOutrapHelper outrapHelper, IOustScriptStatementFactory oustScriptStatementFactory) {
         Model = model;
         SimpleLogger = simpleLogger;
         GuiAndAppHandler = guiAndAppHandler;
-        _OucoHelper = oucoHelper;
+        _OutrapHelper = outrapHelper;
         _OustScriptStatementFactory = oustScriptStatementFactory;
     }
 
@@ -75,8 +75,8 @@ public class WithIdOrClassStep : IScriptStepLogic {
         var scriptCallResponse = await GuiAndAppHandler.RunScriptAsync<ScriptCallResponse>(scriptStatement, false, true);
         if (scriptCallResponse.Success.Inconclusive || !scriptCallResponse.Success.YesNo) { return; }
 
-        Model.WithScriptStepOucoOrOutrapForm = null;
-        Model.WithScriptStepOucoOrOutrapFormInstanceNumber = 0;
+        Model.WithScriptStepOutrapForm = null;
+        Model.WithScriptStepOutrapFormInstanceNumber = 0;
         Model.WithScriptStepIdOrClass = Model.FormOrControlOrIdOrClass.SelectedItem.Guid;
         Model.WithScriptStepIdOrClassInstanceNumber = instanceNumber;
 
@@ -90,6 +90,6 @@ public class WithIdOrClassStep : IScriptStepLogic {
     }
 
     public async Task<IList<Selectable>> SelectableFormsOrControlsOrIdsOrClassesAsync() {
-        return await _OucoHelper.IdOrClassChoicesAsync();
+        return await _OutrapHelper.IdOrClassChoicesAsync();
     }
 }

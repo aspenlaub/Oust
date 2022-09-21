@@ -5,6 +5,7 @@ using Aspenlaub.Net.GitHub.CSharp.Oust.Application.Test.Helpers;
 using Aspenlaub.Net.GitHub.CSharp.Oust.GUI;
 using Aspenlaub.Net.GitHub.CSharp.Oust.Model.Entities;
 using Aspenlaub.Net.GitHub.CSharp.Oust.Model.Interfaces;
+using Aspenlaub.Net.GitHub.CSharp.Tash;
 using Autofac;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -19,15 +20,15 @@ public class OustWindowInputStepTest : OustIntegrationTestBase {
         using var sut = await CreateOustWindowUnderTestAsync();
         var process = await sut.FindIdleProcessAsync();
         var tasks = CreateNewScriptTaskList(sut, process, "Input Some Text");
-        tasks.AddRange(await CreateGoToToughLookStepTaskListAsync(sut, process));
+        tasks.AddRange(await CreateGoToGutLookStepTaskListAsync(sut, process));
         tasks.Add(sut.CreateSetValueTask(process, nameof(IApplicationModel.ScriptStepType), Enum.GetName(typeof(ScriptStepType), ScriptStepType.Input)));
         tasks.Add(sut.CreateVerifyNumberOfItemsTask(process, nameof(IApplicationModel.FormOrControlOrIdOrClass), 0));
-        tasks.AddRange(CreateWithToughLookSubFormTaskList(sut, process));
+        tasks.AddRange(CreateWithGutLookSubFormTaskList(sut, process));
         tasks.Add(sut.CreateSetValueTask(process, nameof(IApplicationModel.FormOrIdOrClassInstanceNumber), "2"));
         tasks.Add(sut.CreatePressButtonTask(process, nameof(OustWindow.AddOrReplaceStep)));
         tasks.Add(sut.CreateVerifyNumberOfItemsTask(process, nameof(IApplicationModel.ScriptSteps), 2));
         tasks.Add(sut.CreateSetValueTask(process, nameof(IApplicationModel.ScriptStepType), Enum.GetName(typeof(ScriptStepType), ScriptStepType.Input)));
-        tasks.Add(sut.CreateVerifyNumberOfItemsTask(process, nameof(IApplicationModel.FormOrControlOrIdOrClass), 5));
+        tasks.Add(sut.CreateVerifyNumberOfItemsTask(process, nameof(IApplicationModel.FormOrControlOrIdOrClass), 8));
         tasks.Add(sut.CreateSetValueTask(process, nameof(IApplicationModel.FormOrControlOrIdOrClass), "Input (Input)"));
         const string inputText = ":2 tupnI";
         tasks.Add(sut.CreateSetValueTask(process, nameof(IApplicationModel.FreeText), inputText));
@@ -35,8 +36,8 @@ public class OustWindowInputStepTest : OustIntegrationTestBase {
         tasks.Add(sut.CreateVerifyNumberOfItemsTask(process, nameof(IApplicationModel.ScriptSteps), 3));
         tasks.Add(sut.CreateVerifyValueTask(process, nameof(IApplicationModel.Status), ""));
         tasks.Add(sut.CreateSetValueTask(process, nameof(IApplicationModel.FormOrControlOrIdOrClass), "RestrictedValueInput (Restricted)"));
-        const string restrictedInputText = "Bärlin";
-        const string restrictedInputCorrectedText = "Berlin";
+        const string restrictedInputText = "Interläken";
+        const string restrictedInputCorrectedText = "Interlaken";
         tasks.Add(sut.CreateSetValueTask(process, nameof(IApplicationModel.FreeText), restrictedInputText));
         tasks.Add(sut.CreatePressButtonTask(process, nameof(OustWindow.AddOrReplaceStep)));
         tasks.Add(sut.CreateVerifyNumberOfItemsTask(process, nameof(IApplicationModel.ScriptSteps), 4));
@@ -50,11 +51,16 @@ public class OustWindowInputStepTest : OustIntegrationTestBase {
         tasks.Add(sut.CreateVerifyValueTask(process, nameof(IApplicationModel.Status), ""));
         tasks.Add(sut.CreateSetValueTask(process, nameof(IApplicationModel.ScriptStepType), Enum.GetName(typeof(ScriptStepType), ScriptStepType.Press)));
         tasks.Add(sut.CreateVerifyNumberOfItemsTask(process, nameof(IApplicationModel.FormOrControlOrIdOrClass), 2));
-        tasks.Add(sut.CreateSetValueTask(process, nameof(IApplicationModel.FormOrControlOrIdOrClass), "SubFormButton (Button)"));
+        tasks.Add(sut.CreateSetValueTask(process, nameof(IApplicationModel.FormOrControlOrIdOrClass), "SubButton (Button)"));
         tasks.Add(sut.CreatePressButtonTask(process, nameof(OustWindow.AddOrReplaceStep)));
         tasks.Add(sut.CreateVerifyNumberOfItemsTask(process, nameof(IApplicationModel.ScriptSteps), 6));
-        var expectedInputValues = "\t\t\t" + inputText + "\t\t" + restrictedInputCorrectedText + "\t\t\t\t" + textBoxConvertedText;
+        var expectedInputValues = "2\t0\t0\t\t\tInterimscoach\t2\t0\t1\t" + inputText + "\t\t" + restrictedInputCorrectedText + "\t\t\t" + textBoxConvertedText;
         tasks.Add(sut.CreateVerifyValueTask(process, nameof(IApplicationModel.WebViewInputValues), expectedInputValues));
-        await sut.RemotelyProcessTaskListAsync(process, tasks);
+        await sut.RemotelyProcessTaskListAsync(process, tasks, true, async (i, task) => await OnTaskCompleted(i, task));
+    }
+
+    protected async Task OnTaskCompleted(int i, ControllableProcessTask _) {
+        Assert.IsTrue(i >= 0);
+        await Task.CompletedTask;
     }
 }

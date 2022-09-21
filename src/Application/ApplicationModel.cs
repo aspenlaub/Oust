@@ -53,9 +53,9 @@ public class ApplicationModel : WebViewApplicationModelBase, IApplicationModel {
     public ITextBox ExpectedContents => FreeText;
     public ITextBox ScriptStepInput => FreeText;
 
-    public Selectable ScriptStepOucoOrOutrapForm { get; set; }
-    public Selectable WithScriptStepOucoOrOutrapForm { get; set; }
-    public int WithScriptStepOucoOrOutrapFormInstanceNumber { get; set; }
+    public Selectable ScriptStepOutrapForm { get; set; }
+    public Selectable WithScriptStepOutrapForm { get; set; }
+    public int WithScriptStepOutrapFormInstanceNumber { get; set; }
 
     public Selectable ScriptStepOutOfControl { get; set; }
     public Selectable WithScriptStepOutOfControl { get; set; }

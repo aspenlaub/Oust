@@ -1,12 +1,12 @@
 using Aspenlaub.Net.GitHub.CSharp.Oust.Application.Interfaces;
 
-namespace Aspenlaub.Net.GitHub.CSharp.Oust.Application.Ouco;
+namespace Aspenlaub.Net.GitHub.CSharp.Oust.Application.Outrap;
 
 public class OutOfControl : IOutOfControl {
     public string Id { get; set; }
     public string Name { get; set; }
     public string Class { get; set; }
-    public OucoControlTypes Type { get; set; }
+    public OutrapControlTypes Type { get; set; }
     public bool DynamicId;
     public List<IOutOfControl> ChildControls;
 
@@ -16,7 +16,7 @@ public class OutOfControl : IOutOfControl {
         Id = Guid.NewGuid().ToString();
         ChildControls = new List<IOutOfControl>();
         DynamicId = false;
-        Type = OucoControlTypes.None;
+        Type = OutrapControlTypes.None;
     }
 
     public int Depth() {
@@ -28,7 +28,7 @@ public class OutOfControl : IOutOfControl {
     public override string ToString() {
         if (Name == "") { return Name; }
 
-        var s = Name + " (" + Enum.GetName(typeof(OucoControlTypes), Type) + ")";
+        var s = Name + " (" + Enum.GetName(typeof(OutrapControlTypes), Type) + ")";
         return s;
     }
 

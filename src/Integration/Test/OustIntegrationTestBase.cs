@@ -32,7 +32,7 @@ public class OustIntegrationTestBase {
             sut.CreateVerifyIntegrationTestEnvironmentTask(process),
             sut.CreateResetTask(process)
         };
-        await sut.RemotelyProcessTaskListAsync(process, tasks);
+        await sut.RemotelyProcessTaskListAsync(process, tasks, false, (_, _) => Task.CompletedTask);
         return sut;
     }
 
@@ -40,9 +40,9 @@ public class OustIntegrationTestBase {
         return sut.CreateNewScriptTaskList(process, newScriptName);
     }
 
-    protected async Task<List<ControllableProcessTask>> CreateGoToToughLookStepTaskListAsync(OustWindowUnderTest sut, ControllableProcess process) {
+    protected async Task<List<ControllableProcessTask>> CreateGoToGutLookStepTaskListAsync(OustWindowUnderTest sut, ControllableProcess process) {
         var errorsAndInfos = new ErrorsAndInfos();
-        var url = await LogicalUrlRepository.GetUrlAsync("ToughLookEntry", errorsAndInfos);
+        var url = await LogicalUrlRepository.GetUrlAsync("GutLookForms", errorsAndInfos);
         Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsToString());
         return CreateGoToStepTaskList(sut, process, url);
     }
@@ -80,10 +80,10 @@ public class OustIntegrationTestBase {
         await sut.RemotelyPressButtonAsync(process, nameof(IApplicationModel.StepInto), successIsExpected);
     }
 
-    protected List<ControllableProcessTask> CreateWithToughLookSubFormTaskList(OustWindowUnderTest sut, ControllableProcess process) {
+    protected List<ControllableProcessTask> CreateWithGutLookSubFormTaskList(OustWindowUnderTest sut, ControllableProcess process) {
         return new() {
             sut.CreateSetValueTask(process, nameof(IApplicationModel.ScriptStepType), Enum.GetName(typeof(ScriptStepType), ScriptStepType.With)),
-            sut.CreateSetValueTask(process, nameof(IApplicationModel.FormOrControlOrIdOrClass), "ToughLookSubForm")
+            sut.CreateSetValueTask(process, nameof(IApplicationModel.FormOrControlOrIdOrClass), "GutLookSubForm")
         };
     }
 

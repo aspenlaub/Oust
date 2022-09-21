@@ -14,18 +14,18 @@ public class CheckOrUncheckStep : IScriptStepLogic {
     public IApplicationModel Model { get; init; }
     public IGuiAndWebViewAppHandler<ApplicationModel> GuiAndAppHandler { get; init; }
     public ISimpleLogger SimpleLogger { get; init; }
-    private readonly IOucoHelper _OucoHelper;
+    private readonly IOutrapHelper _OutrapHelper;
     private readonly IOustScriptStatementFactory _OustScriptStatementFactory;
 
     private readonly ScriptStepType _ScriptStepType;
 
     public string FreeCodeLabelText => Properties.Resources.FreeTextTitle;
 
-    public CheckOrUncheckStep(IApplicationModel model, ISimpleLogger simpleLogger, IGuiAndWebViewAppHandler<ApplicationModel> guiAndAppHandler, IOucoHelper oucoHelper, IOustScriptStatementFactory oustScriptStatementFactory, ScriptStepType stepType) {
+    public CheckOrUncheckStep(IApplicationModel model, ISimpleLogger simpleLogger, IGuiAndWebViewAppHandler<ApplicationModel> guiAndAppHandler, IOutrapHelper outrapHelper, IOustScriptStatementFactory oustScriptStatementFactory, ScriptStepType stepType) {
         Model = model;
         GuiAndAppHandler = guiAndAppHandler;
         SimpleLogger = simpleLogger;
-        _OucoHelper = oucoHelper;
+        _OutrapHelper = outrapHelper;
         _ScriptStepType = stepType;
         _OustScriptStatementFactory = oustScriptStatementFactory;
     }
@@ -49,7 +49,7 @@ public class CheckOrUncheckStep : IScriptStepLogic {
     }
 
     public async Task ExecuteAsync() {
-        var scriptStatement = _OustScriptStatementFactory.CreateDoesDocumentHaveDivLikeWithIdOrNthOccurrenceOfClassStatement(Model.WithScriptStepOucoOrOutrapForm.Guid, Model.WithScriptStepOucoOrOutrapFormInstanceNumber, Model.WithScriptStepOucoOrOutrapForm.Name);
+        var scriptStatement = _OustScriptStatementFactory.CreateDoesDocumentHaveDivLikeWithIdOrNthOccurrenceOfClassStatement(Model.WithScriptStepOutrapForm.Guid, Model.WithScriptStepOutrapFormInstanceNumber, Model.WithScriptStepOutrapForm.Name);
         var scriptCallResponse = await GuiAndAppHandler.RunScriptAsync<ScriptCallResponse>(scriptStatement, false, true);
         if (scriptCallResponse.Success.Inconclusive || !scriptCallResponse.Success.YesNo) { return; }
 
@@ -72,6 +72,6 @@ public class CheckOrUncheckStep : IScriptStepLogic {
     }
 
     public async Task<IList<Selectable>> SelectableFormsOrControlsOrIdsOrClassesAsync() {
-        return await _OucoHelper.OutOfControlChoicesAsync(_ScriptStepType, Model.WithScriptStepOucoOrOutrapForm?.Guid, Model.WithScriptStepOucoOrOutrapFormInstanceNumber);
+        return await _OutrapHelper.OutOfControlChoicesAsync(_ScriptStepType, Model.WithScriptStepOutrapForm?.Guid, Model.WithScriptStepOutrapFormInstanceNumber);
     }
 }

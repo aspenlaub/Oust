@@ -6,7 +6,7 @@ using Aspenlaub.Net.GitHub.CSharp.Oust.Application.Entities;
 using Aspenlaub.Net.GitHub.CSharp.Oust.Application.Handlers;
 using Aspenlaub.Net.GitHub.CSharp.Oust.Application.Helpers;
 using Aspenlaub.Net.GitHub.CSharp.Oust.Application.Interfaces;
-using Aspenlaub.Net.GitHub.CSharp.Oust.Application.Ouco;
+using Aspenlaub.Net.GitHub.CSharp.Oust.Application.Outrap;
 using Aspenlaub.Net.GitHub.CSharp.Oust.Application.StepTypes;
 using Aspenlaub.Net.GitHub.CSharp.Oust.Model.Entities;
 using Aspenlaub.Net.GitHub.CSharp.Oust.Model.Interfaces;
@@ -79,35 +79,35 @@ public class Application : WebViewApplicationBase<IGuiAndApplicationSynchronizer
     }
 
     protected override void CreateCommandsAndHandlers() {
-        var oucoHelper = new OucoHelper(Model, this, SimpleLogger, _FolderResolver, _OustScriptStatementFactory, MethodNamesFromStackFramesExtractor);
+        var outrapHelper = new OutrapHelper(Model, this, SimpleLogger, _FolderResolver, _OustScriptStatementFactory, MethodNamesFromStackFramesExtractor);
         var oustSettingsHelper = new OustSettingsHelper(_SecretRepository);
         _ScriptStepLogicDictionary = new Dictionary<ScriptStepType, IScriptStepLogic> {
-            { ScriptStepType.Check, new CheckOrUncheckStep(Model, SimpleLogger, this, oucoHelper, _OustScriptStatementFactory, ScriptStepType.Check) },
+            { ScriptStepType.Check, new CheckOrUncheckStep(Model, SimpleLogger, this, outrapHelper, _OustScriptStatementFactory, ScriptStepType.Check) },
             { ScriptStepType.CheckSingle, new CheckOrUncheckSingleStep(Model, SimpleLogger, this, _OustScriptStatementFactory, ScriptStepType.CheckSingle) },
             { ScriptStepType.EndOfScript, new EndOfScriptStep(Model) },
             { ScriptStepType.GoToUrl, new GoToUrlStep(Model, SimpleLogger, this, _WampLogScanner, _SecuredHttpGate, _SecretRepository, MethodNamesFromStackFramesExtractor, false) },
-            { ScriptStepType.Input, new InputStep(Model, SimpleLogger, this, oucoHelper, _FileDialogTrickster, _OustScriptStatementFactory, oustSettingsHelper) },
+            { ScriptStepType.Input, new InputStep(Model, SimpleLogger, this, outrapHelper, _FileDialogTrickster, _OustScriptStatementFactory, oustSettingsHelper) },
             { ScriptStepType.InputIntoSingle, new InputIntoSingleStep(Model, SimpleLogger, this, _OustScriptStatementFactory) },
             { ScriptStepType.InvokeUrl, new GoToUrlStep(Model, SimpleLogger, this, _WampLogScanner, _SecuredHttpGate, _SecretRepository, MethodNamesFromStackFramesExtractor, true) },
-            { ScriptStepType.NotExpectedIdOrClass, new NotExpectedIdOrClassStep(Model, SimpleLogger, this, oucoHelper, _OustScriptStatementFactory) },
-            { ScriptStepType.NotExpectedContents, new RecognizeOrNotExpectedContentsStep(Model, SimpleLogger, this, oucoHelper, _OustScriptStatementFactory, ScriptStepType.NotExpectedContents) },
-            { ScriptStepType.NotExpectedSelection, new RecognizeOrNotExpectedContentsStep(Model, SimpleLogger, this, oucoHelper, _OustScriptStatementFactory, ScriptStepType.NotExpectedSelection) },
-            { ScriptStepType.Press, new PressStep(Model, SimpleLogger, this, oucoHelper, _WampLogScanner, _OustScriptStatementFactory) },
+            { ScriptStepType.NotExpectedIdOrClass, new NotExpectedIdOrClassStep(Model, SimpleLogger, this, outrapHelper, _OustScriptStatementFactory) },
+            { ScriptStepType.NotExpectedContents, new RecognizeOrNotExpectedContentsStep(Model, SimpleLogger, this, outrapHelper, _OustScriptStatementFactory, ScriptStepType.NotExpectedContents) },
+            { ScriptStepType.NotExpectedSelection, new RecognizeOrNotExpectedContentsStep(Model, SimpleLogger, this, outrapHelper, _OustScriptStatementFactory, ScriptStepType.NotExpectedSelection) },
+            { ScriptStepType.Press, new PressStep(Model, SimpleLogger, this, outrapHelper, _WampLogScanner, _OustScriptStatementFactory) },
             { ScriptStepType.PressSingle, new PressSingleStep(Model, SimpleLogger, this, _WampLogScanner, _OustScriptStatementFactory) },
-            { ScriptStepType.Recognize, new RecognizeOrNotExpectedContentsStep(Model, SimpleLogger, this, oucoHelper, _OustScriptStatementFactory, ScriptStepType.Recognize) },
-            { ScriptStepType.RecognizeSelection, new RecognizeOrNotExpectedContentsStep(Model, SimpleLogger, this, oucoHelper, _OustScriptStatementFactory, ScriptStepType.RecognizeSelection) },
-            { ScriptStepType.Select, new SelectStep(Model, SimpleLogger, this, oucoHelper, _OustScriptStatementFactory, _WampLogScanner) },
+            { ScriptStepType.Recognize, new RecognizeOrNotExpectedContentsStep(Model, SimpleLogger, this, outrapHelper, _OustScriptStatementFactory, ScriptStepType.Recognize) },
+            { ScriptStepType.RecognizeSelection, new RecognizeOrNotExpectedContentsStep(Model, SimpleLogger, this, outrapHelper, _OustScriptStatementFactory, ScriptStepType.RecognizeSelection) },
+            { ScriptStepType.Select, new SelectStep(Model, SimpleLogger, this, outrapHelper, _OustScriptStatementFactory, _WampLogScanner) },
             { ScriptStepType.SubScript, new SubScriptStep(Model) },
-            { ScriptStepType.Uncheck, new CheckOrUncheckStep(Model, SimpleLogger, this, oucoHelper, _OustScriptStatementFactory, ScriptStepType.Uncheck) },
+            { ScriptStepType.Uncheck, new CheckOrUncheckStep(Model, SimpleLogger, this, outrapHelper, _OustScriptStatementFactory, ScriptStepType.Uncheck) },
             { ScriptStepType.UncheckSingle, new CheckOrUncheckSingleStep(Model, SimpleLogger, this, _OustScriptStatementFactory, ScriptStepType.UncheckSingle) },
             { ScriptStepType.WaitAMinute, new WaitAMinuteStep(Model) },
             { ScriptStepType.WaitTenSeconds, new WaitTenSecondsStep(Model) },
-            { ScriptStepType.With, new WithStep(Model, SimpleLogger, this, oucoHelper, _OustScriptStatementFactory) },
-            { ScriptStepType.WithIdOrClass, new WithIdOrClassStep(Model, SimpleLogger, this, oucoHelper, _OustScriptStatementFactory) },
+            { ScriptStepType.With, new WithStep(Model, SimpleLogger, this, outrapHelper, _OustScriptStatementFactory) },
+            { ScriptStepType.WithIdOrClass, new WithIdOrClassStep(Model, SimpleLogger, this, outrapHelper, _OustScriptStatementFactory) },
             { ScriptStepType.RecognizeOkay, new RecognizeOkayStep(Model, _OustScriptStatementFactory, this) },
         };
 
-        var selectedValueSelectorHandler = new SelectedValueSelectorHandler(Model, oucoHelper, this);
+        var selectedValueSelectorHandler = new SelectedValueSelectorHandler(Model, outrapHelper, this);
         var subScriptSelectorHandler = new SubScriptSelectorHandler(Model, this, _ContextFactory);
         var formOrControlOrIdOrClassHandler = new FormOrControlOrIdOrClassHandler(Model, this, selectedValueSelectorHandler, _ScriptStepLogicDictionary);
         var scriptStepTypeSelectorHandler = new ScriptStepTypeSelectorHandler(Model, this, formOrControlOrIdOrClassHandler, selectedValueSelectorHandler, subScriptSelectorHandler);
@@ -124,7 +124,7 @@ public class Application : WebViewApplicationBase<IGuiAndApplicationSynchronizer
         };
 
         var stepIntoCommand = new StepIntoCommand(Model, Handlers.ScriptSelectorHandler, Handlers.ScriptStepSelectorHandler, this, SimpleLogger,
-                _ScriptStepLogicDictionary, oucoHelper, MethodNamesFromStackFramesExtractor);
+                _ScriptStepLogicDictionary, outrapHelper, MethodNamesFromStackFramesExtractor);
         var stepOverCommand = new StepOverCommand(Model, stepIntoCommand);
         Commands = new ApplicationCommands {
             AddOrReplaceStepCommand = new AddOrReplaceStepCommand(Model, Handlers.ScriptStepSelectorHandler, this, stepIntoCommand, _ScriptStepLogicDictionary, _ContextFactory),

@@ -18,13 +18,13 @@ public class OustWindowCheckAndUncheckStepTest : OustIntegrationTestBase {
         using var sut = await CreateOustWindowUnderTestAsync();
         var process = await sut.FindIdleProcessAsync();
         var tasks = CreateNewScriptTaskList(sut, process, "Check And Uncheck");
-        tasks.AddRange(await CreateGoToToughLookStepTaskListAsync(sut, process));
+        tasks.AddRange(await CreateGoToGutLookStepTaskListAsync(sut, process));
         tasks.Add(sut.CreateSetValueTask(process, nameof(IApplicationModel.ScriptStepType), Enum.GetName(typeof(ScriptStepType), ScriptStepType.Check)));
         tasks.Add(sut.CreateVerifyWhetherEnabledTask(process, nameof(IApplicationModel.FormOrControlOrIdOrClass), false));
         tasks.Add(sut.CreateSetValueTask(process, nameof(IApplicationModel.ScriptStepType), Enum.GetName(typeof(ScriptStepType), ScriptStepType.Uncheck)));
         tasks.Add(sut.CreateVerifyWhetherEnabledTask(process, nameof(IApplicationModel.FormOrControlOrIdOrClass), false));
         tasks.Add(sut.CreateSetValueTask(process, nameof(IApplicationModel.ScriptStepType), Enum.GetName(typeof(ScriptStepType), ScriptStepType.With)));
-        tasks.Add(sut.CreateSetValueTask(process, nameof(IApplicationModel.FormOrControlOrIdOrClass), "ToughLookSubForm"));
+        tasks.Add(sut.CreateSetValueTask(process, nameof(IApplicationModel.FormOrControlOrIdOrClass), "GutLookSubForm"));
         tasks.Add(sut.CreatePressButtonTask(process, nameof(IApplicationModel.AddOrReplaceStep)));
         tasks.Add(sut.CreateVerifyValueTask(process, nameof(IApplicationModel.WebViewCheckBoxesChecked), "NN"));
         tasks.Add(sut.CreateSetValueTask(process, nameof(IApplicationModel.ScriptStepType), Enum.GetName(typeof(ScriptStepType), ScriptStepType.Check)));
@@ -38,6 +38,6 @@ public class OustWindowCheckAndUncheckStepTest : OustIntegrationTestBase {
         tasks.Add(sut.CreatePressButtonTask(process, nameof(IApplicationModel.AddOrReplaceStep)));
         tasks.Add(sut.CreateVerifyValueTask(process, nameof(IApplicationModel.Status), ""));
         tasks.Add(sut.CreateVerifyValueTask(process, nameof(IApplicationModel.WebViewCheckBoxesChecked), "NN"));
-        await sut.RemotelyProcessTaskListAsync(process, tasks);
+        await sut.RemotelyProcessTaskListAsync(process, tasks, false, (_, _) => Task.CompletedTask);
     }
 }

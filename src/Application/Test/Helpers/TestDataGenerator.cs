@@ -142,7 +142,7 @@ public class TestDataGenerator {
 
     public async Task<string> ScriptStep41UrlAsync() {
         var errorsAndInfos = new ErrorsAndInfos();
-        var url = await _LogicalUrlRepository.GetUrlAsync("ToughLookEntry", errorsAndInfos);
+        var url = await _LogicalUrlRepository.GetUrlAsync("GutLookForms", errorsAndInfos);
         Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsToString());
         return url;
     }

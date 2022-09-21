@@ -3,23 +3,23 @@ using Aspenlaub.Net.GitHub.CSharp.Pegh.Entities;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Extensions;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Interfaces;
 
-namespace Aspenlaub.Net.GitHub.CSharp.Oust.Application.Ouco;
+namespace Aspenlaub.Net.GitHub.CSharp.Oust.Application.Outrap;
 
-public class OucoOrOutrapFormCollector {
-    protected IOucoOrOutrapFormReader Reader;
+public class OutrapFormCollector {
+    protected IOutrapFormReader Reader;
     private readonly IFolderResolver _FolderResolver;
 
-    private List<IOucoOrOutrapForm> _PrivateForms;
+    private List<IOutrapForm> _PrivateForms;
 
-    public OucoOrOutrapFormCollector(IOucoOrOutrapFormReader reader, IFolderResolver folderResolver) {
+    public OutrapFormCollector(IOutrapFormReader reader, IFolderResolver folderResolver) {
         Reader = reader;
         _FolderResolver = folderResolver;
     }
 
-    public async Task<List<IOucoOrOutrapForm>> GetFormsAsync() {
+    public async Task<List<IOutrapForm>> GetFormsAsync() {
         if (_PrivateForms != null) { return _PrivateForms; }
 
-        _PrivateForms = new List<IOucoOrOutrapForm>();
+        _PrivateForms = new List<IOutrapForm>();
         var errorsAndInfos = new ErrorsAndInfos();
         var folder = (await _FolderResolver.ResolveAsync(@"$(WampRoot)", errorsAndInfos)).FullName;
         if (errorsAndInfos.AnyErrors()) {
@@ -35,9 +35,6 @@ public class OucoOrOutrapFormCollector {
         if (IgnoreFolder(folder)) { return; }
 
         var dirInfo = new DirectoryInfo(folder);
-        foreach (var form in from file in dirInfo.GetFiles("*.xml") select file.FullName into fileName where ContainsOucoFormTag(fileName) select Reader.Read(fileName, false)) {
-            _PrivateForms.Add(form);
-        }
         foreach (var form in from file in dirInfo.GetFiles("*.xml") select file.FullName into fileName where ContainsOutrapFormTag(fileName) select Reader.Read(fileName, true)) {
             _PrivateForms.Add(form);
         }
@@ -50,10 +47,6 @@ public class OucoOrOutrapFormCollector {
 
     private bool IgnoreFolder(string folder) {
         return _UnwantedSubFolders.Any(f => folder.EndsWith('\\' + f));
-    }
-
-    private static bool ContainsOucoFormTag(string fileName) {
-        return File.ReadAllText(fileName).Contains("<form");
     }
 
     private static bool ContainsOutrapFormTag(string fileName) {

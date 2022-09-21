@@ -1,8 +1,8 @@
 using Aspenlaub.Net.GitHub.CSharp.Oust.Application.Interfaces;
 
-namespace Aspenlaub.Net.GitHub.CSharp.Oust.Application.Ouco;
+namespace Aspenlaub.Net.GitHub.CSharp.Oust.Application.Outrap;
 
-public class OucoOrOutrapForm : OutOfControl, IOucoOrOutrapForm {
+public class OutrapForm : OutOfControl, IOutrapForm {
     public override string ToString() {
         return Name;
     }

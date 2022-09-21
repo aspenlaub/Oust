@@ -1,20 +1,20 @@
 using System.Xml;
 using Aspenlaub.Net.GitHub.CSharp.Oust.Application.Interfaces;
 
-namespace Aspenlaub.Net.GitHub.CSharp.Oust.Application.Ouco;
+namespace Aspenlaub.Net.GitHub.CSharp.Oust.Application.Outrap;
 
-public class OucoOrOutrapFormReader : IOucoOrOutrapFormReader {
-    public IOucoOrOutrapForm Read(string fileName, bool isOutrap) {
+public class OutrapFormReader : IOutrapFormReader {
+    public IOutrapForm Read(string fileName, bool isOutrap) {
         var doc = new XmlDocument();
         doc.Load(fileName);
         var root = doc.DocumentElement;
         var classAttributeValue = root?.Attributes["class"]?.Value;
         if (classAttributeValue == null) { return null; }
 
-        var form = new OucoOrOutrapForm {
+        var form = new OutrapForm {
             Class = classAttributeValue,
             Name = root.HasAttribute("name") && root.Attributes["name"] != null ? root.Attributes["name"].Value : classAttributeValue,
-            Type = OucoControlTypes.OucoFormDefinition
+            Type = OutrapControlTypes.OutrapFormDefinition
         };
         XmlNode formDoc = null, guidsOrUidsDoc = null;
         var found = false;
@@ -37,7 +37,7 @@ public class OucoOrOutrapFormReader : IOucoOrOutrapFormReader {
                     found = true;
                     formDoc = subDoc;
                     guidsOrUidsDoc = subDoc.ChildNodes.Cast<XmlNode>().Single(c => c.Name == "uids");
-                    form.Type = OucoControlTypes.OutrapForm;
+                    form.Type = OutrapControlTypes.OutrapForm;
                     break;
             }
 
@@ -56,7 +56,7 @@ public class OucoOrOutrapFormReader : IOucoOrOutrapFormReader {
         return form;
     }
 
-    protected Dictionary<string, string> ReadGuidsOrUids(XmlNode doc, OucoControlTypes controlType) {
+    protected Dictionary<string, string> ReadGuidsOrUids(XmlNode doc, OutrapControlTypes controlType) {
         var guidsOrUids = new Dictionary<string, string>();
         for (var i = 0; i < doc.ChildNodes.Count; i++) {
             var subDoc = doc.ChildNodes[i];
@@ -95,35 +95,35 @@ public class OucoOrOutrapFormReader : IOucoOrOutrapFormReader {
 
             var childControl = new OutOfControl { Name = name, Id = guid };
             switch (subDoc.Name) {
-                case "button": childControl.Type = OucoControlTypes.Button; break;
-                case "checkbox": childControl.Type = OucoControlTypes.CheckBox; break;
-                case "copy": childControl.Type = OucoControlTypes.Copy; break;
-                case "dropdown": childControl.Type = OucoControlTypes.DropDown; break;
+                case "button": childControl.Type = OutrapControlTypes.Button; break;
+                case "checkbox": childControl.Type = OutrapControlTypes.CheckBox; break;
+                case "copy": childControl.Type = OutrapControlTypes.Copy; break;
+                case "dropdown": childControl.Type = OutrapControlTypes.DropDown; break;
                 case "vstack":
-                case "hstack": childControl.Type = OucoControlTypes.Stack; break;
-                case "input": childControl.Type = OucoControlTypes.Input; break;
-                case "legacymenu": childControl.Type = OucoControlTypes.LegacyMenu; childControl.Class = oclass; break;
-                case "menu": childControl.Type = OucoControlTypes.Menu; childControl.Class = oclass; break;
-                case "subform": childControl.Type = OucoControlTypes.SubForm; childControl.Class = oclass; break;
-                case "restricted": childControl.Type = OucoControlTypes.Restricted; break;
-                case "table": childControl.Type = OucoControlTypes.Table; break;
-                case "textarea": childControl.Type = OucoControlTypes.TextArea; break;
+                case "hstack": childControl.Type = OutrapControlTypes.Stack; break;
+                case "input": childControl.Type = OutrapControlTypes.Input; break;
+                case "legacymenu": childControl.Type = OutrapControlTypes.LegacyMenu; childControl.Class = oclass; break;
+                case "menu": childControl.Type = OutrapControlTypes.Menu; childControl.Class = oclass; break;
+                case "subform": childControl.Type = OutrapControlTypes.SubForm; childControl.Class = oclass; break;
+                case "restricted": childControl.Type = OutrapControlTypes.Restricted; break;
+                case "table": childControl.Type = OutrapControlTypes.Table; break;
+                case "textarea": childControl.Type = OutrapControlTypes.TextArea; break;
                 case "valoutput":
-                    childControl.Type = OucoControlTypes.ValidationOutput;
+                    childControl.Type = OutrapControlTypes.ValidationOutput;
                     if (isOutrap) {
                         childControl.Id = childControl.Id + "-ValOut";
                     }
                     break;
-                case "upload": childControl.Type = OucoControlTypes.Upload; break;
-                case "frame": childControl.Type = OucoControlTypes.Frame; break;
-                case "img": childControl.Type = OucoControlTypes.Image; break;
-                case "row": childControl.Type = OucoControlTypes.Row; break;
-                case "col": childControl.Type = OucoControlTypes.Column; break;
-                case "navtabs": childControl.Type = OucoControlTypes.NavTabs; break;
-                case "card": childControl.Type = OucoControlTypes.Card; break;
-                case "carousel": childControl.Type = OucoControlTypes.Carousel; break;
+                case "upload": childControl.Type = OutrapControlTypes.Upload; break;
+                case "frame": childControl.Type = OutrapControlTypes.Frame; break;
+                case "img": childControl.Type = OutrapControlTypes.Image; break;
+                case "row": childControl.Type = OutrapControlTypes.Row; break;
+                case "col": childControl.Type = OutrapControlTypes.Column; break;
+                case "navtabs": childControl.Type = OutrapControlTypes.NavTabs; break;
+                case "card": childControl.Type = OutrapControlTypes.Card; break;
+                case "carousel": childControl.Type = OutrapControlTypes.Carousel; break;
                 default: {
-                    throw new NotImplementedException($"{nameof(OucoOrOutrapFormReader)} does not know how to handle {subDoc.Name}");
+                    throw new NotImplementedException($"{nameof(OutrapFormReader)} does not know how to handle {subDoc.Name}");
                 }
             }
 

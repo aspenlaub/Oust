@@ -7,12 +7,12 @@ namespace Aspenlaub.Net.GitHub.CSharp.Oust.Application.Handlers;
 
 public class SelectedValueSelectorHandler : ISelectedValueSelectorHandler {
     private readonly IApplicationModel _Model;
-    private readonly IOucoHelper _OucoHelper;
+    private readonly IOutrapHelper _OutrapHelper;
     private readonly IGuiAndWebViewAppHandler<ApplicationModel> _GuiAndAppHandler;
 
-    public SelectedValueSelectorHandler(IApplicationModel model, IOucoHelper oucoHelper, IGuiAndWebViewAppHandler<ApplicationModel> guiAndAppHandler) {
+    public SelectedValueSelectorHandler(IApplicationModel model, IOutrapHelper outrapHelper, IGuiAndWebViewAppHandler<ApplicationModel> guiAndAppHandler) {
         _Model = model;
-        _OucoHelper = oucoHelper;
+        _OutrapHelper = outrapHelper;
         _GuiAndAppHandler = guiAndAppHandler;
     }
 
@@ -23,7 +23,7 @@ public class SelectedValueSelectorHandler : ISelectedValueSelectorHandler {
     private async Task UpdateSelectableSelectedValuesAsync() {
         var scriptStepType = _Model.ScriptStepType.SelectionMade ? (ScriptStepType)int.Parse(_Model.ScriptStepType.SelectedItem.Guid) : ScriptStepType.EndOfScript;
         var selectables = scriptStepType is ScriptStepType.Select or ScriptStepType.RecognizeSelection
-            ? await _OucoHelper.SelectionChoicesAsync(_Model.WithScriptStepOucoOrOutrapForm?.Guid, _Model.WithScriptStepOucoOrOutrapFormInstanceNumber, _Model.FormOrControlOrIdOrClass?.SelectedItem?.Guid)
+            ? await _OutrapHelper.SelectionChoicesAsync(_Model.WithScriptStepOutrapForm?.Guid, _Model.WithScriptStepOutrapFormInstanceNumber, _Model.FormOrControlOrIdOrClass?.SelectedItem?.Guid)
             : new List<Selectable>();
         _Model.SelectedValue.UpdateSelectables(selectables);
         if (_Model.SelectedValue.SelectionMade) {

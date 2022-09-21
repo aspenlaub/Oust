@@ -62,10 +62,10 @@ public class GoToUrlStep : IScriptStepLogic {
             var methodNamesFromStack = _MethodNamesFromStackFramesExtractor.ExtractMethodNamesFromStackFrames();
 
             if (!_JustInvoke) {
-                _Model.WithScriptStepOucoOrOutrapForm = null;
+                _Model.WithScriptStepOutrapForm = null;
                 _Model.WithScriptStepIdOrClass = null;
                 _Model.WithScriptStepOutOfControl = null;
-                _Model.WithScriptStepOucoOrOutrapFormInstanceNumber = 0;
+                _Model.WithScriptStepOutrapFormInstanceNumber = 0;
                 _Model.WithScriptStepIdOrClassInstanceNumber = 0;
             }
 

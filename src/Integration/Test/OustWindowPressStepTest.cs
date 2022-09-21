@@ -23,22 +23,22 @@ public class OustWindowPressStepTest : OustIntegrationTestBase {
         using var sut = await CreateOustWindowUnderTestAsync();
         var process = await sut.FindIdleProcessAsync();
         var tasks = CreateNewScriptTaskList(sut, process, "Tell Me To Press");
-        tasks.AddRange(await CreateGoToToughLookStepTaskListAsync(sut, process));
+        tasks.AddRange(await CreateGoToGutLookStepTaskListAsync(sut, process));
         tasks.Add(sut.CreateSetValueTask(process, nameof(IApplicationModel.ScriptStepType), Enum.GetName(typeof(ScriptStepType), ScriptStepType.Press)));
         tasks.Add(sut.CreateVerifyWhetherEnabledTask(process, nameof(IApplicationModel.FormOrControlOrIdOrClass), false));
-        tasks.AddRange(CreateWithToughLookSubFormTaskList(sut, process));
+        tasks.AddRange(CreateWithGutLookSubFormTaskList(sut, process));
         tasks.Add(sut.CreatePressButtonTask(process, nameof(OustWindow.AddOrReplaceStep)));
-        await sut.RemotelyProcessTaskListAsync(process, tasks);
+        await sut.RemotelyProcessTaskListAsync(process, tasks, false, (_, _) => Task.CompletedTask);
         tasks.Clear();
 
         var paragraphsBefore = (await sut.RemotelyGetValueAsync(process, nameof(IApplicationModel.WebViewParagraphs))).Split('\t').ToList();
-        Assert.AreEqual(8, paragraphsBefore.Count);
+        Assert.AreEqual(11, paragraphsBefore.Count);
         await Task.Delay(2000);
 
         tasks.Add(sut.CreateSetValueTask(process, nameof(IApplicationModel.ScriptStepType), Enum.GetName(typeof(ScriptStepType), ScriptStepType.Press)));
-        tasks.Add(sut.CreateSetValueTask(process, nameof(IApplicationModel.FormOrControlOrIdOrClass), "SubFormButton (Button)"));
+        tasks.Add(sut.CreateSetValueTask(process, nameof(IApplicationModel.FormOrControlOrIdOrClass), "SubButton (Button)"));
         tasks.Add(sut.CreatePressButtonTask(process, nameof(OustWindow.AddOrReplaceStep)));
-        await sut.RemotelyProcessTaskListAsync(process, tasks);
+        await sut.RemotelyProcessTaskListAsync(process, tasks, false, (_, _) => Task.CompletedTask);
         tasks.Clear();
 
         var success = false;
@@ -46,19 +46,22 @@ public class OustWindowPressStepTest : OustIntegrationTestBase {
         for (var i = 0; i < 200 && !success; i++) {
             await Task.Delay(50);
             paragraphsAfter = (await sut.RemotelyGetValueAsync(process, nameof(IApplicationModel.WebViewParagraphs))).Split('\t').ToList();
-            Assert.AreEqual(8, paragraphsAfter.Count);
-            success = paragraphsBefore[2] != paragraphsAfter[2];
+            Assert.AreEqual(11, paragraphsAfter.Count);
+            success = paragraphsBefore[3] != paragraphsAfter[3];
         }
         Assert.IsTrue(success);
 
         Assert.AreEqual(paragraphsBefore[0], paragraphsAfter[0]);
         Assert.AreEqual(paragraphsBefore[1], paragraphsAfter[1]);
-        Assert.AreNotEqual(paragraphsBefore[2], paragraphsAfter[2]);
+        Assert.AreEqual(paragraphsBefore[2], paragraphsAfter[2]);
         Assert.AreNotEqual(paragraphsBefore[3], paragraphsAfter[3]);
         Assert.AreEqual(paragraphsBefore[4], paragraphsAfter[4]);
-        Assert.AreEqual(paragraphsBefore[5], paragraphsAfter[5]);
+        Assert.AreNotEqual(paragraphsBefore[5], paragraphsAfter[5]);
         Assert.AreEqual(paragraphsBefore[6], paragraphsAfter[6]);
         Assert.AreEqual(paragraphsBefore[7], paragraphsAfter[7]);
+        Assert.AreEqual(paragraphsBefore[8], paragraphsAfter[8]);
+        Assert.AreEqual(paragraphsBefore[9], paragraphsAfter[9]);
+        Assert.AreEqual(paragraphsBefore[10], paragraphsAfter[10]);
     }
 
     [TestMethod]
@@ -80,7 +83,7 @@ public class OustWindowPressStepTest : OustIntegrationTestBase {
         tasks.Add(sut.CreateSetValueTask(process, nameof(IApplicationModel.ScriptStepType), Enum.GetName(typeof(ScriptStepType), ScriptStepType.PressSingle)));
         tasks.Add(sut.CreatePressButtonTask(process, nameof(OustWindow.AddOrReplaceStep)));
         tasks.Add(sut.CreateVerifyValueTask(process, nameof(IApplicationModel.WebViewUrl), url + "?brainsource=main&brainmode=5"));
-        await sut.RemotelyProcessTaskListAsync(process, tasks);
+        await sut.RemotelyProcessTaskListAsync(process, tasks, false, (_, _) => Task.CompletedTask);
         tasks.Clear();
     }
 }

@@ -15,18 +15,18 @@ public class SelectStep : IScriptStepLogic {
     public IApplicationModel Model { get; init; }
     public IGuiAndWebViewAppHandler<ApplicationModel> GuiAndAppHandler { get; init; }
     public ISimpleLogger SimpleLogger { get; init; }
-    private readonly IOucoHelper _OucoHelper;
+    private readonly IOutrapHelper _OutrapHelper;
     private readonly IOustScriptStatementFactory _OustScriptStatementFactory;
     private readonly IWampLogScanner _WampLogScanner;
 
     public string FreeCodeLabelText => Properties.Resources.FreeTextTitle;
 
-    public SelectStep(IApplicationModel model, ISimpleLogger simpleLogger, IGuiAndWebViewAppHandler<ApplicationModel> guiAndAppHandler, IOucoHelper oucoHelper,
+    public SelectStep(IApplicationModel model, ISimpleLogger simpleLogger, IGuiAndWebViewAppHandler<ApplicationModel> guiAndAppHandler, IOutrapHelper outrapHelper,
                       IOustScriptStatementFactory oustScriptStatementFactory, IWampLogScanner wampLogScanner) {
         Model = model;
         SimpleLogger = simpleLogger;
         GuiAndAppHandler = guiAndAppHandler;
-        _OucoHelper = oucoHelper;
+        _OutrapHelper = outrapHelper;
         _OustScriptStatementFactory = oustScriptStatementFactory;
         _WampLogScanner = wampLogScanner;
     }
@@ -51,12 +51,12 @@ public class SelectStep : IScriptStepLogic {
     }
 
     public async Task ExecuteAsync() {
-        var scriptStatement = _OustScriptStatementFactory.CreateDoesDocumentHaveDivLikeWithIdOrNthOccurrenceOfClassStatement(Model.WithScriptStepOucoOrOutrapForm.Guid, Model.WithScriptStepOucoOrOutrapFormInstanceNumber, Model.WithScriptStepOucoOrOutrapForm.Name);
+        var scriptStatement = _OustScriptStatementFactory.CreateDoesDocumentHaveDivLikeWithIdOrNthOccurrenceOfClassStatement(Model.WithScriptStepOutrapForm.Guid, Model.WithScriptStepOutrapFormInstanceNumber, Model.WithScriptStepOutrapForm.Name);
         var scriptCallResponse = await GuiAndAppHandler.RunScriptAsync<ScriptCallResponse>(scriptStatement, false, true);
         if (scriptCallResponse.Success.Inconclusive || !scriptCallResponse.Success.YesNo) { return; }
 
         var ancestorDomElementJson = JsonSerializer.Serialize(scriptCallResponse.DomElement);
-        scriptStatement = _OustScriptStatementFactory.CreateDoesDocumentContainDescendantElementOfClassStatement(ancestorDomElementJson, Model.ScriptStepOutOfControl.Guid, Model.ScriptStepOutOfControl.Name, Model.WithScriptStepOucoOrOutrapForm.Name, Model.WithScriptStepOucoOrOutrapFormInstanceNumber);
+        scriptStatement = _OustScriptStatementFactory.CreateDoesDocumentContainDescendantElementOfClassStatement(ancestorDomElementJson, Model.ScriptStepOutOfControl.Guid, Model.ScriptStepOutOfControl.Name, Model.WithScriptStepOutrapForm.Name, Model.WithScriptStepOutrapFormInstanceNumber);
         scriptCallResponse = await GuiAndAppHandler.RunScriptAsync<ScriptCallResponse>(scriptStatement, false, true);
         if (scriptCallResponse.Success.Inconclusive || !scriptCallResponse.Success.YesNo) { return; }
 
@@ -92,6 +92,6 @@ public class SelectStep : IScriptStepLogic {
     }
 
     public async Task<IList<Selectable>> SelectableFormsOrControlsOrIdsOrClassesAsync() {
-        return await _OucoHelper.OutOfControlChoicesAsync(ScriptStepType.Select, Model.WithScriptStepOucoOrOutrapForm?.Guid, Model.WithScriptStepOucoOrOutrapFormInstanceNumber);
+        return await _OutrapHelper.OutOfControlChoicesAsync(ScriptStepType.Select, Model.WithScriptStepOutrapForm?.Guid, Model.WithScriptStepOutrapFormInstanceNumber);
     }
 }

@@ -29,6 +29,6 @@ public class OustWindowRemoteControlTest : OustIntegrationTestBase {
             sut.CreateResetTask(process),
             sut.CreateVerifyValueTask(process, nameof(IApplicationModel.Status), "")
         };
-        await sut.RemotelyProcessTaskListAsync(process, tasks);
+        await sut.RemotelyProcessTaskListAsync(process, tasks, false, (_, _) => Task.CompletedTask);
     }
 }

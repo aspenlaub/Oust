@@ -14,7 +14,7 @@ public class RecognizeOrNotExpectedContentsStep : IScriptStepLogic {
     public IApplicationModel Model { get; init; }
     public IGuiAndWebViewAppHandler<ApplicationModel> GuiAndAppHandler { get; init; }
     public ISimpleLogger SimpleLogger { get; init; }
-    private readonly IOucoHelper _OucoHelper;
+    private readonly IOutrapHelper _OutrapHelper;
     private readonly IOustScriptStatementFactory _OustScriptStatementFactory;
 
     private readonly ScriptStepType _ScriptStepType;
@@ -25,11 +25,11 @@ public class RecognizeOrNotExpectedContentsStep : IScriptStepLogic {
                 ? Properties.Resources.ExpectedContentsTitle
                 : Properties.Resources.NotExpectedContentsTitle;
 
-    public RecognizeOrNotExpectedContentsStep(IApplicationModel model, ISimpleLogger simpleLogger, IGuiAndWebViewAppHandler<ApplicationModel> guiAndAppHandler, IOucoHelper oucoHelper, IOustScriptStatementFactory oustScriptStatementFactory, ScriptStepType stepType) {
+    public RecognizeOrNotExpectedContentsStep(IApplicationModel model, ISimpleLogger simpleLogger, IGuiAndWebViewAppHandler<ApplicationModel> guiAndAppHandler, IOutrapHelper outrapHelper, IOustScriptStatementFactory oustScriptStatementFactory, ScriptStepType stepType) {
         Model = model;
         GuiAndAppHandler = guiAndAppHandler;
         SimpleLogger = simpleLogger;
-        _OucoHelper = oucoHelper;
+        _OutrapHelper = outrapHelper;
         _OustScriptStatementFactory = oustScriptStatementFactory;
         _ScriptStepType = stepType;
     }
@@ -61,9 +61,9 @@ public class RecognizeOrNotExpectedContentsStep : IScriptStepLogic {
     }
 
     public async Task ExecuteAsync() {
-        var scriptStatement = string.IsNullOrWhiteSpace(Model.WithScriptStepOucoOrOutrapForm?.Guid)
+        var scriptStatement = string.IsNullOrWhiteSpace(Model.WithScriptStepOutrapForm?.Guid)
             ? _OustScriptStatementFactory.CreateDoesDocumentHaveNthOccurrenceOfIdOrClassStatement(Model.WithScriptStepIdOrClass, Model.WithScriptStepIdOrClassInstanceNumber)
-            : _OustScriptStatementFactory.CreateDoesDocumentHaveDivLikeWithIdOrNthOccurrenceOfClassStatement(Model.WithScriptStepOucoOrOutrapForm.Guid, Model.WithScriptStepOucoOrOutrapFormInstanceNumber, Model.WithScriptStepOucoOrOutrapForm.Name);
+            : _OustScriptStatementFactory.CreateDoesDocumentHaveDivLikeWithIdOrNthOccurrenceOfClassStatement(Model.WithScriptStepOutrapForm.Guid, Model.WithScriptStepOutrapFormInstanceNumber, Model.WithScriptStepOutrapForm.Name);
 
         var scriptCallResponse = await GuiAndAppHandler.RunScriptAsync<ScriptCallResponse>(scriptStatement, false, true);
         if (scriptCallResponse.Success.Inconclusive || !scriptCallResponse.Success.YesNo) {
@@ -77,7 +77,7 @@ public class RecognizeOrNotExpectedContentsStep : IScriptStepLogic {
         if (string.IsNullOrWhiteSpace(Model.ScriptStepOutOfControl?.Guid)) {
             html = ancestorDomElementInnerHtml;
         } else {
-            scriptStatement = _OustScriptStatementFactory.CreateDoesDocumentContainDescendantElementOfClassStatement(ancestorDomElementJson, Model.ScriptStepOutOfControl.Guid, Model.ScriptStepOutOfControl.Name, Model.WithScriptStepOucoOrOutrapForm?.Name, Model.WithScriptStepOucoOrOutrapFormInstanceNumber);
+            scriptStatement = _OustScriptStatementFactory.CreateDoesDocumentContainDescendantElementOfClassStatement(ancestorDomElementJson, Model.ScriptStepOutOfControl.Guid, Model.ScriptStepOutOfControl.Name, Model.WithScriptStepOutrapForm?.Name, Model.WithScriptStepOutrapFormInstanceNumber);
             scriptCallResponse = await GuiAndAppHandler.RunScriptAsync<ScriptCallResponse>(scriptStatement, false, true);
             if (scriptCallResponse.Success.Inconclusive || !scriptCallResponse.Success.YesNo) { return; }
 
@@ -104,20 +104,20 @@ public class RecognizeOrNotExpectedContentsStep : IScriptStepLogic {
             case ScriptStepType.Recognize when html.Contains(Model.ExpectedContents.Text.Replace("'", "\"")):
                 return;
             case ScriptStepType.Recognize when html.Length < 20:
-                Model.Status.Text = string.IsNullOrWhiteSpace(Model.WithScriptStepOucoOrOutrapForm?.Guid)
+                Model.Status.Text = string.IsNullOrWhiteSpace(Model.WithScriptStepOutrapForm?.Guid)
                     ? string.Format(Properties.Resources.ExpectedContentsNotFoundInstead, Model.WithScriptStepIdOrClass, Model.WithScriptStepIdOrClassInstanceNumber, Model.WithScriptStepIdOrClass, Model.ExpectedContents.Text, html)
-                    : string.Format(Properties.Resources.ExpectedContentsNotFoundInstead, Model.ScriptStepOutOfControl?.Name, Model.WithScriptStepOucoOrOutrapFormInstanceNumber, Model.WithScriptStepOucoOrOutrapForm.Name, Model.ExpectedContents.Text, html);
+                    : string.Format(Properties.Resources.ExpectedContentsNotFoundInstead, Model.ScriptStepOutOfControl?.Name, Model.WithScriptStepOutrapFormInstanceNumber, Model.WithScriptStepOutrapForm.Name, Model.ExpectedContents.Text, html);
                 break;
             case ScriptStepType.Recognize:
-                Model.Status.Text = string.IsNullOrWhiteSpace(Model.WithScriptStepOucoOrOutrapForm?.Guid)
+                Model.Status.Text = string.IsNullOrWhiteSpace(Model.WithScriptStepOutrapForm?.Guid)
                     ? string.Format(Properties.Resources.ExpectedContentsNotFound, Model.WithScriptStepIdOrClass, Model.WithScriptStepIdOrClassInstanceNumber, Model.WithScriptStepIdOrClass, Model.ExpectedContents.Text)
-                    : string.Format(Properties.Resources.ExpectedContentsNotFound, Model.ScriptStepOutOfControl?.Name, Model.WithScriptStepOucoOrOutrapFormInstanceNumber, Model.WithScriptStepOucoOrOutrapForm.Name, Model.ExpectedContents.Text);
+                    : string.Format(Properties.Resources.ExpectedContentsNotFound, Model.ScriptStepOutOfControl?.Name, Model.WithScriptStepOutrapFormInstanceNumber, Model.WithScriptStepOutrapForm.Name, Model.ExpectedContents.Text);
                 break;
             default: {
                 if (html.Contains(Model.ExpectedContents.Text)) {
-                    Model.Status.Text = string.IsNullOrWhiteSpace(Model.WithScriptStepOucoOrOutrapForm?.Guid)
+                    Model.Status.Text = string.IsNullOrWhiteSpace(Model.WithScriptStepOutrapForm?.Guid)
                         ? string.Format(Properties.Resources.UnexpectedContentsFound, Model.WithScriptStepIdOrClassInstanceNumber, Model.WithScriptStepIdOrClass, Model.ExpectedContents.Text)
-                        : string.Format(Properties.Resources.UnexpectedContentsFound, Model.WithScriptStepOucoOrOutrapFormInstanceNumber, Model.WithScriptStepOucoOrOutrapForm.Name, Model.ExpectedContents.Text);
+                        : string.Format(Properties.Resources.UnexpectedContentsFound, Model.WithScriptStepOutrapFormInstanceNumber, Model.WithScriptStepOutrapForm.Name, Model.ExpectedContents.Text);
 
                 } else {
                     return;
@@ -131,6 +131,6 @@ public class RecognizeOrNotExpectedContentsStep : IScriptStepLogic {
     }
 
     public async Task<IList<Selectable>> SelectableFormsOrControlsOrIdsOrClassesAsync() {
-        return await _OucoHelper.OutOfControlChoicesAsync(_ScriptStepType, Model.WithScriptStepOucoOrOutrapForm?.Guid, Model.WithScriptStepOucoOrOutrapFormInstanceNumber);
+        return await _OutrapHelper.OutOfControlChoicesAsync(_ScriptStepType, Model.WithScriptStepOutrapForm?.Guid, Model.WithScriptStepOutrapFormInstanceNumber);
     }
 }

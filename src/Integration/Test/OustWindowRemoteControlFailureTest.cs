@@ -45,10 +45,10 @@ public class OustWindowRemoteControlFailureTest : OustIntegrationTestBase {
             sut.CreateSetValueTask(process, nameof(IApplicationModel.SelectedScript), FlawedTestDataGenerator.FailingScriptName),
             sut.CreateVerifyValueTask(process, nameof(IApplicationModel.SelectedScript), FlawedTestDataGenerator.FailingScriptName)
         };
-        await sut.RemotelyProcessTaskListAsync(process, tasks);
+        await sut.RemotelyProcessTaskListAsync(process, tasks, false, (_, _) => Task.CompletedTask);
         tasks.Clear();
         await sut.RemotelyPressButtonAsync(process, nameof(OustWindow.Play), false);
         tasks.Add(sut.CreateVerifyValueTask(process, nameof(IApplicationModel.Status), Properties.Resources.AutoDestructSequenceHasBeenInitialized));
-        await sut.RemotelyProcessTaskListAsync(process, tasks);
+        await sut.RemotelyProcessTaskListAsync(process, tasks, false, (_, _) => Task.CompletedTask);
     }
 }

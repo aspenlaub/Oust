@@ -50,12 +50,12 @@ public class FormOrControlOrIdOrClassHandler : IFormOrControlOrIdOrClassHandler 
 
         _Model.FormOrControlOrIdOrClass.SelectedIndex = selectedIndex;
         var scriptStepType = _Model.ScriptStepType.SelectionMade && _Model.ScriptStepType.SelectedItem != null ? (ScriptStepType)int.Parse(_Model.ScriptStepType.SelectedItem.Guid) : ScriptStepType.EndOfScript;
-        _Model.ScriptStepOucoOrOutrapForm = null;
+        _Model.ScriptStepOutrapForm = null;
         _Model.ScriptStepOutOfControl = null;
         _Model.ScriptStepIdOrClass = "";
         switch (scriptStepType) {
             case ScriptStepType.With:
-                _Model.ScriptStepOucoOrOutrapForm = _Model.FormOrControlOrIdOrClass.SelectedItem;
+                _Model.ScriptStepOutrapForm = _Model.FormOrControlOrIdOrClass.SelectedItem;
                 break;
             case ScriptStepType.Recognize:
             case ScriptStepType.NotExpectedContents:

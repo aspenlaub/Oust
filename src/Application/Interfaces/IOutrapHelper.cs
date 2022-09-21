@@ -3,10 +3,10 @@ using Aspenlaub.Net.GitHub.CSharp.VishizhukelNet.Entities;
 
 namespace Aspenlaub.Net.GitHub.CSharp.Oust.Application.Interfaces;
 
-public interface IOucoHelper {
+public interface IOutrapHelper {
     Task<List<Selectable>> FormChoicesAsync();
-    Task<List<Selectable>> OutOfControlChoicesAsync(ScriptStepType scriptStepType, string oucoFormGuid, int oucoFormInstanceNumber);
+    Task<List<Selectable>> OutOfControlChoicesAsync(ScriptStepType scriptStepType, string outrapFormGuid, int outrapFormInstanceNumber);
     Task<List<Selectable>> IdOrClassChoicesAsync();
-    Task<List<Selectable>> SelectionChoicesAsync(string oucoFormGuid, int oucoFormInstanceNumber, string outOfControlGuid);
+    Task<List<Selectable>> SelectionChoicesAsync(string outrapFormGuid, int outrapFormInstanceNumber, string outOfControlGuid);
     Task<Dictionary<string, string>> AuxiliaryDictionaryAsync();
 }

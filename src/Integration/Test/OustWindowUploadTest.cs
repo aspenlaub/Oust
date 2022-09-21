@@ -41,9 +41,9 @@ public class OustWindowUploadTest : OustIntegrationTestBase {
         using var sut = await CreateOustWindowUnderTestAsync();
         var process = await sut.FindIdleProcessAsync();
         var tasks = CreateNewScriptTaskList(sut, process, "Load Me Up!");
-        tasks.AddRange(await CreateGoToToughLookStepTaskListAsync(sut, process));
+        tasks.AddRange(await CreateGoToGutLookStepTaskListAsync(sut, process));
         tasks.Add(sut.CreateSetValueTask(process, nameof(IApplicationModel.ScriptStepType), Enum.GetName(typeof(ScriptStepType), ScriptStepType.With)));
-        tasks.Add(sut.CreateSetValueTask(process, nameof(IApplicationModel.FormOrControlOrIdOrClass), "ToughLookForm"));
+        tasks.Add(sut.CreateSetValueTask(process, nameof(IApplicationModel.FormOrControlOrIdOrClass), "GutLookForm"));
         tasks.Add(sut.CreateSetValueTask(process, nameof(IApplicationModel.FormOrIdOrClassInstanceNumber), "1"));
         tasks.Add(sut.CreatePressButtonTask(process, nameof(OustWindow.AddOrReplaceStep)));
         tasks.Add(sut.CreateSetValueTask(process, nameof(IApplicationModel.ScriptStepType), Enum.GetName(typeof(ScriptStepType), ScriptStepType.Recognize)));
@@ -60,7 +60,7 @@ public class OustWindowUploadTest : OustIntegrationTestBase {
         tasks.Add(sut.CreateSetValueTask(process, nameof(IApplicationModel.ScriptStepType), Enum.GetName(typeof(ScriptStepType), ScriptStepType.Press)));
         tasks.Add(sut.CreateSetValueTask(process, nameof(IApplicationModel.FormOrControlOrIdOrClass), "UploadControl (Upload)"));
         tasks.Add(sut.CreatePressButtonTask(process, nameof(OustWindow.AddOrReplaceStep)));
-        await sut.RemotelyProcessTaskListAsync(process, tasks);
+        await sut.RemotelyProcessTaskListAsync(process, tasks, false, (_, _) => Task.CompletedTask);
         tasks.Clear();
 
         await Task.Delay(TimeSpan.FromSeconds(10));
@@ -68,6 +68,6 @@ public class OustWindowUploadTest : OustIntegrationTestBase {
         tasks.Add(sut.CreateSetValueTask(process, nameof(IApplicationModel.FormOrControlOrIdOrClass), "UploadControl (Upload)"));
         tasks.Add(sut.CreateSetValueTask(process, nameof(IApplicationModel.FreeText), "0%"));
         tasks.Add(sut.CreatePressButtonTask(process, nameof(OustWindow.AddOrReplaceStep)));
-        await sut.RemotelyProcessTaskListAsync(process, tasks);
+        await sut.RemotelyProcessTaskListAsync(process, tasks, false, (_, _) => Task.CompletedTask);
     }
 }

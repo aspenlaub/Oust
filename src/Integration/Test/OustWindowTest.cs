@@ -33,7 +33,7 @@ public class OustWindowTest : OustIntegrationTestBase {
                 sut.CreateVerifyNumberOfItemsTask(process, nameof(IApplicationModel.SelectedScript), 4),
                 sut.CreateVerifyNumberOfItemsTask(process, nameof(IApplicationModel.ScriptSteps), 4)
             };
-        await sut.RemotelyProcessTaskListAsync(process, tasks);
+        await sut.RemotelyProcessTaskListAsync(process, tasks, false, (_, _) => Task.CompletedTask);
     }
 
     [TestMethod]
@@ -51,7 +51,7 @@ public class OustWindowTest : OustIntegrationTestBase {
                 sut.CreateSetValueTask(process, nameof(IApplicationModel.NewScriptName), TestDataGenerator.Script4Name),
                 sut.CreateVerifyWhetherEnabledTask(process, nameof(IApplicationModel.RenameScript), false),
             };
-        await sut.RemotelyProcessTaskListAsync(process, tasks);
+        await sut.RemotelyProcessTaskListAsync(process, tasks, false, (_, _) => Task.CompletedTask);
     }
 
     [TestMethod]
@@ -64,7 +64,7 @@ public class OustWindowTest : OustIntegrationTestBase {
                 sut.CreatePressButtonTask(process, nameof(OustWindow.RenameScript)),
                 sut.CreateVerifyValueTask(process, nameof(IApplicationModel.SelectedScript), newName)
             };
-        await sut.RemotelyProcessTaskListAsync(process, tasks);
+        await sut.RemotelyProcessTaskListAsync(process, tasks, false, (_, _) => Task.CompletedTask);
     }
 
 }

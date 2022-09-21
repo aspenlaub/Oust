@@ -8,23 +8,23 @@ using Aspenlaub.Net.GitHub.CSharp.VishizhukelNet.Entities;
 using Aspenlaub.Net.GitHub.CSharp.VishizhukelNetWeb.Entities;
 using Aspenlaub.Net.GitHub.CSharp.VishizhukelNetWeb.Interfaces;
 
-namespace Aspenlaub.Net.GitHub.CSharp.Oust.Application.Ouco;
+namespace Aspenlaub.Net.GitHub.CSharp.Oust.Application.Outrap;
 
-public class OucoHelper : IOucoHelper {
+public class OutrapHelper : IOutrapHelper {
     public IApplicationModel Model { get; init; }
     public IGuiAndWebViewAppHandler<ApplicationModel> GuiAndAppHandler { get; init; }
     public ISimpleLogger SimpleLogger { get; init; }
-    private readonly OucoOrOutrapFormCollector _OucoOrOutrapFormCollector;
+    private readonly OutrapFormCollector _OutrapFormCollector;
     private readonly IOustScriptStatementFactory _OustScriptStatementFactory;
     private readonly IMethodNamesFromStackFramesExtractor _MethodNamesFromStackFramesExtractor;
 
-    protected static List<IOucoOrOutrapForm> Forms;
+    protected static List<IOutrapForm> Forms;
 
-    public OucoHelper(IApplicationModel model, IGuiAndWebViewAppHandler<ApplicationModel> guiAndAppHandler, ISimpleLogger simpleLogger, IFolderResolver folderResolver, IOustScriptStatementFactory oustScriptStatementFactory, IMethodNamesFromStackFramesExtractor methodNamesFromStackFramesExtractor) {
+    public OutrapHelper(IApplicationModel model, IGuiAndWebViewAppHandler<ApplicationModel> guiAndAppHandler, ISimpleLogger simpleLogger, IFolderResolver folderResolver, IOustScriptStatementFactory oustScriptStatementFactory, IMethodNamesFromStackFramesExtractor methodNamesFromStackFramesExtractor) {
         Model = model;
         GuiAndAppHandler = guiAndAppHandler;
         SimpleLogger = simpleLogger;
-        _OucoOrOutrapFormCollector = new OucoOrOutrapFormCollector(new OucoOrOutrapFormReader(), folderResolver);
+        _OutrapFormCollector = new OutrapFormCollector(new OutrapFormReader(), folderResolver);
         _OustScriptStatementFactory = oustScriptStatementFactory;
         _MethodNamesFromStackFramesExtractor = methodNamesFromStackFramesExtractor;
     }
@@ -38,7 +38,7 @@ public class OucoHelper : IOucoHelper {
         var choices = new List<Selectable> {new() {Guid = "", Name = ""}};
         var formIds = new List<string>();
 
-        var scriptStatement = new ScriptStatement { Statement = "OustUtilities.OucoOrOutrapFormIds()" };
+        var scriptStatement = new ScriptStatement { Statement = "OustUtilities.OutrapFormIds()" };
         var scriptCallResponse = await GuiAndAppHandler.RunScriptAsync<ScriptCallResponse>(scriptStatement, false, true);
         if (scriptCallResponse.Success.Inconclusive || !scriptCallResponse.Success.YesNo) {
             SimpleLogger.LogInformationWithCallStack("Form choices not available", methodNamesFromStack);
@@ -55,20 +55,20 @@ public class OucoHelper : IOucoHelper {
         return choices;
     }
 
-    public async Task<List<Selectable>> OutOfControlChoicesAsync(ScriptStepType scriptStepType, string oucoFormGuid, int oucoFormInstanceNumber) {
+    public async Task<List<Selectable>> OutOfControlChoicesAsync(ScriptStepType scriptStepType, string outrapFormGuid, int outrapFormInstanceNumber) {
         var methodNamesFromStack = _MethodNamesFromStackFramesExtractor.ExtractMethodNamesFromStackFrames();
         SimpleLogger.LogInformationWithCallStack("Out-of-control choices requested", methodNamesFromStack);
 
         await SetFormsIfNecessaryAsync();
 
         var choices = new List<Selectable> {new() {Guid = "", Name = ""}};
-        var form = Forms.FirstOrDefault(f => f.Id == oucoFormGuid);
+        var form = Forms.FirstOrDefault(f => f.Id == outrapFormGuid);
         if (form == null) {
             SimpleLogger.LogInformationWithCallStack("Out-of-control choices not available (form not available", methodNamesFromStack);
             return new List<Selectable>();
         }
 
-        var scriptStatement = _OustScriptStatementFactory.CreateDoesDocumentHaveDivLikeWithIdOrNthOccurrenceOfClassStatement(oucoFormGuid, oucoFormInstanceNumber, oucoFormGuid);
+        var scriptStatement = _OustScriptStatementFactory.CreateDoesDocumentHaveDivLikeWithIdOrNthOccurrenceOfClassStatement(outrapFormGuid, outrapFormInstanceNumber, outrapFormGuid);
         var scriptCallResponse = await GuiAndAppHandler.RunScriptAsync<ScriptCallResponse>(scriptStatement, true, true);
         if (!scriptCallResponse.Success.YesNo || scriptCallResponse.Success.Inconclusive) {
             SimpleLogger.LogInformationWithCallStack("Out-of-control choices not available (div not found", methodNamesFromStack);
@@ -94,11 +94,11 @@ public class OucoHelper : IOucoHelper {
 
     private bool DoesControlMatchScriptStepType(IOutOfControl outOfControl, ScriptStepType scriptStepType) {
         switch (scriptStepType) {
-            case ScriptStepType.Check or ScriptStepType.Uncheck when outOfControl.Type != OucoControlTypes.CheckBox:
-            case ScriptStepType.Press when outOfControl.Type != OucoControlTypes.Button && outOfControl.Type != OucoControlTypes.Upload:
-            case ScriptStepType.Input when outOfControl.Type != OucoControlTypes.Input && outOfControl.Type != OucoControlTypes.Restricted && outOfControl.Type != OucoControlTypes.TextArea && outOfControl.Type != OucoControlTypes.Upload:
-            case ScriptStepType.Select when outOfControl.Type != OucoControlTypes.DropDown:
-            case ScriptStepType.RecognizeSelection when outOfControl.Type != OucoControlTypes.DropDown:
+            case ScriptStepType.Check or ScriptStepType.Uncheck when outOfControl.Type != OutrapControlTypes.CheckBox:
+            case ScriptStepType.Press when outOfControl.Type != OutrapControlTypes.Button && outOfControl.Type != OutrapControlTypes.Upload:
+            case ScriptStepType.Input when outOfControl.Type != OutrapControlTypes.Input && outOfControl.Type != OutrapControlTypes.Restricted && outOfControl.Type != OutrapControlTypes.TextArea && outOfControl.Type != OutrapControlTypes.Upload:
+            case ScriptStepType.Select when outOfControl.Type != OutrapControlTypes.DropDown:
+            case ScriptStepType.RecognizeSelection when outOfControl.Type != OutrapControlTypes.DropDown:
                 return false;
             default:
                 return true;
@@ -124,17 +124,17 @@ public class OucoHelper : IOucoHelper {
         return choices;
     }
 
-    public async Task<List<Selectable>> SelectionChoicesAsync(string oucoFormGuid, int oucoFormInstanceNumber, string outOfControlGuid) {
+    public async Task<List<Selectable>> SelectionChoicesAsync(string outrapFormGuid, int outrapFormInstanceNumber, string outOfControlGuid) {
         var methodNamesFromStack = _MethodNamesFromStackFramesExtractor.ExtractMethodNamesFromStackFrames();
         SimpleLogger.LogInformationWithCallStack("Selection choices requested", methodNamesFromStack);
 
         await SetFormsIfNecessaryAsync();
 
         var choices = new List<Selectable>() { new() { Guid = "", Name = "" } };
-        var form = Forms.FirstOrDefault(f => f.Id == oucoFormGuid);
+        var form = Forms.FirstOrDefault(f => f.Id == outrapFormGuid);
         if (form == null) { return choices; }
 
-        var scriptStatement = _OustScriptStatementFactory.CreateDoesDocumentHaveDivLikeWithIdOrNthOccurrenceOfClassStatement(oucoFormGuid, oucoFormInstanceNumber, oucoFormGuid);
+        var scriptStatement = _OustScriptStatementFactory.CreateDoesDocumentHaveDivLikeWithIdOrNthOccurrenceOfClassStatement(outrapFormGuid, outrapFormInstanceNumber, outrapFormGuid);
         var scriptCallResponse = await GuiAndAppHandler.RunScriptAsync<ScriptCallResponse>(scriptStatement, true, true);
         if (scriptCallResponse.Success.Inconclusive || !scriptCallResponse.Success.YesNo) {
             SimpleLogger.LogInformationWithCallStack("Selection choices not available (div not found)", methodNamesFromStack);
@@ -169,7 +169,7 @@ public class OucoHelper : IOucoHelper {
     public async Task SetFormsIfNecessaryAsync() {
         if (Forms != null) { return; }
 
-        Forms = await _OucoOrOutrapFormCollector.GetFormsAsync();
+        Forms = await _OutrapFormCollector.GetFormsAsync();
     }
 
     public async Task<Dictionary<string, string>> AuxiliaryDictionaryAsync() {

@@ -13,16 +13,16 @@ public class NotExpectedIdOrClassStep : IScriptStepLogic {
     public IApplicationModel Model { get; init; }
     public IGuiAndWebViewAppHandler<ApplicationModel> GuiAndAppHandler { get; init; }
     public ISimpleLogger SimpleLogger { get; init; }
-    private readonly IOucoHelper _OucoHelper;
+    private readonly IOutrapHelper _OutrapHelper;
     private readonly IOustScriptStatementFactory _OustScriptStatementFactory;
 
     public string FreeCodeLabelText => Properties.Resources.FreeTextTitle;
 
-    public NotExpectedIdOrClassStep(IApplicationModel model, ISimpleLogger simpleLogger, IGuiAndWebViewAppHandler<ApplicationModel> guiAndAppHandler, IOucoHelper oucoHelper, IOustScriptStatementFactory oustScriptStatementFactory) {
+    public NotExpectedIdOrClassStep(IApplicationModel model, ISimpleLogger simpleLogger, IGuiAndWebViewAppHandler<ApplicationModel> guiAndAppHandler, IOutrapHelper outrapHelper, IOustScriptStatementFactory oustScriptStatementFactory) {
         Model = model;
         GuiAndAppHandler = guiAndAppHandler;
         SimpleLogger = simpleLogger;
-        _OucoHelper = oucoHelper;
+        _OutrapHelper = outrapHelper;
         _OustScriptStatementFactory = oustScriptStatementFactory;
     }
 
@@ -78,6 +78,6 @@ public class NotExpectedIdOrClassStep : IScriptStepLogic {
     }
 
     public async Task<IList<Selectable>> SelectableFormsOrControlsOrIdsOrClassesAsync() {
-        return await _OucoHelper.IdOrClassChoicesAsync();
+        return await _OutrapHelper.IdOrClassChoicesAsync();
     }
 }

@@ -13,16 +13,16 @@ public class WithStep : IScriptStepLogic {
     public IApplicationModel Model { get; init; }
     public IGuiAndWebViewAppHandler<ApplicationModel> GuiAndAppHandler { get; init; }
     public ISimpleLogger SimpleLogger { get; init; }
-    private readonly IOucoHelper _OucoHelper;
+    private readonly IOutrapHelper _OutrapHelper;
     private readonly IOustScriptStatementFactory _OustScriptStatementFactory;
 
     public string FreeCodeLabelText => Properties.Resources.FreeTextTitle;
 
-    public WithStep(IApplicationModel model, ISimpleLogger simpleLogger, IGuiAndWebViewAppHandler<ApplicationModel> guiAndAppHandler, IOucoHelper oucoHelper, IOustScriptStatementFactory oustScriptStatementFactory) {
+    public WithStep(IApplicationModel model, ISimpleLogger simpleLogger, IGuiAndWebViewAppHandler<ApplicationModel> guiAndAppHandler, IOutrapHelper outrapHelper, IOustScriptStatementFactory oustScriptStatementFactory) {
         Model = model;
         SimpleLogger = simpleLogger;
         GuiAndAppHandler = guiAndAppHandler;
-        _OucoHelper = oucoHelper;
+        _OutrapHelper = outrapHelper;
         _OustScriptStatementFactory = oustScriptStatementFactory;
     }
 
@@ -30,7 +30,7 @@ public class WithStep : IScriptStepLogic {
         if (!ShouldBeEnabled(out var instanceNumber)) { return false; }
         if (!Model.FormOrControlOrIdOrClass.SelectionMade) { return false; }
 
-        var scriptStatement = _OustScriptStatementFactory.CreateDoesDocumentHaveDivLikeWithIdOrNthOccurrenceOfClassStatement(Model.ScriptStepOucoOrOutrapForm.Guid, instanceNumber, Model.ScriptStepOucoOrOutrapForm.Name);
+        var scriptStatement = _OustScriptStatementFactory.CreateDoesDocumentHaveDivLikeWithIdOrNthOccurrenceOfClassStatement(Model.ScriptStepOutrapForm.Guid, instanceNumber, Model.ScriptStepOutrapForm.Name);
         var scriptCallResponse = await GuiAndAppHandler.RunScriptAsync<ScriptCallResponse>(scriptStatement, true, true);
         return scriptCallResponse.Success.YesNo && !scriptCallResponse.Success.Inconclusive;
     }
@@ -46,7 +46,7 @@ public class WithStep : IScriptStepLogic {
 
     private bool ShouldBeEnabled(out int instanceNumber) {
         instanceNumber = -1;
-        if (string.IsNullOrWhiteSpace(Model.ScriptStepOucoOrOutrapForm?.Guid)) { return false; }
+        if (string.IsNullOrWhiteSpace(Model.ScriptStepOutrapForm?.Guid)) { return false; }
 
         int.TryParse(Model.FormOrIdOrClassInstanceNumber.Text, out instanceNumber);
         return instanceNumber > 0;
@@ -58,18 +58,18 @@ public class WithStep : IScriptStepLogic {
 
     public async Task ExecuteAsync() {
         var instanceNumber = int.Parse(Model.FormOrIdOrClassInstanceNumber.Text);
-        var scriptStatement = _OustScriptStatementFactory.CreateDoesDocumentHaveDivLikeWithIdOrNthOccurrenceOfClassStatement(Model.ScriptStepOucoOrOutrapForm.Guid, instanceNumber, Model.ScriptStepOucoOrOutrapForm.Name);
+        var scriptStatement = _OustScriptStatementFactory.CreateDoesDocumentHaveDivLikeWithIdOrNthOccurrenceOfClassStatement(Model.ScriptStepOutrapForm.Guid, instanceNumber, Model.ScriptStepOutrapForm.Name);
         var scriptCallResponse = await GuiAndAppHandler.RunScriptAsync<ScriptCallResponse>(scriptStatement, false, true);
         if (scriptCallResponse.Success.Inconclusive || !scriptCallResponse.Success.YesNo) { return; }
 
-        Model.WithScriptStepOucoOrOutrapForm = new Selectable { Guid = Model.ScriptStepOucoOrOutrapForm.Guid, Name = Model.ScriptStepOucoOrOutrapForm.Name };
-        Model.WithScriptStepOucoOrOutrapFormInstanceNumber = instanceNumber;
+        Model.WithScriptStepOutrapForm = new Selectable { Guid = Model.ScriptStepOutrapForm.Guid, Name = Model.ScriptStepOutrapForm.Name };
+        Model.WithScriptStepOutrapFormInstanceNumber = instanceNumber;
 
         Model.Status.Text = "";
         Model.Status.Type = StatusType.None;
     }
 
     public async Task<IList<Selectable>> SelectableFormsOrControlsOrIdsOrClassesAsync() {
-        return await _OucoHelper.FormChoicesAsync();
+        return await _OutrapHelper.FormChoicesAsync();
     }
 }

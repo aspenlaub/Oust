@@ -29,14 +29,14 @@ public class OustWindowSubScriptTest : OustIntegrationTestBase {
         var tasks = await CreateSubScriptsAndCallScriptAsync(sut, process);
         tasks.AddRange(StepIntoEverything(sut, process));
         tasks.AddRange(StepOverFirstSubScriptCall(sut, process));
-        await sut.RemotelyProcessTaskListAsync(process, tasks);
+        await sut.RemotelyProcessTaskListAsync(process, tasks, false, (_, _) => Task.CompletedTask);
     }
 
     private async Task<List<ControllableProcessTask>> CreateSubScriptsAndCallScriptAsync(OustWindowUnderTest sut, ControllableProcess process) {
         var tasks = new List<ControllableProcessTask>();
         foreach (var subScriptName in new[] { SubScriptName, AnotherSubScriptName }) {
             tasks.AddRange(sut.CreateNewScriptTaskList(process, subScriptName));
-            var addTasks = await CreateGoToToughLookStepTaskListAsync(sut, process);
+            var addTasks = await CreateGoToGutLookStepTaskListAsync(sut, process);
             tasks.AddRange(addTasks);
             FirstSubStepText = "\u2192 " + addTasks[1].Text;
             tasks.Add(sut.CreateVerifyValueTask(process, nameof(IApplicationModel.ScriptSteps), FirstSubStepText));

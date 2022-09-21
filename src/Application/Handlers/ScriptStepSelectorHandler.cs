@@ -139,7 +139,7 @@ public class ScriptStepSelectorHandler : IScriptStepSelectorHandler {
                         selectedIndex = _Model.FormOrControlOrIdOrClass.Selectables.FindIndex(s => s.Guid == scriptStep.FormGuid);
                         await _FormOrControlOrIdOrClassHandler.FormOrControlOrIdOrClassSelectedIndexChangedAsync(selectedIndex, false);
                         await _FormOrControlOrIdOrClassHandler.FormOrIdOrClassInstanceNumberChangedAsync(scriptStep.FormInstanceNumber.ToString());
-                        _Model.ScriptStepOucoOrOutrapForm = new Selectable { Guid = scriptStep.FormGuid, Name = scriptStep.FormName };
+                        _Model.ScriptStepOutrapForm = new Selectable { Guid = scriptStep.FormGuid, Name = scriptStep.FormName };
                         break;
                     case ScriptStepType.Recognize:
                     case ScriptStepType.NotExpectedContents:
@@ -174,7 +174,7 @@ public class ScriptStepSelectorHandler : IScriptStepSelectorHandler {
                     case ScriptStepType.RecognizeOkay:
                         await _FormOrControlOrIdOrClassHandler.FormOrControlOrIdOrClassSelectedIndexChangedAsync(-1, false);
                         await _FormOrControlOrIdOrClassHandler.FormOrIdOrClassInstanceNumberChangedAsync("");
-                        _Model.ScriptStepOucoOrOutrapForm = null;
+                        _Model.ScriptStepOutrapForm = null;
                         break;
                     default:
                         throw new NotImplementedException();
@@ -204,7 +204,7 @@ public class ScriptStepSelectorHandler : IScriptStepSelectorHandler {
             }
         } else {
             await _ScriptStepTypeSelectorHandler.ScriptStepTypeSelectedIndexChangedAsync(-1, true);
-            _Model.ScriptStepOucoOrOutrapForm = null;
+            _Model.ScriptStepOutrapForm = null;
         }
 
         _Model.Status.Text = "";

@@ -17,18 +17,18 @@ public class StepIntoCommand : ICommand {
     private readonly IScriptSelectorHandler _ScriptSelectorHandler;
     private readonly IGuiAndWebViewAppHandler<ApplicationModel> _GuiAndAppHandler;
     private readonly ISimpleLogger _SimpleLogger;
-    private readonly IOucoHelper _OucoHelper;
+    private readonly IOutrapHelper _OutrapHelper;
     private readonly IMethodNamesFromStackFramesExtractor _MethodNamesFromStackFramesExtractor;
 
     public StepIntoCommand(IApplicationModel model, IScriptSelectorHandler scriptSelectorHandler, IScriptStepSelectorHandler scriptStepSelectorHandler, IGuiAndWebViewAppHandler<ApplicationModel> guiAndAppHandler, ISimpleLogger simpleLogger,
-            IDictionary<ScriptStepType, IScriptStepLogic> scriptStepLogicDictionary, IOucoHelper oucoHelper, IMethodNamesFromStackFramesExtractor methodNamesFromStackFramesExtractor) {
+            IDictionary<ScriptStepType, IScriptStepLogic> scriptStepLogicDictionary, IOutrapHelper outrapHelper, IMethodNamesFromStackFramesExtractor methodNamesFromStackFramesExtractor) {
         _Model = model;
         _ScriptStepLogicDictionary = scriptStepLogicDictionary;
         _ScriptStepSelectorHandler = scriptStepSelectorHandler;
         _ScriptSelectorHandler = scriptSelectorHandler;
         _GuiAndAppHandler = guiAndAppHandler;
         _SimpleLogger = simpleLogger;
-        _OucoHelper = oucoHelper;
+        _OutrapHelper = outrapHelper;
         _MethodNamesFromStackFramesExtractor = methodNamesFromStackFramesExtractor;
     }
 
@@ -59,7 +59,7 @@ public class StepIntoCommand : ICommand {
             var methodNamesFromStack = _MethodNamesFromStackFramesExtractor.ExtractMethodNamesFromStackFrames();
             await _ScriptStepLogicDictionary[scriptStepType].ExecuteAsync();
 
-            var dictionary = await _OucoHelper.AuxiliaryDictionaryAsync();
+            var dictionary = await _OutrapHelper.AuxiliaryDictionaryAsync();
             _Model.WebViewCheckBoxesChecked.Text = dictionary["WebViewCheckBoxesChecked"];
             _Model.WebViewParagraphs.Text = dictionary["WebViewParagraphs"];
             _Model.WebViewInputValues.Text = dictionary["WebViewInputValues"];

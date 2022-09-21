@@ -4,7 +4,7 @@ public interface IOutOfControl {
     string Id { get; }
     string Name { get; }
     string Class { get; }
-    OucoControlTypes Type { get; }
+    OutrapControlTypes Type { get; }
     int Depth();
     string ToString();
     List<IOutOfControl> TraverseChildren();

@@ -32,7 +32,7 @@ public class OustWindowGoToUrlStepTest : OustIntegrationTestBase {
     [TestMethod]
     public async Task CanAddAndReplaceGoToUrlSteps() {
         var errorsAndInfos = new ErrorsAndInfos();
-        var url = await LogicalUrlRepository.GetUrlAsync("ToughLookEntry", errorsAndInfos);
+        var url = await LogicalUrlRepository.GetUrlAsync("GutLookForms", errorsAndInfos);
         Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsToString());
 
         using var sut = await CreateOustWindowUnderTestAsync();
@@ -41,19 +41,19 @@ public class OustWindowGoToUrlStepTest : OustIntegrationTestBase {
         tasks.Add(sut.CreateSetValueTask(process, nameof(IApplicationModel.ScriptStepType), Enum.GetName(typeof(ScriptStepType), ScriptStepType.GoToUrl)));
         var stepUrls = new List<string>();
         for (var i = 0; i < 3; i ++) {
-            var stepUrl = url + "?n=" + i;
+            var stepUrl = url + "&n=" + i;
             stepUrls.Add(stepUrl);
             tasks.Add(sut.CreateSetValueTask(process, nameof(IApplicationModel.FreeText), stepUrl));
             tasks.Add(sut.CreatePressButtonTask(process, nameof(OustWindow.AddOrReplaceStep)));
             tasks.Add(sut.CreateVerifyNumberOfItemsTask(process, nameof(IApplicationModel.ScriptSteps), i + 1));
         }
         tasks.Add(sut.CreateSetValueTask(process, nameof(IApplicationModel.ScriptSteps), "\u2192 " + stepUrls[1]));
-        var newUrl = url + "?replaced=y";
+        var newUrl = url + "&replaced=y";
         tasks.Add(sut.CreateSetValueTask(process, nameof(IApplicationModel.FreeText), newUrl));
         tasks.Add(sut.CreatePressButtonTask(process, nameof(OustWindow.AddOrReplaceStep)));
         tasks.Add(sut.CreateSetValueTask(process, nameof(IApplicationModel.ScriptSteps), "\u2192 " + stepUrls[0]));
         tasks.Add(sut.CreateSetValueTask(process, nameof(IApplicationModel.ScriptSteps), "\u2192 " + newUrl));
-        await sut.RemotelyProcessTaskListAsync(process, tasks);
+        await sut.RemotelyProcessTaskListAsync(process, tasks, false, (_, _) => Task.CompletedTask);
     }
 
     [TestMethod]
@@ -73,14 +73,14 @@ public class OustWindowGoToUrlStepTest : OustIntegrationTestBase {
         tasks.AddRange(await CreateGoToErrorLogOnWrongCountTaskListAsync(sut, process, 2));
         tasks.Add(sut.CreateVerifyValueTask(process, nameof(IApplicationModel.Status), ""));
         tasks.Add(sut.CreateSetValueTask(process, nameof(IApplicationModel.ScriptSteps), secondStepText));
-        await sut.RemotelyProcessTaskListAsync(process, tasks);
+        await sut.RemotelyProcessTaskListAsync(process, tasks, false, (_, _) => Task.CompletedTask);
 
         await StepIntoAsync(sut, process, false);
 
         tasks.Clear();
         tasks.Add(sut.CreateVerifyValueTask(process, nameof(IApplicationModel.Status), "n is invalid, you are counting in a wrong way"));
         tasks.Add(sut.CreateSetValueTask(process, nameof(IApplicationModel.ScriptSteps), secondStepText));
-        await sut.RemotelyProcessTaskListAsync(process, tasks);
+        await sut.RemotelyProcessTaskListAsync(process, tasks, false, (_, _) => Task.CompletedTask);
     }
 
     [TestMethod]
@@ -100,13 +100,13 @@ public class OustWindowGoToUrlStepTest : OustIntegrationTestBase {
         tasks.AddRange(await CreateGoToInvalidMarkUpOnWrongCountTaskListAsync(sut, process, 2));
         tasks.Add(sut.CreateVerifyValueTask(process, nameof(IApplicationModel.Status), ""));
         tasks.Add(sut.CreateSetValueTask(process, nameof(IApplicationModel.ScriptSteps), secondStepText));
-        await sut.RemotelyProcessTaskListAsync(process, tasks);
+        await sut.RemotelyProcessTaskListAsync(process, tasks, false, (_, _) => Task.CompletedTask);
 
         await StepIntoAsync(sut, process, false);
 
         tasks.Clear();
         tasks.Add(sut.CreateVerifyValueTask(process, nameof(IApplicationModel.Status), Properties.Resources.AutoDestructSequenceHasBeenInitialized));
         tasks.Add(sut.CreateSetValueTask(process, nameof(IApplicationModel.ScriptSteps), secondStepText));
-        await sut.RemotelyProcessTaskListAsync(process, tasks);
+        await sut.RemotelyProcessTaskListAsync(process, tasks, false, (_, _) => Task.CompletedTask);
     }
 }

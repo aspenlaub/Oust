@@ -49,9 +49,9 @@ public interface IApplicationModel : IWebViewApplicationModelBase {
     Button Consolidate { get; }
     Button ShowExecutionStack { get; }
 
-    Selectable ScriptStepOucoOrOutrapForm { get; set; }
-    Selectable WithScriptStepOucoOrOutrapForm { get; set; }
-    int WithScriptStepOucoOrOutrapFormInstanceNumber { get; set; }
+    Selectable ScriptStepOutrapForm { get; set; }
+    Selectable WithScriptStepOutrapForm { get; set; }
+    int WithScriptStepOutrapFormInstanceNumber { get; set; }
 
     Selectable ScriptStepOutOfControl { get; set; }
     Selectable WithScriptStepOutOfControl { get; set; }
