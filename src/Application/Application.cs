@@ -86,7 +86,7 @@ public class Application : WebViewApplicationBase<IGuiAndApplicationSynchronizer
             { ScriptStepType.CheckSingle, new CheckOrUncheckSingleStep(Model, SimpleLogger, this, _OustScriptStatementFactory, ScriptStepType.CheckSingle) },
             { ScriptStepType.EndOfScript, new EndOfScriptStep(Model) },
             { ScriptStepType.GoToUrl, new GoToUrlStep(Model, SimpleLogger, this, _WampLogScanner, _SecuredHttpGate, _SecretRepository, MethodNamesFromStackFramesExtractor, false) },
-            { ScriptStepType.Input, new InputStep(Model, SimpleLogger, this, outrapHelper, _FileDialogTrickster, _OustScriptStatementFactory, oustSettingsHelper) },
+            { ScriptStepType.Input, new InputStep(ScriptStepType.Input, Model, SimpleLogger, this, outrapHelper, _FileDialogTrickster, _OustScriptStatementFactory, oustSettingsHelper) },
             { ScriptStepType.InputIntoSingle, new InputIntoSingleStep(Model, SimpleLogger, this, _OustScriptStatementFactory) },
             { ScriptStepType.InvokeUrl, new GoToUrlStep(Model, SimpleLogger, this, _WampLogScanner, _SecuredHttpGate, _SecretRepository, MethodNamesFromStackFramesExtractor, true) },
             { ScriptStepType.NotExpectedIdOrClass, new NotExpectedIdOrClassStep(Model, SimpleLogger, this, outrapHelper, _OustScriptStatementFactory) },
@@ -105,6 +105,7 @@ public class Application : WebViewApplicationBase<IGuiAndApplicationSynchronizer
             { ScriptStepType.With, new WithStep(Model, SimpleLogger, this, outrapHelper, _OustScriptStatementFactory) },
             { ScriptStepType.WithIdOrClass, new WithIdOrClassStep(Model, SimpleLogger, this, outrapHelper, _OustScriptStatementFactory) },
             { ScriptStepType.RecognizeOkay, new RecognizeOkayStep(Model, _OustScriptStatementFactory, this) },
+            { ScriptStepType.ClearInput, new InputStep(ScriptStepType.ClearInput, Model, SimpleLogger, this, outrapHelper, _FileDialogTrickster, _OustScriptStatementFactory, oustSettingsHelper) },
         };
 
         var selectedValueSelectorHandler = new SelectedValueSelectorHandler(Model, outrapHelper, this);

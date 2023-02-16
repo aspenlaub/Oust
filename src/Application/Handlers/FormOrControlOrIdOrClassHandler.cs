@@ -63,6 +63,7 @@ public class FormOrControlOrIdOrClassHandler : IFormOrControlOrIdOrClassHandler 
             case ScriptStepType.Uncheck:
             case ScriptStepType.Press:
             case ScriptStepType.Input:
+            case ScriptStepType.ClearInput:
             case ScriptStepType.Select:
             case ScriptStepType.RecognizeSelection:
             case ScriptStepType.NotExpectedSelection:

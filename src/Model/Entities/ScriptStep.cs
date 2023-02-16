@@ -147,6 +147,9 @@ public class ScriptStep : IGuid, ISetGuid, IScriptStep {
             case ScriptStepType.Input: {
                 return string.Format(Properties.Resources.InputText, InputText, ControlName);
             }
+            case ScriptStepType.ClearInput: {
+                return string.Format(Properties.Resources.ClearInputText, ControlName);
+            }
             case ScriptStepType.Select: {
                 return string.Format(Properties.Resources.SelectOption, InputText, ControlName);
             }

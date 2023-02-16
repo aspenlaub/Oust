@@ -79,6 +79,15 @@ namespace Aspenlaub.Net.GitHub.CSharp.Oust.Model.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Clear {0}.
+        /// </summary>
+        internal static string ClearInputText {
+            get {
+                return ResourceManager.GetString("ClearInputText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to End of script.
         /// </summary>
         internal static string EndOfScript {

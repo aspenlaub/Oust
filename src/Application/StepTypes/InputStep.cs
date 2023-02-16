@@ -18,11 +18,13 @@ public class InputStep : IScriptStepLogic {
     private readonly IFileDialogTrickster _FileDialogTrickster;
     private readonly IOustScriptStatementFactory _OustScriptStatementFactory;
     private readonly IOustSettingsHelper _OustSettingsHelper;
+    private readonly ScriptStepType _ScriptStepType;
 
-    public string FreeCodeLabelText => Properties.Resources.InputTitle;
+    public string FreeCodeLabelText => _ScriptStepType == ScriptStepType.Input ? Properties.Resources.InputTitle : Properties.Resources.FreeTextTitle;
 
-    public InputStep(IApplicationModel model, ISimpleLogger simpleLogger, IGuiAndWebViewAppHandler<ApplicationModel> guiAndAppHandler, IOutrapHelper outrapHelper,
-            IFileDialogTrickster fileDialogTrickster, IOustScriptStatementFactory oustScriptStatementFactory, IOustSettingsHelper oustSettingsHelper) {
+    public InputStep(ScriptStepType scriptStepType,  IApplicationModel model, ISimpleLogger simpleLogger,
+            IGuiAndWebViewAppHandler<ApplicationModel> guiAndAppHandler, IOutrapHelper outrapHelper, IFileDialogTrickster fileDialogTrickster,
+            IOustScriptStatementFactory oustScriptStatementFactory, IOustSettingsHelper oustSettingsHelper) {
         Model = model;
         GuiAndAppHandler = guiAndAppHandler;
         SimpleLogger = simpleLogger;
@@ -30,20 +32,26 @@ public class InputStep : IScriptStepLogic {
         _FileDialogTrickster = fileDialogTrickster;
         _OustScriptStatementFactory = oustScriptStatementFactory;
         _OustSettingsHelper = oustSettingsHelper;
+        _ScriptStepType = scriptStepType;
     }
 
     public async Task<bool> CanBeAddedOrReplaceExistingStepAsync() {
         if (!await ShouldBeEnabledAsync()) { return false; }
 
-        return !string.IsNullOrWhiteSpace(Model.ScriptStepOutOfControl?.Guid) && !string.IsNullOrWhiteSpace(Model.ScriptStepInput.Text);
+        switch (_ScriptStepType) {
+            case ScriptStepType.ClearInput:
+                return !string.IsNullOrWhiteSpace(Model.ScriptStepOutOfControl?.Guid);
+            default:
+                return !string.IsNullOrWhiteSpace(Model.ScriptStepOutOfControl?.Guid) && !string.IsNullOrWhiteSpace(Model.ScriptStepInput.Text);
+        }
     }
 
     public IScriptStep CreateScriptStepToAdd() {
         return new ScriptStep {
-            ScriptStepType = ScriptStepType.Input,
+            ScriptStepType = _ScriptStepType,
             ControlGuid = Model.ScriptStepOutOfControl.Guid,
             ControlName = Model.ScriptStepOutOfControl.Name,
-            InputText = Model.ScriptStepInput.Text
+            InputText = _ScriptStepType == ScriptStepType.Input ? Model.ScriptStepInput.Text : ""
         };
     }
 
@@ -71,7 +79,7 @@ public class InputStep : IScriptStepLogic {
         scriptCallResponse = await GuiAndAppHandler.RunScriptAsync<ScriptCallResponse>(scriptStatement, true, true);
         var isUpload = scriptCallResponse.Success.YesNo && !scriptCallResponse.Success.Inconclusive;
 
-        var scriptStepInputText = Model.ScriptStepInput.Text;
+        var scriptStepInputText = _ScriptStepType == ScriptStepType.Input ? Model.ScriptStepInput.Text : "";
         var isWindows11 = (await _OustSettingsHelper.ShouldWindows11BeAssumedAsync()).YesNo;
         if (isTextArea) {
             scriptStepInputText = scriptStepInputText.Replace(@"\n", "\n");
@@ -118,6 +126,6 @@ public class InputStep : IScriptStepLogic {
     }
 
     public async Task<IList<Selectable>> SelectableFormsOrControlsOrIdsOrClassesAsync() {
-        return await _OutrapHelper.OutOfControlChoicesAsync(ScriptStepType.Input, Model.WithScriptStepOutrapForm?.Guid, Model.WithScriptStepOutrapFormInstanceNumber);
+        return await _OutrapHelper.OutOfControlChoicesAsync(_ScriptStepType, Model.WithScriptStepOutrapForm?.Guid, Model.WithScriptStepOutrapFormInstanceNumber);
     }
 }

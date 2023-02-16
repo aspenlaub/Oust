@@ -156,6 +156,7 @@ public partial class OustWindow : IAsyncDisposable {
             _TashTimer = new TashTimer<ApplicationModel>(Container.Resolve<ITashAccessor>(), _OustApp.TashHandler, guiToAppGate);
             if (!await _TashTimer.ConnectAndMakeTashRegistrationReturnSuccessAsync(Properties.Resources.OustWindowTitle)) {
                 Close();
+                return;
             }
 
             _TashTimer.CreateAndStartTimer(_OustApp.CreateTashTaskHandlingStatus());
