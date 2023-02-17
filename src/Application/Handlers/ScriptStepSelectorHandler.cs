@@ -147,6 +147,7 @@ public class ScriptStepSelectorHandler : IScriptStepSelectorHandler {
                     case ScriptStepType.Uncheck:
                     case ScriptStepType.Press:
                     case ScriptStepType.Input:
+                    case ScriptStepType.ClearInput:
                     case ScriptStepType.Select:
                     case ScriptStepType.NotExpectedSelection:
                     case ScriptStepType.RecognizeSelection:
