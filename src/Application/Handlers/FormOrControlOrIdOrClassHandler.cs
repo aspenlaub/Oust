@@ -67,6 +67,7 @@ public class FormOrControlOrIdOrClassHandler : IFormOrControlOrIdOrClassHandler 
             case ScriptStepType.Select:
             case ScriptStepType.RecognizeSelection:
             case ScriptStepType.NotExpectedSelection:
+            case ScriptStepType.EndScriptIfRecognized:
                 _Model.ScriptStepOutOfControl = _Model.FormOrControlOrIdOrClass.SelectedItem;
                 break;
             case ScriptStepType.WithIdOrClass:

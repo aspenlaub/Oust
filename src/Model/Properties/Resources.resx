@@ -129,6 +129,12 @@
   <data name="EndOfScript" xml:space="preserve">
     <value>End of script</value>
   </data>
+  <data name="EndScriptIfRecognizeIdOrClassContents" xml:space="preserve">
+    <value>End script if contents '{0}' is recognized</value>
+  </data>
+  <data name="EndScriptIfRecognizeWithContents" xml:space="preserve">
+    <value>End script if contents '{1}' is recognized in {0}</value>
+  </data>
   <data name="InputIntoSingleText" xml:space="preserve">
     <value>Input '{0}' into the one and only field</value>
   </data>

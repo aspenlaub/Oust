@@ -75,8 +75,8 @@ public class OutrapFormReader : IOutrapFormReader {
 
             var attributes = AttributeDictionary(subDoc);
             string name;
-            if (attributes.ContainsKey("name")) {
-                name = attributes["name"];
+            if (attributes.TryGetValue("name", out var attribute)) {
+                name = attribute;
             } else if (subDoc.Name == "upload") {
                 name = "UploadControl";
             } else {
@@ -88,7 +88,7 @@ public class OutrapFormReader : IOutrapFormReader {
             }
 
             var guid = guids[name];
-            var oclass = attributes.ContainsKey("class") ? attributes["class"] : "";
+            var oclass = attributes.TryGetValue("class", out var attribute1) ? attribute1 : "";
             if (guid.Length == 0) {
                 throw new NotImplementedException();
             }

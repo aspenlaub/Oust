@@ -34,7 +34,7 @@ public class WampLogScanner : IWampLogScanner {
         var snapshot = ScanFolder();
         const string errorTag = "ERROR: ";
         foreach (var fileName in snapshot.Keys) {
-            var oldLength = Snapshot.ContainsKey(fileName) ? Snapshot[fileName] : 0;
+            var oldLength = Snapshot.TryGetValue(fileName, out var value) ? value : 0;
             newErrors.AddRange(File.ReadAllText(fileName).Substring(oldLength).Split('\n').Where(s => s.Contains(errorTag)).Select(s => s.Substring(s.IndexOf(errorTag, StringComparison.Ordinal) + errorTag.Length).Replace("\r", "")).ToList());
         }
 

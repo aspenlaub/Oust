@@ -122,6 +122,7 @@ public class ScriptStepSelectorHandler : IScriptStepSelectorHandler {
                     case ScriptStepType.Recognize:
                     case ScriptStepType.NotExpectedContents:
                     case ScriptStepType.NotExpectedSelection:
+                    case ScriptStepType.EndScriptIfRecognized:
                         _Model.ExpectedContents.Text = scriptStep.ExpectedContents;
                         break;
                     case ScriptStepType.Input:
@@ -151,6 +152,7 @@ public class ScriptStepSelectorHandler : IScriptStepSelectorHandler {
                     case ScriptStepType.Select:
                     case ScriptStepType.NotExpectedSelection:
                     case ScriptStepType.RecognizeSelection:
+                    case ScriptStepType.EndScriptIfRecognized:
                         selectedIndex = _Model.FormOrControlOrIdOrClass.Selectables.FindIndex(s => s.Guid == scriptStep.ControlGuid);
                         await _FormOrControlOrIdOrClassHandler.FormOrControlOrIdOrClassSelectedIndexChangedAsync(selectedIndex, false);
                         _Model.ScriptStepOutOfControl = new Selectable { Guid = scriptStep.ControlGuid, Name = scriptStep.ControlName };

@@ -106,6 +106,7 @@ public class Application : WebViewApplicationBase<IGuiAndApplicationSynchronizer
             { ScriptStepType.WithIdOrClass, new WithIdOrClassStep(Model, SimpleLogger, this, outrapHelper, _OustScriptStatementFactory) },
             { ScriptStepType.RecognizeOkay, new RecognizeOkayStep(Model, _OustScriptStatementFactory, this) },
             { ScriptStepType.ClearInput, new InputStep(ScriptStepType.ClearInput, Model, SimpleLogger, this, outrapHelper, _FileDialogTrickster, _OustScriptStatementFactory, oustSettingsHelper) },
+            { ScriptStepType.EndScriptIfRecognized, new RecognizeOrNotExpectedContentsStep(Model, SimpleLogger, this, outrapHelper, _OustScriptStatementFactory, ScriptStepType.EndScriptIfRecognized) },
         };
 
         var selectedValueSelectorHandler = new SelectedValueSelectorHandler(Model, outrapHelper, this);

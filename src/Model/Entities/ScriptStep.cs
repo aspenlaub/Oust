@@ -1,10 +1,12 @@
 using System.ComponentModel.DataAnnotations;
+using System.Runtime.CompilerServices;
 using System.Xml.Serialization;
 using Aspenlaub.Net.GitHub.CSharp.Oust.Model.Interfaces;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Interfaces;
 
 // ReSharper disable ConvertIfStatementToReturnStatement
 
+[assembly: InternalsVisibleTo("Aspenlaub.Net.GitHub.CSharp.Oust.Application")]
 namespace Aspenlaub.Net.GitHub.CSharp.Oust.Model.Entities;
 
 public class ScriptStep : IGuid, ISetGuid, IScriptStep {
@@ -127,6 +129,10 @@ public class ScriptStep : IGuid, ISetGuid, IScriptStep {
 
                 return string.Format(ScriptStepType == ScriptStepType.RecognizeSelection ? Properties.Resources.RecognizeSelected : Properties.Resources.RecognizeWithContents, ControlName, ExpectedContents);
             }
+            case ScriptStepType.EndScriptIfRecognized:
+                return string.IsNullOrWhiteSpace(ControlName)
+                    ? string.Format(Properties.Resources.EndScriptIfRecognizeIdOrClassContents, ExpectedContents)
+                    : string.Format(Properties.Resources.EndScriptIfRecognizeWithContents, ControlName, ExpectedContents);
             case ScriptStepType.NotExpectedContents:
             case ScriptStepType.NotExpectedSelection: {
                 if (string.IsNullOrWhiteSpace(ControlName)) {

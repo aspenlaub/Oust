@@ -115,6 +115,15 @@ namespace Aspenlaub.Net.GitHub.CSharp.Oust.Application.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Contents was found, end script.
+        /// </summary>
+        internal static string ContentsFoundEndScript {
+            get {
+                return ResourceManager.GetString("ContentsFoundEndScript", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Control {0} not found in instance {1} of {2}.
         /// </summary>
         internal static string ControlNotFound {
@@ -363,6 +372,15 @@ namespace Aspenlaub.Net.GitHub.CSharp.Oust.Application.Properties {
         internal static string InstanceXOfYNotFound {
             get {
                 return ResourceManager.GetString("InstanceXOfYNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Expected last step to be end-of-script, but it is not.
+        /// </summary>
+        internal static string LastStepIsNotEndOfScript {
+            get {
+                return ResourceManager.GetString("LastStepIsNotEndOfScript", resourceCulture);
             }
         }
         

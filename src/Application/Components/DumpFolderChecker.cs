@@ -42,8 +42,8 @@ public class DumpFolderChecker : IDumpFolderChecker {
                     return;
                 }
 
-                if (guidToName.ContainsKey(guid)) {
-                    errorsAndInfos.Errors.Add($"The same guid is assigned to dumped script {guidToName[guid]} and {name}. Please delete the wrong and reimport the right script");
+                if (guidToName.TryGetValue(guid, out var value)) {
+                    errorsAndInfos.Errors.Add($"The same guid is assigned to dumped script {value} and {name}. Please delete the wrong and reimport the right script");
                     return;
                 }
 

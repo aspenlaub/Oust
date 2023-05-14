@@ -7,6 +7,7 @@ using Aspenlaub.Net.GitHub.CSharp.Pegh.Interfaces;
 using Aspenlaub.Net.GitHub.CSharp.VishizhukelNet.Enums;
 using Aspenlaub.Net.GitHub.CSharp.VishizhukelNet.Interfaces;
 using Aspenlaub.Net.GitHub.CSharp.VishizhukelNetWeb.Interfaces;
+using ModelResources = Aspenlaub.Net.GitHub.CSharp.Oust.Model.Properties.Resources;
 
 namespace Aspenlaub.Net.GitHub.CSharp.Oust.Application.Commands;
 
@@ -65,11 +66,24 @@ public class StepIntoCommand : ICommand {
             _Model.WebViewInputValues.Text = dictionary["WebViewInputValues"];
             _Model.WebViewSelectedValues.Text = dictionary["WebViewSelectedValues"];
 
-            if (_Model.Status.Type != StatusType.Error && _Model.ScriptSteps.SelectedIndex + 1 < _Model.ScriptSteps.Selectables.Count) {
-                _SimpleLogger.LogInformationWithCallStack(Properties.Resources.AdvancingToNextStep, methodNamesFromStack);
-                await _ScriptStepSelectorHandler.ScriptStepsSelectedIndexChangedAsync(_Model.ScriptSteps.SelectedIndex + 1, false);
-                _SimpleLogger.LogInformationWithCallStack(Properties.Resources.AdvancedToNextStep, methodNamesFromStack);
+            if (_Model.Status.Type == StatusType.Error || _Model.ScriptSteps.SelectedIndex + 1 >= _Model.ScriptSteps.Selectables.Count) {
+                return;
             }
+
+            var nextStepIndex = _Model.ScriptSteps.SelectedIndex + 1;
+            if (scriptStepType == ScriptStepType.EndScriptIfRecognized && _Model.Status.Text == Properties.Resources.ContentsFoundEndScript) {
+                nextStepIndex = _Model.ScriptSteps.Selectables.Count - 1;
+
+                if (_Model.ScriptSteps.Selectables[nextStepIndex].Name != ModelResources.EndOfScript) {
+                    _Model.Status.Type = StatusType.Error;
+                    _Model.Status.Text = Properties.Resources.LastStepIsNotEndOfScript;
+                    return;
+                }
+            }
+
+            _SimpleLogger.LogInformationWithCallStack(Properties.Resources.AdvancingToNextStep, methodNamesFromStack);
+            await _ScriptStepSelectorHandler.ScriptStepsSelectedIndexChangedAsync(nextStepIndex, false);
+            _SimpleLogger.LogInformationWithCallStack(Properties.Resources.AdvancedToNextStep, methodNamesFromStack);
         }
     }
 

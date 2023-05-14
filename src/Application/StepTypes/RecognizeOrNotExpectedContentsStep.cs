@@ -37,6 +37,10 @@ public class RecognizeOrNotExpectedContentsStep : IScriptStepLogic {
     public async Task<bool> CanBeAddedOrReplaceExistingStepAsync() {
         if (!await ShouldBeEnabledAsync()) { return false; }
 
+        if (_ScriptStepType == ScriptStepType.EndScriptIfRecognized && string.IsNullOrEmpty(Model.ExpectedContents.Text)) {
+            return false;
+        }
+
         return !string.IsNullOrWhiteSpace(Model.ScriptStepOutOfControl?.Guid) || !string.IsNullOrWhiteSpace(Model.WithScriptStepIdOrClass);
     }
 
@@ -52,7 +56,8 @@ public class RecognizeOrNotExpectedContentsStep : IScriptStepLogic {
 
     public async Task<bool> ShouldBeEnabledAsync() {
         if (_ScriptStepType != ScriptStepType.Recognize && _ScriptStepType != ScriptStepType.NotExpectedContents
-            && _ScriptStepType != ScriptStepType.RecognizeSelection && _ScriptStepType != ScriptStepType.NotExpectedSelection) { return false; }
+            && _ScriptStepType != ScriptStepType.RecognizeSelection && _ScriptStepType != ScriptStepType.NotExpectedSelection
+            && _ScriptStepType != ScriptStepType.EndScriptIfRecognized) { return false; }
         return await Task.FromResult(true);
     }
 
@@ -102,6 +107,11 @@ public class RecognizeOrNotExpectedContentsStep : IScriptStepLogic {
             }
             case ScriptStepType.Recognize when html.Contains(Model.ExpectedContents.Text):
             case ScriptStepType.Recognize when html.Contains(Model.ExpectedContents.Text.Replace("'", "\"")):
+            case ScriptStepType.EndScriptIfRecognized when html.Contains(Model.ExpectedContents.Text):
+            case ScriptStepType.EndScriptIfRecognized when html.Contains(Model.ExpectedContents.Text.Replace("'", "\"")):
+                if (_ScriptStepType == ScriptStepType.EndScriptIfRecognized) {
+                    Model.Status.Text = Properties.Resources.ContentsFoundEndScript;
+                }
                 return;
             case ScriptStepType.Recognize when html.Length < 20:
                 Model.Status.Text = string.IsNullOrWhiteSpace(Model.WithScriptStepOutrapForm?.Guid)
@@ -109,6 +119,9 @@ public class RecognizeOrNotExpectedContentsStep : IScriptStepLogic {
                     : string.Format(Properties.Resources.ExpectedContentsNotFoundInstead, Model.ScriptStepOutOfControl?.Name, Model.WithScriptStepOutrapFormInstanceNumber, Model.WithScriptStepOutrapForm.Name, Model.ExpectedContents.Text, html);
                 break;
             case ScriptStepType.Recognize:
+            case ScriptStepType.EndScriptIfRecognized:
+                if (_ScriptStepType == ScriptStepType.EndScriptIfRecognized) { return; }
+
                 Model.Status.Text = string.IsNullOrWhiteSpace(Model.WithScriptStepOutrapForm?.Guid)
                     ? string.Format(Properties.Resources.ExpectedContentsNotFound, Model.WithScriptStepIdOrClass, Model.WithScriptStepIdOrClassInstanceNumber, Model.WithScriptStepIdOrClass, Model.ExpectedContents.Text)
                     : string.Format(Properties.Resources.ExpectedContentsNotFound, Model.ScriptStepOutOfControl?.Name, Model.WithScriptStepOutrapFormInstanceNumber, Model.WithScriptStepOutrapForm.Name, Model.ExpectedContents.Text);

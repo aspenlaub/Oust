@@ -97,6 +97,24 @@ namespace Aspenlaub.Net.GitHub.CSharp.Oust.Model.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to End script if contents &apos;{0}&apos; is recognized.
+        /// </summary>
+        internal static string EndScriptIfRecognizeIdOrClassContents {
+            get {
+                return ResourceManager.GetString("EndScriptIfRecognizeIdOrClassContents", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to End script if contents &apos;{1}&apos; is recognized in {0}.
+        /// </summary>
+        internal static string EndScriptIfRecognizeWithContents {
+            get {
+                return ResourceManager.GetString("EndScriptIfRecognizeWithContents", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Input &apos;{0}&apos; into the one and only field.
         /// </summary>
         internal static string InputIntoSingleText {

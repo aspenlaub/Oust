@@ -135,6 +135,9 @@
   <data name="ConsolidateProgressCaption" xml:space="preserve">
     <value>Consolidate Scripts And Sub Scripts</value>
   </data>
+  <data name="ContentsFoundEndScript" xml:space="preserve">
+    <value>Contents was found, end script</value>
+  </data>
   <data name="ControlNotFound" xml:space="preserve">
     <value>Control {0} not found in instance {1} of {2}</value>
   </data>
@@ -218,6 +221,9 @@
   </data>
   <data name="InstanceXOfYNotFound" xml:space="preserve">
     <value>Instance {0} of {1} not found</value>
+  </data>
+  <data name="LastStepIsNotEndOfScript" xml:space="preserve">
+    <value>Expected last step to be end-of-script, but it is not</value>
   </data>
   <data name="MarkupValidationFailed" xml:space="preserve">
     <value>Markup validation failed</value>

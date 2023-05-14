@@ -27,7 +27,7 @@ public class ScriptStepTypeSelectorHandler : IScriptStepTypeSelectorHandler {
             ScriptStepType.Check, ScriptStepType.CheckSingle, ScriptStepType.Uncheck, ScriptStepType.UncheckSingle,
             ScriptStepType.Press, ScriptStepType.PressSingle, ScriptStepType.Input, ScriptStepType.InputIntoSingle, ScriptStepType.Select,
             ScriptStepType.SubScript, ScriptStepType.WaitAMinute, ScriptStepType.EndOfScript, ScriptStepType.WaitTenSeconds, ScriptStepType.InvokeUrl,
-            ScriptStepType.RecognizeOkay, ScriptStepType.ClearInput
+            ScriptStepType.RecognizeOkay, ScriptStepType.ClearInput, ScriptStepType.EndScriptIfRecognized
         };
         _Model.ScriptStepType.Selectables.Clear();
         choices.ForEach(c => _Model.ScriptStepType.Selectables.Add(new Selectable { Guid = ((int)c).ToString(), Name = Enum.GetName(typeof(ScriptStepType), c) }));
