@@ -31,6 +31,8 @@ public class OustWindowGoToUrlStepTest : OustIntegrationTestBase {
 
     [TestMethod]
     public async Task CanAddAndReplaceGoToUrlSteps() {
+        await CallGutLookOnceIgnoreResultAsync();
+
         var errorsAndInfos = new ErrorsAndInfos();
         var url = await LogicalUrlRepository.GetUrlAsync("GutLookForms", errorsAndInfos);
         Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsToString());
