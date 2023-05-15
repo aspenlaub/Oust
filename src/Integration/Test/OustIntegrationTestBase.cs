@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using Aspenlaub.Net.GitHub.CSharp.Oust.Application.Interfaces;
 using Aspenlaub.Net.GitHub.CSharp.Oust.GUI;
 using Aspenlaub.Net.GitHub.CSharp.Oust.Model.Entities;
-using Aspenlaub.Net.GitHub.CSharp.Oust.Model.Interfaces;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Entities;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Extensions;
 using Aspenlaub.Net.GitHub.CSharp.Tash;
@@ -112,11 +111,8 @@ public class OustIntegrationTestBase {
         var errorsAndInfos = new ErrorsAndInfos();
         var url = await LogicalUrlRepository.GetUrlAsync("GutLookForms", errorsAndInfos);
         Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsToString());
-        var startOfExecutionTime = DateTime.Now;
         var client = new HttpClient();
         await client.GetAsync(url);
-        var wampLogScanner = Container.Resolve<IWampLogScanner>();
-        wampLogScanner.WaitUntilLogFolderIsStable(startOfExecutionTime, out _);
         _GutLookCalledOnce = true;
 
     }
