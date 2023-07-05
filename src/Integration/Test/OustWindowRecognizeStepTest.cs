@@ -75,7 +75,7 @@ public class OustWindowRecognizeStepTest : OustIntegrationTestBase {
         tasks.Add(sut.CreateSetValueTask(process, nameof(IApplicationModel.ScriptStepType), Enum.GetName(typeof(ScriptStepType), ScriptStepType.Recognize)));
         tasks.Add(sut.CreateSetValueTask(process, nameof(IApplicationModel.FormOrControlOrIdOrClass), "InputLabel (Copy)"));
         tasks.Add(sut.CreateSetValueTask(process, nameof(IApplicationModel.ExpectedContents), "Input 1:"));
-        await sut.RemotelyProcessTaskListAsync(process, tasks, false, async (i, task) => await OnTaskCompleted(i, task));
+        await sut.RemotelyProcessTaskListAsync(process, tasks, false, (_, _) => Task.CompletedTask);
         tasks.Clear();
 
         await sut.RemotelyPressButtonAsync(process, nameof(OustWindow.AddOrReplaceStep), false);
@@ -92,10 +92,5 @@ public class OustWindowRecognizeStepTest : OustIntegrationTestBase {
         const string errorMessage2 = "No id or class context identified in preceding step/-s";
         tasks.Add(sut.CreateVerifyValueTask(process, nameof(IApplicationModel.Status), errorMessage2));
         await sut.RemotelyProcessTaskListAsync(process, tasks, false, (_, _) => Task.CompletedTask);
-    }
-
-    protected async Task OnTaskCompleted(int i, ControllableProcessTask _) {
-        Assert.IsTrue(i >= 0);
-        await Task.CompletedTask;
     }
 }
