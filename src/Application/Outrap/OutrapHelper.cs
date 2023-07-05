@@ -99,6 +99,7 @@ public class OutrapHelper : IOutrapHelper {
             case ScriptStepType.Input when outOfControl.Type != OutrapControlTypes.Input && outOfControl.Type != OutrapControlTypes.Restricted && outOfControl.Type != OutrapControlTypes.TextArea && outOfControl.Type != OutrapControlTypes.Upload:
             case ScriptStepType.Select when outOfControl.Type != OutrapControlTypes.DropDown:
             case ScriptStepType.RecognizeSelection when outOfControl.Type != OutrapControlTypes.DropDown:
+            case ScriptStepType.NotExpectedSelection when outOfControl.Type != OutrapControlTypes.DropDown:
             case ScriptStepType.ClearInput when outOfControl.Type != OutrapControlTypes.Input && outOfControl.Type != OutrapControlTypes.Restricted && outOfControl.Type != OutrapControlTypes.TextArea:
                 return false;
             default:
