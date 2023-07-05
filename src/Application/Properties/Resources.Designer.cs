@@ -79,6 +79,15 @@ namespace Aspenlaub.Net.GitHub.CSharp.Oust.Application.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Another value is selected.
+        /// </summary>
+        internal static string AnotherValueIsSelected {
+            get {
+                return ResourceManager.GetString("AnotherValueIsSelected", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Calling script &quot;{0}&quot; not found.
         /// </summary>
         internal static string CallingScriptNotFound {
@@ -606,6 +615,15 @@ namespace Aspenlaub.Net.GitHub.CSharp.Oust.Application.Properties {
         internal static string UrlTitle {
             get {
                 return ResourceManager.GetString("UrlTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Value is selected, this is unexpected.
+        /// </summary>
+        internal static string ValueIsSelectedThisIsUnexpected {
+            get {
+                return ResourceManager.GetString("ValueIsSelectedThisIsUnexpected", resourceCulture);
             }
         }
     }

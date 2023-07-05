@@ -93,7 +93,8 @@ public class RecognizeOrNotExpectedContentsStep : IScriptStepLogic {
         Model.Status.Text = "";
         Model.Status.Type = StatusType.None;
 
-        if (Model.ExpectedContents.Text == "") { return; }
+        if (_ScriptStepType != ScriptStepType.RecognizeSelection && Model.ExpectedContents.Text == "") { return; }
+        if (_ScriptStepType == ScriptStepType.RecognizeSelection && !Model.SelectedValue.SelectionMade) { return; }
 
         switch (_ScriptStepType) {
             case ScriptStepType.RecognizeSelection or ScriptStepType.NotExpectedSelection: {
@@ -101,9 +102,12 @@ public class RecognizeOrNotExpectedContentsStep : IScriptStepLogic {
                     _ScriptStepType == ScriptStepType.RecognizeSelection ? Model.SelectedValue.SelectedItem.Guid : Model.ExpectedContents.Text,
                     _ScriptStepType == ScriptStepType.RecognizeSelection);
                 scriptCallResponse = await GuiAndAppHandler.RunScriptAsync<ScriptCallResponse>(scriptStatement, false, true);
-                if (scriptCallResponse.Success.Inconclusive || !scriptCallResponse.Success.YesNo) { return; }
+                if (scriptCallResponse.Success.Inconclusive || scriptCallResponse.Success.YesNo) { return; }
 
-                return;
+                Model.Status.Text = _ScriptStepType == ScriptStepType.RecognizeSelection
+                    ? Properties.Resources.AnotherValueIsSelected
+                    : Properties.Resources.ValueIsSelectedThisIsUnexpected;
+                break;
             }
             case ScriptStepType.Recognize when html.Contains(Model.ExpectedContents.Text):
             case ScriptStepType.Recognize when html.Contains(Model.ExpectedContents.Text.Replace("'", "\"")):

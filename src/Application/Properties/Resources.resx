@@ -123,6 +123,9 @@
   <data name="AdvancingToNextStep" xml:space="preserve">
     <value>Advancing to next step</value>
   </data>
+  <data name="AnotherValueIsSelected" xml:space="preserve">
+    <value>Another value is selected</value>
+  </data>
   <data name="CallingScriptNotFound" xml:space="preserve">
     <value>Calling script "{0}" not found</value>
   </data>
@@ -299,5 +302,8 @@
   </data>
   <data name="UrlTitle" xml:space="preserve">
     <value>URL</value>
+  </data>
+  <data name="ValueIsSelectedThisIsUnexpected" xml:space="preserve">
+    <value>Value is selected, this is unexpected</value>
   </data>
 </root>
