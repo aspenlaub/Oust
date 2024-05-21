@@ -46,7 +46,7 @@ public class OustWindowCodeCoverageTest : OustIntegrationTestBase {
         await sut.RemotelyProcessTaskListAsync(process, tasks, false, (_, _) => Task.CompletedTask);
         tasks.Clear();
 
-        const int expectedNumberOfLogFiles = 6;
+        const int expectedNumberOfLogFiles = 12;
         var resultFile = (await folderResolver.ResolveAsync(@"$(WampRoot)\temp\coverage", errorsAndInfos)).FullName + "\\" + dumperNameConverter.ScriptFileFriendlyShortName("Code Coverage") + ".txt";
         Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsToString());
         Assert.IsTrue(File.Exists(resultFile));
