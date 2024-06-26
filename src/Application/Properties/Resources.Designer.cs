@@ -556,6 +556,15 @@ namespace Aspenlaub.Net.GitHub.CSharp.Oust.Application.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Script step not found in script step logic dictionary.
+        /// </summary>
+        internal static string ScriptStepTypeNotFoundInLogicDictionary {
+            get {
+                return ResourceManager.GetString("ScriptStepTypeNotFoundInLogicDictionary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Button in instance {0} of {1} not found or not unique.
         /// </summary>
         internal static string SubmitOrAnchorControlNotFoundOrNotUnique {

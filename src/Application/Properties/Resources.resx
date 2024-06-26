@@ -282,6 +282,9 @@
   <data name="ScriptIsObsoleteOrSubScript" xml:space="preserve">
     <value>Script is obsolete or a sub script</value>
   </data>
+  <data name="ScriptStepTypeNotFoundInLogicDictionary" xml:space="preserve">
+    <value>Script step not found in script step logic dictionary</value>
+  </data>
   <data name="SubmitOrAnchorControlNotFoundOrNotUnique" xml:space="preserve">
     <value>Button in instance {0} of {1} not found or not unique</value>
   </data>

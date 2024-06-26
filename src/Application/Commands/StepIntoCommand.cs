@@ -58,6 +58,11 @@ public class StepIntoCommand : ICommand {
     private async Task ExecuteAccordingToStepLogicAsync(ScriptStepType scriptStepType) {
         using (_SimpleLogger.BeginScope(SimpleLoggingScopeId.Create(nameof(IScriptStepLogic.ExecuteAsync) + scriptStepType))) {
             var methodNamesFromStack = _MethodNamesFromStackFramesExtractor.ExtractMethodNamesFromStackFrames();
+            if (_ScriptStepLogicDictionary[scriptStepType] == null) {
+                _Model.Status.Type = StatusType.Error;
+                _Model.Status.Text = Properties.Resources.ScriptStepTypeNotFoundInLogicDictionary;
+                return;
+            }
             await _ScriptStepLogicDictionary[scriptStepType].ExecuteAsync();
 
             var dictionary = await _OutrapHelper.AuxiliaryDictionaryAsync();

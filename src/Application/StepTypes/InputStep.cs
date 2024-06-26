@@ -60,7 +60,11 @@ public class InputStep : IScriptStepLogic {
     }
 
     public async Task ExecuteAsync() {
-        var scriptStatement = _OustScriptStatementFactory.CreateDoesDocumentHaveDivLikeWithIdOrNthOccurrenceOfClassStatement(Model.WithScriptStepOutrapForm.Guid, Model.WithScriptStepOutrapFormInstanceNumber, Model.WithScriptStepOutrapForm.Name);
+        if (Model?.WithScriptStepOutrapForm == null) { return; }
+
+        var scriptStatement = _OustScriptStatementFactory.CreateDoesDocumentHaveDivLikeWithIdOrNthOccurrenceOfClassStatement(
+            Model.WithScriptStepOutrapForm.Guid, Model.WithScriptStepOutrapFormInstanceNumber,
+            Model.WithScriptStepOutrapForm.Name);
         var scriptCallResponse = await GuiAndAppHandler.RunScriptAsync<ScriptCallResponse>(scriptStatement, false, true);
         if (scriptCallResponse.Success.Inconclusive || !scriptCallResponse.Success.YesNo) { return; }
 
