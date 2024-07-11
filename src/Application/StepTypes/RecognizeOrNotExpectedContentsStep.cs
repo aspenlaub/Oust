@@ -111,6 +111,7 @@ public class RecognizeOrNotExpectedContentsStep : IScriptStepLogic {
             }
             case ScriptStepType.Recognize when html.Contains(Model.ExpectedContents.Text):
             case ScriptStepType.Recognize when html.Contains(Model.ExpectedContents.Text.Replace("'", "\"")):
+            case ScriptStepType.Recognize when html.Contains(Model.ExpectedContents.Text.Replace("\\n", "\n")):
             case ScriptStepType.EndScriptIfRecognized when html.Contains(Model.ExpectedContents.Text):
             case ScriptStepType.EndScriptIfRecognized when html.Contains(Model.ExpectedContents.Text.Replace("'", "\"")):
                 if (_ScriptStepType == ScriptStepType.EndScriptIfRecognized) {
