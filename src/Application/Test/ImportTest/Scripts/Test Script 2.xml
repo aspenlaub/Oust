@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <!-- V=103 -->
 <Script xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" guid="BFDCF6C4-6384-2210-188C-A8A29DB8FEB9" name="Test Script 2" xmlns="http://www.aspenlaub.net">
-  <ScriptStep guid="09DE2AF6-C96E-9753-464A-3EB268373D1A" stepnumber="1" steptype="GoToUrl" url="Herzblut" />
+  <ScriptStep guid="09DE2AF6-C96E-9753-464A-3EB268373D1A" stepnumber="1" steptype="GoToUrl" url="Rhönlamas" />
   <ScriptStep guid="1AF2963C-9365-2727-0D7F-411A66288763" stepnumber="2" steptype="GoToUrl" url="ViperUnitTest" />
   <ScriptStep guid="FCAD8E95-BE7E-4801-E7E2-27FB14CD6E44" stepnumber="3" steptype="GoToUrl" url="Viperfisch" />
 </Script>
