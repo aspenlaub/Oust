@@ -96,9 +96,6 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.2903.40" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="Application\Oust.Application.csproj" />
   </ItemGroup>
   <ItemGroup>
@@ -113,5 +110,8 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.2957.106" />
   </ItemGroup>
 </Project>
