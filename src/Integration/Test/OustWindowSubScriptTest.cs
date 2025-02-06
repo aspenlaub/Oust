@@ -29,7 +29,7 @@ public class OustWindowSubScriptTest : OustIntegrationTestBase {
         var tasks = await CreateSubScriptsAndCallScriptAsync(sut, process);
         tasks.AddRange(StepIntoEverything(sut, process));
         tasks.AddRange(StepOverFirstSubScriptCall(sut, process));
-        await sut.RemotelyProcessTaskListAsync(process, tasks, false, (_, _) => Task.CompletedTask);
+        await sut.RemotelyProcessTaskListAsync(process, tasks, true, (_, _) => Task.CompletedTask);
     }
 
     private async Task<List<ControllableProcessTask>> CreateSubScriptsAndCallScriptAsync(OustWindowUnderTest sut, ControllableProcess process) {
