@@ -45,10 +45,11 @@ public class RecognizeOrNotExpectedContentsStep : IScriptStepLogic {
     }
 
     public IScriptStep CreateScriptStepToAdd() {
+        bool haveSelectedIndex = Model.FormOrControlOrIdOrClass.SelectedIndex >= 0;
         return new ScriptStep {
             ScriptStepType = _ScriptStepType,
-            ControlGuid = Model.ScriptStepOutOfControl?.Guid ?? "",
-            ControlName = Model.ScriptStepOutOfControl?.Name ?? "",
+            ControlGuid = haveSelectedIndex ? Model.ScriptStepOutOfControl?.Guid ?? "" : "",
+            ControlName = haveSelectedIndex ? Model.ScriptStepOutOfControl?.Name ?? "" : "",
             ExpectedContents = _ScriptStepType == ScriptStepType.RecognizeSelection ? Model.SelectedValue.SelectedItem.Name : Model.ExpectedContents.Text
         };
 
@@ -66,19 +67,19 @@ public class RecognizeOrNotExpectedContentsStep : IScriptStepLogic {
     }
 
     public async Task ExecuteAsync() {
-        var scriptStatement = string.IsNullOrWhiteSpace(Model.WithScriptStepOutrapForm?.Guid)
+        IScriptStatement scriptStatement = string.IsNullOrWhiteSpace(Model.WithScriptStepOutrapForm?.Guid)
             ? _OustScriptStatementFactory.CreateDoesDocumentHaveNthOccurrenceOfIdOrClassStatement(Model.WithScriptStepIdOrClass, Model.WithScriptStepIdOrClassInstanceNumber)
             : _OustScriptStatementFactory.CreateDoesDocumentHaveDivLikeWithIdOrNthOccurrenceOfClassStatement(Model.WithScriptStepOutrapForm.Guid, Model.WithScriptStepOutrapFormInstanceNumber, Model.WithScriptStepOutrapForm.Name);
 
-        var scriptCallResponse = await GuiAndAppHandler.RunScriptAsync<ScriptCallResponse>(scriptStatement, false, true);
+        ScriptCallResponse scriptCallResponse = await GuiAndAppHandler.RunScriptAsync<ScriptCallResponse>(scriptStatement, false, true);
         if (scriptCallResponse.Success.Inconclusive || !scriptCallResponse.Success.YesNo) {
             return;
         }
 
-        var ancestorDomElementJson = JsonSerializer.Serialize(scriptCallResponse.DomElement);
-        var ancestorDomElementInnerHtml = scriptCallResponse.InnerHtml;
+        string ancestorDomElementJson = JsonSerializer.Serialize(scriptCallResponse.DomElement);
+        string ancestorDomElementInnerHtml = scriptCallResponse.InnerHtml;
         string html;
-        var domElementJson = ancestorDomElementJson;
+        string domElementJson = ancestorDomElementJson;
         if (string.IsNullOrWhiteSpace(Model.ScriptStepOutOfControl?.Guid)) {
             html = ancestorDomElementInnerHtml;
         } else {
