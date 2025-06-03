@@ -35,6 +35,9 @@ public class OustWindowInputStepTest : OustIntegrationTestBase {
         tasks.Add(sut.CreatePressButtonTask(process, nameof(OustWindow.AddOrReplaceStep)));
         tasks.Add(sut.CreateVerifyNumberOfItemsTask(process, nameof(IApplicationModel.ScriptSteps), 3));
         tasks.Add(sut.CreateVerifyValueTask(process, nameof(IApplicationModel.Status), ""));
+        await sut.RemotelyProcessTaskListAsync(process, tasks, true, (_, _) => Task.CompletedTask);
+        tasks.Clear();
+
         tasks.Add(sut.CreateSetValueTask(process, nameof(IApplicationModel.FormOrControlOrIdOrClass), "RestrictedValueInput (Restricted)"));
         const string restrictedInputText = "Interläken";
         const string restrictedInputCorrectedText = "Interlaken";
@@ -42,6 +45,9 @@ public class OustWindowInputStepTest : OustIntegrationTestBase {
         tasks.Add(sut.CreatePressButtonTask(process, nameof(OustWindow.AddOrReplaceStep)));
         tasks.Add(sut.CreateVerifyNumberOfItemsTask(process, nameof(IApplicationModel.ScriptSteps), 4));
         tasks.Add(sut.CreateVerifyValueTask(process, nameof(IApplicationModel.Status), ""));
+        await sut.RemotelyProcessTaskListAsync(process, tasks, true, (_, _) => Task.CompletedTask);
+        tasks.Clear();
+
         tasks.Add(sut.CreateSetValueTask(process, nameof(IApplicationModel.FormOrControlOrIdOrClass), "TextArea (TextArea)"));
         const string textBoxText = @"public void DoNothing() {\n}";
         var textBoxConvertedText = textBoxText.Replace(@"\n", "\n");
@@ -56,7 +62,7 @@ public class OustWindowInputStepTest : OustIntegrationTestBase {
         tasks.Add(sut.CreateVerifyNumberOfItemsTask(process, nameof(IApplicationModel.ScriptSteps), 6));
         var expectedInputValues = "2\t0\t0\t\t\tInterimscoach\t2\t0\t1\t" + inputText + "\t\t" + restrictedInputCorrectedText + "\t\t\t" + textBoxConvertedText;
         tasks.Add(sut.CreateVerifyValueTask(process, nameof(IApplicationModel.WebViewInputValues), expectedInputValues));
-        await sut.RemotelyProcessTaskListAsync(process, tasks, true, async (i, task) => await OnTaskCompleted(i, task));
+        await sut.RemotelyProcessTaskListAsync(process, tasks, true, OnTaskCompleted);
     }
 
     protected async Task OnTaskCompleted(int i, ControllableProcessTask _) {
