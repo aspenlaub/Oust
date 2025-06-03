@@ -3,14 +3,17 @@ using Aspenlaub.Net.GitHub.CSharp.Oust.Model;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
 namespace Aspenlaub.Net.GitHub.CSharp.Oust.Model.Migrations {
     [DbContext(typeof(Context))]
-    partial class ContextModelSnapshot : ModelSnapshot {
-        protected override void BuildModel(ModelBuilder modelBuilder) {
+    [Migration("20250603200602_EntityFrameworkCore905")]
+    partial class EntityFrameworkCore905 {
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder) {
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("ProductVersion", "9.0.5")
