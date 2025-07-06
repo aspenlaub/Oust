@@ -17,8 +17,25 @@ public class WampLogScanner : IWampLogScanner {
 
     protected Dictionary<string, int> ScanFolder() {
         var snapshot = new Dictionary<string, int>();
-        foreach (var fileName in Directory.GetFiles(LogFolder.FullName, "*-ERR.log").OrderBy(f => f)) {
-            snapshot[fileName] = File.ReadAllText(fileName).Length;
+        foreach (string fileName in Directory.GetFiles(LogFolder.FullName, "*-ERR.log").OrderBy(f => f)) {
+            string text = File.ReadAllText(fileName);
+            bool relevant = false;
+            for (int i = 0; i >= 0 && i < text.Length; i = text.IndexOf("ERROR:", i + 1, StringComparison.InvariantCulture)) {
+                if (!text[i..].StartsWith("ERROR:", StringComparison.InvariantCulture)) {
+                    continue;
+                }
+                if (text[i..].StartsWith("ERROR: Request caused", StringComparison.InvariantCulture)) {
+                    continue;
+                }
+
+                relevant = true;
+                break;
+            }
+
+            if (!relevant) {
+                continue;
+            }
+            snapshot[fileName] = text.Length;
         }
 
         return snapshot;
@@ -31,11 +48,11 @@ public class WampLogScanner : IWampLogScanner {
 
     private string LastNewErrorMessage() {
         var newErrors = new List<string>();
-        var snapshot = ScanFolder();
+        Dictionary<string, int> snapshot = ScanFolder();
         const string errorTag = "ERROR: ";
-        foreach (var fileName in snapshot.Keys) {
-            var oldLength = Snapshot.TryGetValue(fileName, out var value) ? value : 0;
-            newErrors.AddRange(File.ReadAllText(fileName).Substring(oldLength).Split('\n').Where(s => s.Contains(errorTag)).Select(s => s.Substring(s.IndexOf(errorTag, StringComparison.Ordinal) + errorTag.Length).Replace("\r", "")).ToList());
+        foreach (string fileName in snapshot.Keys) {
+            int oldLength = Snapshot.TryGetValue(fileName, out int value) ? value : 0;
+            newErrors.AddRange(File.ReadAllText(fileName)[oldLength..].Split('\n').Where(s => s.Contains(errorTag)).Select(s => s[(s.IndexOf(errorTag, StringComparison.Ordinal) + errorTag.Length)..].Replace("\r", "")).ToList());
         }
 
         SaveSnapshots();
@@ -50,8 +67,8 @@ public class WampLogScanner : IWampLogScanner {
 
     public void WaitUntilLogFolderIsStable(DateTime startOfExecutionTimeStamp, out string errorMessage) {
         const int maxSeconds = 100;
-        var intervalInMilliseconds = 500;
-        var attempts = maxSeconds * 1000 / intervalInMilliseconds;
+        int intervalInMilliseconds = 500;
+        int attempts = maxSeconds * 1000 / intervalInMilliseconds;
         DateTime lastTimeStamp, newTimeStamp = DateTime.Now;
         do {
             lastTimeStamp = newTimeStamp;
@@ -71,7 +88,7 @@ public class WampLogScanner : IWampLogScanner {
             return $"Wamp log folder does not exist: {WampLogFolder.FullName}";
         }
 
-        var fileName = WampLogFolder.FullName + @"\php_error.log";
+        string fileName = WampLogFolder.FullName + @"\php_error.log";
         if (!File.Exists(fileName)) {
             return $"Wamp php error log does not exist: {fileName}";
         }
