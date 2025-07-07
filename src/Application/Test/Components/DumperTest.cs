@@ -23,7 +23,7 @@ public class DumperTest {
 
     [TestInitialize]
     public async Task InitializeAsync() {
-        _Container = (await new ContainerBuilder().RegisterForOustApplicationAsync()).Build();
+        _Container = (await new ContainerBuilder().RegisterForOustApplicationAsync(EnvironmentType.UnitTest)).Build();
         DumperNameConverter = _Container.Resolve<IDumperNameConverter>();
         ContextFactory = _Container.Resolve<IContextFactory>();
         Sut = new Dumper(EnvironmentType.UnitTest, _Container.Resolve<IFolderResolver>(), _Container.Resolve<IXmlSerializer>(), DumperNameConverter, ContextFactory);

@@ -25,7 +25,7 @@ public class ImporterTest {
 
     [TestInitialize]
     public async Task InitializeAsync() {
-        _Container = (await new ContainerBuilder().RegisterForOustApplicationAsync()).Build();
+        _Container = (await new ContainerBuilder().RegisterForOustApplicationAsync(EnvironmentType.UnitTest)).Build();
         var logicalUrlRepository = _Container.Resolve<ILogicalUrlRepository>();
         Importer = new Importer(EnvironmentType.UnitTest, _Container.Resolve<IFolderResolver>(), _Container.Resolve<IXmlSerializer>(),
             _Container.Resolve<IXmlDeserializer>(), _Container.Resolve<IDumperNameConverter>(), _Container.Resolve<IContextFactory>(),

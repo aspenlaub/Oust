@@ -18,7 +18,7 @@ using Autofac;
 namespace Aspenlaub.Net.GitHub.CSharp.Oust.Application;
 
 public static class ApplicationContainerBuilder {
-    public static async Task<ContainerBuilder> RegisterForOustApplicationAsync(this ContainerBuilder builder) {
+    public static async Task<ContainerBuilder> RegisterForOustApplicationAsync(this ContainerBuilder builder, EnvironmentType environmentType) {
         await builder.UseVishizhukelNetWebDvinAndPeghAsync("Oust", new DummyCsArgumentPrompter());
         builder.RegisterType<ButtonNameToCommandMapper>().As<IButtonNameToCommandMapper>().SingleInstance();
         builder.RegisterInstance<IContextFactory>(new ContextFactory());
@@ -32,20 +32,21 @@ public static class ApplicationContainerBuilder {
         builder.RegisterType<FileDialogTrickster>().As<IFileDialogTrickster>();
         builder.RegisterType<OustScriptStatementFactory>().As<IOustScriptStatementFactory>();
 
-        var container = new ContainerBuilder().UsePegh("Oust", new DummyCsArgumentPrompter()).Build();
-        var folderResolver = container.Resolve<IFolderResolver>();
-        var secretRepository = container.Resolve<ISecretRepository>();
+        IContainer container = new ContainerBuilder().UsePegh("Oust", new DummyCsArgumentPrompter()).Build();
+        IFolderResolver folderResolver = container.Resolve<IFolderResolver>();
+        ISecretRepository secretRepository = container.Resolve<ISecretRepository>();
         var errorsAndInfos = new ErrorsAndInfos();
-        var logFolder = await folderResolver.ResolveAsync(@"$(WampLog)", errorsAndInfos);
-        var extendedLogFolder = await folderResolver.ResolveAsync(@"$(WampExtLog)", errorsAndInfos);
-        var wampLogFolder = await folderResolver.ResolveAsync(@"$(WampCoreLog)", errorsAndInfos);
+        IFolder logFolder = await folderResolver.ResolveAsync(@"$(WampLog)", errorsAndInfos);
+        IFolder extendedLogFolder = await folderResolver.ResolveAsync(@"$(WampExtLog)", errorsAndInfos);
+        IFolder wampLogFolder = await folderResolver.ResolveAsync(@"$(WampCoreLog)", errorsAndInfos);
         if (errorsAndInfos.AnyErrors()) {
             throw new Exception(errorsAndInfos.ErrorsToString());
         }
-        builder.Register(_ => new WampLogScanner(logFolder, extendedLogFolder, wampLogFolder)).As<IWampLogScanner>();
+        builder.Register(_ => new WampLogScanner(logFolder, extendedLogFolder, wampLogFolder, environmentType)
+            ).As<IWampLogScanner>();
 
         var securedHttpGateSettingsSecret = new SecretSecuredHttpGateSettings();
-        var securedHttpGateSettings = await secretRepository.GetAsync(securedHttpGateSettingsSecret, errorsAndInfos);
+        SecuredHttpGateSettings securedHttpGateSettings = await secretRepository.GetAsync(securedHttpGateSettingsSecret, errorsAndInfos);
         if (errorsAndInfos.AnyErrors()) {
             throw new Exception(errorsAndInfos.ErrorsToString());
         }

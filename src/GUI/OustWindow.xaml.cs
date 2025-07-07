@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows;
@@ -34,7 +35,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Oust.GUI;
 /// </summary>
 // ReSharper disable once UnusedMember.Global
 public partial class OustWindow : IAsyncDisposable {
-    private const string WebViewLoaderDll = "WebView2Loader.dll";
+    private const string _webViewLoaderDll = "WebView2Loader.dll";
 
     private static IContainer Container { get; set; }
 
@@ -68,28 +69,28 @@ public partial class OustWindow : IAsyncDisposable {
 
     private async void OnLoadedAsync(object sender, RoutedEventArgs e) {
         var contextFactory = new ContextFactory();
-        await using var db = await contextFactory.CreateAsync(Context.DefaultEnvironmentType);
+        await using Context db = await contextFactory.CreateAsync(Context.DefaultEnvironmentType);
         db.Migrate();
 
         await BuildContainerIfNecessaryAsync();
 
-        var folder = GetType().Assembly.Location;
+        string folder = GetType().Assembly.Location;
         folder = folder.Substring(0, folder.LastIndexOf(@"\", StringComparison.Ordinal));
-        var file = Directory.GetFiles(folder, WebViewLoaderDll, SearchOption.AllDirectories).FirstOrDefault();
+        string file = Directory.GetFiles(folder, _webViewLoaderDll, SearchOption.AllDirectories).FirstOrDefault();
         if (string.IsNullOrEmpty(file)) {
-            MessageBox.Show($"Missing {WebViewLoaderDll}", nameof(Window), MessageBoxButton.OK, MessageBoxImage.Error);
+            MessageBox.Show($"Missing {_webViewLoaderDll}", nameof(Window), MessageBoxButton.OK, MessageBoxImage.Error);
             Close();
             return;
         }
 
-        var httpGate = Container.Resolve<IHttpGate>();
-        var localhostAvailable = await httpGate.IsLocalHostAvailableAsync();
+        IHttpGate httpGate = Container.Resolve<IHttpGate>();
+        bool localhostAvailable = await httpGate.IsLocalHostAvailableAsync();
         if (!localhostAvailable) {
             MessageBox.Show(Properties.Resources.LocalHostNotAvailable, Properties.Resources.OustWindowTitle, MessageBoxButton.OK, MessageBoxImage.Error);
             Environment.Exit(0);
         }
 
-        var result = await httpGate.GetAsync(new Uri(await CleanWindowIdCookieUrlAsync()));
+        HttpResponseMessage result = await httpGate.GetAsync(new Uri(await CleanWindowIdCookieUrlAsync()));
         if (result.StatusCode != HttpStatusCode.OK || !(await result.Content.ReadAsStringAsync()).Contains("OK")) {
             MessageBox.Show(Properties.Resources.CouldNotClearWindowIdCookie, Properties.Resources.OustWindowTitle, MessageBoxButton.OK, MessageBoxImage.Error);
             Environment.Exit(0);
@@ -117,12 +118,12 @@ public partial class OustWindow : IAsyncDisposable {
         _OustApp = Container.Resolve<IApplication>(new NamedParameter("extractSubScriptPopup", _ExtractSubScriptPopup), new NamedParameter("progressWindow", _ProgressWindow));
         await _OustApp.OnLoadedAsync();
 
-        var guiToAppGate = Container.Resolve<IGuiToWebViewApplicationGate>();
-        var buttonNameToCommandMapper = Container.Resolve<IButtonNameToCommandMapper>();
+        IGuiToWebViewApplicationGate guiToAppGate = Container.Resolve<IGuiToWebViewApplicationGate>();
+        IButtonNameToCommandMapper buttonNameToCommandMapper = Container.Resolve<IButtonNameToCommandMapper>();
 
         guiToAppGate.WireWebView(WebView);
 
-        var commands = _OustApp.Commands;
+        IApplicationCommands commands = _OustApp.Commands;
         guiToAppGate.WireButtonAndCommand(AddOrReplaceStep, commands.AddOrReplaceStepCommand, buttonNameToCommandMapper);
         guiToAppGate.WireButtonAndCommand(CodeCoverage, commands.CodeCoverageCommand, buttonNameToCommandMapper);
         guiToAppGate.WireButtonAndCommand(Consolidate, commands.ConsolidateCommand, buttonNameToCommandMapper);
@@ -138,7 +139,7 @@ public partial class OustWindow : IAsyncDisposable {
         guiToAppGate.WireButtonAndCommand(StopCodeCoverage, commands.StopCodeCoverageCommand, buttonNameToCommandMapper);
         guiToAppGate.WireButtonAndCommand(SelectScriptFromList, commands.SelectScriptFromListCommand, buttonNameToCommandMapper);
 
-        var handlers = _OustApp.Handlers;
+        IApplicationHandlers handlers = _OustApp.Handlers;
         guiToAppGate.RegisterAsyncTextBoxCallback(NewScriptName, t => _OustApp.NewScriptNameChangedAsync(t));
         guiToAppGate.RegisterAsyncTextBoxCallback(FormOrIdOrClassInstanceNumber, t => handlers.FormOrControlOrIdOrClassHandler.FormOrIdOrClassInstanceNumberChangedAsync(t));
         guiToAppGate.RegisterAsyncTextBoxCallback(FreeText, t => _OustApp.FreeTextChangedAsync(t));
@@ -163,7 +164,7 @@ public partial class OustWindow : IAsyncDisposable {
 
             await ExceptionHandler.RunAsync(WindowsApplication.Current, TimeSpan.FromSeconds(7));
         } catch (Exception exception) {
-            var exceptionLogFolder = new Folder(Path.GetTempPath()).SubFolder("AspenlaubExceptions");
+            IFolder exceptionLogFolder = new Folder(Path.GetTempPath()).SubFolder("AspenlaubExceptions");
             ExceptionSaver.SaveUnhandledException(exceptionLogFolder, exception, "Oust", _ => {});
             MessageBox.Show(this, Properties.Resources.ExceptionWasLogged, Title, MessageBoxButton.OK, MessageBoxImage.Error);
             Close();
@@ -197,15 +198,15 @@ public partial class OustWindow : IAsyncDisposable {
     }
 
     private async Task BuildContainerIfNecessaryAsync() {
-        var builder = (await new ContainerBuilder().RegisterForOustApplicationAsync()).RegisterForOustWindow(_EnvironmentType, this);
+        ContainerBuilder builder = (await new ContainerBuilder().RegisterForOustApplicationAsync(_EnvironmentType)).RegisterForOustWindow(_EnvironmentType, this);
         Container = builder.Build();
         _ExtractSubScriptPopup = new ExtractSubScriptPopup(_EnvironmentType, Container.Resolve<INewScriptNameValidator>());
     }
 
     private async Task<string> CleanWindowIdCookieUrlAsync() {
-        var logicalUrlRepository = Container.Resolve<ILogicalUrlRepository>();
+        ILogicalUrlRepository logicalUrlRepository = Container.Resolve<ILogicalUrlRepository>();
         var errorsAndInfos = new ErrorsAndInfos();
-        var url = await logicalUrlRepository.GetUrlAsync("ClearWinIdCookie", errorsAndInfos);
+        string url = await logicalUrlRepository.GetUrlAsync("ClearWinIdCookie", errorsAndInfos);
         if (errorsAndInfos.AnyErrors()) {
             throw new Exception(errorsAndInfos.ErrorsToString());
         }

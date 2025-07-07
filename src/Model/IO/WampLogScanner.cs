@@ -7,11 +7,13 @@ namespace Aspenlaub.Net.GitHub.CSharp.Oust.Model.IO;
 public class WampLogScanner : IWampLogScanner {
     protected IFolder LogFolder, ExtendedLogFolder, WampLogFolder;
     protected Dictionary<string, int> Snapshot;
+    protected EnvironmentType EnvironmentType;
 
-    public WampLogScanner(IFolder logFolder, IFolder extendedLogFolder, IFolder wampLogFolder) {
+    public WampLogScanner(IFolder logFolder, IFolder extendedLogFolder, IFolder wampLogFolder, EnvironmentType environmentType) {
         LogFolder = logFolder;
         ExtendedLogFolder = extendedLogFolder;
         WampLogFolder = wampLogFolder;
+        EnvironmentType = environmentType;
         SaveSnapshots();
     }
 
@@ -19,11 +21,17 @@ public class WampLogScanner : IWampLogScanner {
         var snapshot = new Dictionary<string, int>();
         foreach (string fileName in Directory.GetFiles(LogFolder.FullName, "*-ERR.log").OrderBy(f => f)) {
             string text = File.ReadAllText(fileName);
+            if (EnvironmentType != EnvironmentType.UnitTest) {
+                snapshot[fileName] = text.Length;
+                continue;
+            }
+
             bool relevant = false;
             for (int i = 0; i >= 0 && i < text.Length; i = text.IndexOf("ERROR:", i + 1, StringComparison.InvariantCulture)) {
                 if (!text[i..].StartsWith("ERROR:", StringComparison.InvariantCulture)) {
                     continue;
                 }
+
                 if (text[i..].StartsWith("ERROR: Request caused", StringComparison.InvariantCulture)) {
                     continue;
                 }
@@ -35,6 +43,7 @@ public class WampLogScanner : IWampLogScanner {
             if (!relevant) {
                 continue;
             }
+
             snapshot[fileName] = text.Length;
         }
 
