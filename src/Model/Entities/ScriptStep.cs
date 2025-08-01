@@ -218,6 +218,9 @@ public class ScriptStep : IGuid, ISetGuid, IScriptStep {
             case ScriptStepType.RecognizeOkay: {
                 return string.Format(Properties.Resources.RecognizeOkay);
             }
+            case ScriptStepType.StartOfCleanUpSection: {
+                return string.Format(Properties.Resources.StartOfCleanUpSection);
+            }
             default: {
                 return Properties.Resources.StepTypeCannotBeDisplayed;
             }

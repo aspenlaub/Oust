@@ -268,6 +268,15 @@ namespace Aspenlaub.Net.GitHub.CSharp.Oust.Model.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Start of cleanup section.
+        /// </summary>
+        internal static string StartOfCleanUpSection {
+            get {
+                return ResourceManager.GetString("StartOfCleanUpSection", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Step type cannot be displayed.
         /// </summary>
         internal static string StepTypeCannotBeDisplayed {

@@ -1,61 +1,51 @@
 using Aspenlaub.Net.GitHub.CSharp.Oust.Application.Interfaces;
 using Aspenlaub.Net.GitHub.CSharp.Oust.Model.Entities;
+using Aspenlaub.Net.GitHub.CSharp.VishizhukelNet.Entities;
 using Aspenlaub.Net.GitHub.CSharp.VishizhukelNetWeb.Interfaces;
 
 namespace Aspenlaub.Net.GitHub.CSharp.Oust.Application.Handlers;
 
-public class FormOrControlOrIdOrClassHandler : IFormOrControlOrIdOrClassHandler {
-    private readonly IApplicationModel _Model;
-    private readonly IGuiAndWebViewAppHandler<ApplicationModel> _GuiAndAppHandler;
-    private readonly ISelectedValueSelectorHandler _SelectedValueSelectorHandler;
-    private readonly IDictionary<ScriptStepType, IScriptStepLogic> _ScriptStepLogicDictionary;
-
-    public FormOrControlOrIdOrClassHandler(IApplicationModel model, IGuiAndWebViewAppHandler<ApplicationModel> guiAndAppHandler, ISelectedValueSelectorHandler selectedValueSelectorHandler,
-            IDictionary<ScriptStepType, IScriptStepLogic> scriptStepLogicDictionary) {
-        _Model = model;
-        _GuiAndAppHandler = guiAndAppHandler;
-        _SelectedValueSelectorHandler = selectedValueSelectorHandler;
-        _ScriptStepLogicDictionary = scriptStepLogicDictionary;
-    }
-
+public class FormOrControlOrIdOrClassHandler(IApplicationModel model, IGuiAndWebViewAppHandler<ApplicationModel> guiAndAppHandler,
+        ISelectedValueSelectorHandler selectedValueSelectorHandler, IDictionary<ScriptStepType, IScriptStepLogic> scriptStepLogicDictionary)
+            : IFormOrControlOrIdOrClassHandler {
     public async Task EnableOrDisableFormOrControlOrIdOrClassAndSetLabelTextAsync() {
-        var scriptStepType = _Model.ScriptStepType.SelectionMade ? (ScriptStepType)int.Parse(_Model.ScriptStepType.SelectedItem.Guid) : ScriptStepType.EndOfScript;
-        _ScriptStepLogicDictionary[scriptStepType].SetFormOrControlOrIdOrClassTitle();
+        ScriptStepType scriptStepType = model.ScriptStepType.SelectionMade ? (ScriptStepType)int.Parse(model.ScriptStepType.SelectedItem.Guid) : ScriptStepType.EndOfScript;
+        scriptStepLogicDictionary[scriptStepType].SetFormOrControlOrIdOrClassTitle();
         await UpdateSelectableFormsOrControlsOrIdsOrClassesAsync();
     }
 
     private async Task UpdateSelectableFormsOrControlsOrIdsOrClassesAsync() {
-        _GuiAndAppHandler.IndicateBusy(true);
-        var scriptStepType = _Model.ScriptStepType.SelectionMade ? (ScriptStepType)int.Parse(_Model.ScriptStepType.SelectedItem.Guid) : ScriptStepType.EndOfScript;
-        var selectables = await _ScriptStepLogicDictionary[scriptStepType].SelectableFormsOrControlsOrIdsOrClassesAsync();
-        if (_Model.FormOrControlOrIdOrClass.AreSelectablesIdentical(selectables)) { return; }
+        guiAndAppHandler.IndicateBusy(true);
+        ScriptStepType scriptStepType = model.ScriptStepType.SelectionMade ? (ScriptStepType)int.Parse(model.ScriptStepType.SelectedItem.Guid) : ScriptStepType.EndOfScript;
+        IList<Selectable> selectables = await scriptStepLogicDictionary[scriptStepType].SelectableFormsOrControlsOrIdsOrClassesAsync();
+        if (model.FormOrControlOrIdOrClass.AreSelectablesIdentical(selectables)) { return; }
 
-        _Model.FormOrControlOrIdOrClass.UpdateSelectables(selectables);
-        if (_Model.FormOrControlOrIdOrClass.SelectionMade) {
-            await FormOrControlOrIdOrClassSelectedIndexChangedAsync(_Model.FormOrControlOrIdOrClass.SelectedIndex, true);
+        model.FormOrControlOrIdOrClass.UpdateSelectables(selectables);
+        if (model.FormOrControlOrIdOrClass.SelectionMade) {
+            await FormOrControlOrIdOrClassSelectedIndexChangedAsync(model.FormOrControlOrIdOrClass.SelectedIndex, true);
         } else {
-            await FormOrControlOrIdOrClassSelectedIndexChangedAsync(_Model.FormOrControlOrIdOrClass.Selectables.Any() ? 0 : -1, true);
+            await FormOrControlOrIdOrClassSelectedIndexChangedAsync(model.FormOrControlOrIdOrClass.Selectables.Any() ? 0 : -1, true);
         }
     }
 
     public async Task FormOrIdOrClassInstanceNumberChangedAsync(string text) {
-        if (_Model.FormOrIdOrClassInstanceNumber.Text == text) { return; }
+        if (model.FormOrIdOrClassInstanceNumber.Text == text) { return; }
 
-        _Model.FormOrIdOrClassInstanceNumber.Text = text;
-        await _GuiAndAppHandler.EnableOrDisableButtonsThenSyncGuiAndAppAsync();
+        model.FormOrIdOrClassInstanceNumber.Text = text;
+        await guiAndAppHandler.EnableOrDisableButtonsThenSyncGuiAndAppAsync();
     }
 
     public async Task FormOrControlOrIdOrClassSelectedIndexChangedAsync(int selectedIndex, bool selectablesChanged) {
-        if (!selectablesChanged && _Model.FormOrControlOrIdOrClass.SelectedIndex == selectedIndex) { return; }
+        if (!selectablesChanged && model.FormOrControlOrIdOrClass.SelectedIndex == selectedIndex) { return; }
 
-        _Model.FormOrControlOrIdOrClass.SelectedIndex = selectedIndex;
-        var scriptStepType = _Model.ScriptStepType.SelectionMade && _Model.ScriptStepType.SelectedItem != null ? (ScriptStepType)int.Parse(_Model.ScriptStepType.SelectedItem.Guid) : ScriptStepType.EndOfScript;
-        _Model.ScriptStepOutrapForm = null;
-        _Model.ScriptStepOutOfControl = null;
-        _Model.ScriptStepIdOrClass = "";
+        model.FormOrControlOrIdOrClass.SelectedIndex = selectedIndex;
+        ScriptStepType scriptStepType = model.ScriptStepType.SelectionMade && model.ScriptStepType.SelectedItem != null ? (ScriptStepType)int.Parse(model.ScriptStepType.SelectedItem.Guid) : ScriptStepType.EndOfScript;
+        model.ScriptStepOutrapForm = null;
+        model.ScriptStepOutOfControl = null;
+        model.ScriptStepIdOrClass = "";
         switch (scriptStepType) {
             case ScriptStepType.With:
-                _Model.ScriptStepOutrapForm = _Model.FormOrControlOrIdOrClass.SelectedItem;
+                model.ScriptStepOutrapForm = model.FormOrControlOrIdOrClass.SelectedItem;
                 break;
             case ScriptStepType.Recognize:
             case ScriptStepType.NotExpectedContents:
@@ -68,11 +58,11 @@ public class FormOrControlOrIdOrClassHandler : IFormOrControlOrIdOrClassHandler 
             case ScriptStepType.RecognizeSelection:
             case ScriptStepType.NotExpectedSelection:
             case ScriptStepType.EndScriptIfRecognized:
-                _Model.ScriptStepOutOfControl = _Model.FormOrControlOrIdOrClass.SelectedItem;
+                model.ScriptStepOutOfControl = model.FormOrControlOrIdOrClass.SelectedItem;
                 break;
             case ScriptStepType.WithIdOrClass:
             case ScriptStepType.NotExpectedIdOrClass:
-                _Model.ScriptStepIdOrClass = _Model.FormOrControlOrIdOrClass.SelectionMade ? _Model.FormOrControlOrIdOrClass.SelectedItem.Guid : "";
+                model.ScriptStepIdOrClass = model.FormOrControlOrIdOrClass.SelectionMade ? model.FormOrControlOrIdOrClass.SelectedItem.Guid : "";
                 break;
             case ScriptStepType.GoToUrl:
             case ScriptStepType.CheckSingle:
@@ -85,21 +75,22 @@ public class FormOrControlOrIdOrClassHandler : IFormOrControlOrIdOrClassHandler 
             case ScriptStepType.WaitTenSeconds:
             case ScriptStepType.InvokeUrl:
             case ScriptStepType.RecognizeOkay:
+            case ScriptStepType.StartOfCleanUpSection:
                 break;
             default:
                 throw new NotImplementedException();
         }
 
-        var anySelectables = _Model.FormOrControlOrIdOrClass.Selectables.Any();
-        _Model.FormOrIdOrClassInstanceNumber.Enabled = anySelectables && _Model.FormOrControlOrIdOrClass.SelectedIndex > 0 && scriptStepType != ScriptStepType.Select;
-        if (!_Model.FormOrIdOrClassInstanceNumber.Enabled) {
+        bool anySelectables = model.FormOrControlOrIdOrClass.Selectables.Any();
+        model.FormOrIdOrClassInstanceNumber.Enabled = anySelectables && model.FormOrControlOrIdOrClass.SelectedIndex > 0 && scriptStepType != ScriptStepType.Select;
+        if (!model.FormOrIdOrClassInstanceNumber.Enabled) {
             await FormOrIdOrClassInstanceNumberChangedAsync("");
-        } else if (string.IsNullOrWhiteSpace(_Model.FormOrIdOrClassInstanceNumber.Text)) {
+        } else if (string.IsNullOrWhiteSpace(model.FormOrIdOrClassInstanceNumber.Text)) {
             await FormOrIdOrClassInstanceNumberChangedAsync("1");
         }
 
-        await _SelectedValueSelectorHandler.EnableOrDisableSelectedValueAsync();
+        await selectedValueSelectorHandler.EnableOrDisableSelectedValueAsync();
 
-        await _GuiAndAppHandler.EnableOrDisableButtonsThenSyncGuiAndAppAsync();
+        await guiAndAppHandler.EnableOrDisableButtonsThenSyncGuiAndAppAsync();
     }
 }

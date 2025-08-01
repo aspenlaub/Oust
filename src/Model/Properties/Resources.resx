@@ -186,6 +186,9 @@
   <data name="SelectOption" xml:space="preserve">
     <value>Select '{0}' in {1}</value>
   </data>
+  <data name="StartOfCleanUpSection" xml:space="preserve">
+    <value>Start of cleanup section</value>
+  </data>
   <data name="StepTypeCannotBeDisplayed" xml:space="preserve">
     <value>Step type cannot be displayed</value>
   </data>

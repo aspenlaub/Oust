@@ -25,97 +25,67 @@ using Aspenlaub.Net.GitHub.CSharp.VishizhukelNetWeb.Interfaces;
 [assembly: InternalsVisibleTo("Aspenlaub.Net.GitHub.CSharp.Oust.Integration.Test")]
 namespace Aspenlaub.Net.GitHub.CSharp.Oust.Application;
 
-public class Application : WebViewApplicationBase<IGuiAndApplicationSynchronizer, ApplicationModel>, IGuiAndAppHandler, IApplication {
+public class Application(IButtonNameToCommandMapper buttonNameToCommandMapper,
+            IToggleButtonNameToHandlerMapper toggleButtonNameToHandlerMapper,
+            IGuiAndApplicationSynchronizer guiAndApplicationSynchronizer, ApplicationModel model,
+            ISimpleLogger simpleLogger, ITashAccessor tashAccessor, ISecuredHttpGate securedHttpGate,
+            IWampLogScanner wampLogScanner, IScriptAndSubScriptsConsolidator scriptAndSubScriptsConsolidator,
+            IDumperNameConverter dumperNameConverter, IObsoleteScriptChecker obsoleteScriptChecker,
+            ISecretRepository secretRepository, IContextFactory contextFactory,
+            IExecutionStackFormatter executionStackFormatter, IShowExecutionStackPopupFactory executionStackPopupFactory,
+            IFolderResolver folderResolver, IFileDialogTrickster fileDialogTrickster,
+            IExtractSubScriptPopup extractSubScriptPopup, IOustScriptStatementFactory oustScriptStatementFactory,
+            IProgressWindow progressWindow, IOucidLogAccessor oucidLogAccessor,
+            IMethodNamesFromStackFramesExtractor methodNamesFromStackFramesExtractor,
+            ILogicalUrlRepository logicalUrlRepository, ISelectScriptFromListPopupFactory selectScriptFromListPopupFactory)
+                : WebViewApplicationBase<IGuiAndApplicationSynchronizer, ApplicationModel>(buttonNameToCommandMapper,
+                      toggleButtonNameToHandlerMapper, guiAndApplicationSynchronizer, model,
+                      simpleLogger, methodNamesFromStackFramesExtractor, oucidLogAccessor),
+                    IGuiAndAppHandler, IApplication {
     private IDictionary<ScriptStepType, IScriptStepLogic> _ScriptStepLogicDictionary;
     public IApplicationHandlers Handlers { get; private set; }
     public IApplicationCommands Commands { get; private set; }
     public ITashHandler<ApplicationModel> TashHandler { get; private set; }
 
-    private readonly IDumperNameConverter _DumperNameConverter;
-    private readonly ITashAccessor _TashAccessor;
-    private readonly ISecuredHttpGate _SecuredHttpGate;
-    private readonly IWampLogScanner _WampLogScanner;
-    private readonly IScriptAndSubScriptsConsolidator _ScriptAndSubScriptsConsolidator;
-    private readonly ISecretRepository _SecretRepository;
-    private readonly IContextFactory _ContextFactory;
-    private readonly IObsoleteScriptChecker _ObsoleteScriptChecker;
-    private readonly IShowExecutionStackPopupFactory _ExecutionStackPopupFactory;
-    private readonly IExecutionStackFormatter _ExecutionStackFormatter;
-    private readonly IFolderResolver _FolderResolver;
-    private readonly IFileDialogTrickster _FileDialogTrickster;
-    private readonly IExtractSubScriptPopup _ExtractSubScriptPopup;
-    private readonly IOustScriptStatementFactory _OustScriptStatementFactory;
-    private readonly IProgressWindow _ProgressWindow;
-    private readonly ILogicalUrlRepository _LogicalUrlRepository;
-    private readonly ISelectScriptFromListPopupFactory _SelectScriptFromListPopupFactory;
-
-    public Application(IButtonNameToCommandMapper buttonNameToCommandMapper, IToggleButtonNameToHandlerMapper toggleButtonNameToHandlerMapper,
-            IGuiAndApplicationSynchronizer guiAndApplicationSynchronizer, ApplicationModel model, ISimpleLogger simpleLogger,
-            ITashAccessor tashAccessor, ISecuredHttpGate securedHttpGate, IWampLogScanner wampLogScanner,
-            IScriptAndSubScriptsConsolidator scriptAndSubScriptsConsolidator, IDumperNameConverter dumperNameConverter,
-            IObsoleteScriptChecker obsoleteScriptChecker, ISecretRepository secretRepository, IContextFactory contextFactory,
-            IExecutionStackFormatter executionStackFormatter, IShowExecutionStackPopupFactory executionStackPopupFactory, IFolderResolver folderResolver,
-            IFileDialogTrickster fileDialogTrickster, IExtractSubScriptPopup extractSubScriptPopup, IOustScriptStatementFactory oustScriptStatementFactory,
-            IProgressWindow progressWindow, IOucidLogAccessor oucidLogAccessor, IMethodNamesFromStackFramesExtractor methodNamesFromStackFramesExtractor,
-            ILogicalUrlRepository logicalUrlRepository, ISelectScriptFromListPopupFactory selectScriptFromListPopupFactory)
-        : base(buttonNameToCommandMapper, toggleButtonNameToHandlerMapper, guiAndApplicationSynchronizer, model, simpleLogger, methodNamesFromStackFramesExtractor, oucidLogAccessor) {
-        _DumperNameConverter = dumperNameConverter;
-        _TashAccessor = tashAccessor;
-        _SecuredHttpGate = securedHttpGate;
-        _WampLogScanner = wampLogScanner;
-        _ScriptAndSubScriptsConsolidator = scriptAndSubScriptsConsolidator;
-        _SecretRepository = secretRepository;
-        _ObsoleteScriptChecker = obsoleteScriptChecker;
-        _ContextFactory = contextFactory;
-        _ExecutionStackFormatter = executionStackFormatter;
-        _ExecutionStackPopupFactory = executionStackPopupFactory;
-        _FolderResolver = folderResolver;
-        _FileDialogTrickster = fileDialogTrickster;
-        _ExtractSubScriptPopup = extractSubScriptPopup;
-        _OustScriptStatementFactory = oustScriptStatementFactory;
-        _ProgressWindow = progressWindow;
-        _LogicalUrlRepository = logicalUrlRepository;
-        _SelectScriptFromListPopupFactory = selectScriptFromListPopupFactory;
-    }
-
     protected override void CreateCommandsAndHandlers() {
-        var outrapHelper = new OutrapHelper(Model, this, SimpleLogger, _FolderResolver, _OustScriptStatementFactory, MethodNamesFromStackFramesExtractor);
-        var oustSettingsHelper = new OustSettingsHelper(_SecretRepository);
+        var outrapHelper = new OutrapHelper(Model, this, SimpleLogger, folderResolver, oustScriptStatementFactory, MethodNamesFromStackFramesExtractor);
+        var oustSettingsHelper = new OustSettingsHelper(secretRepository);
         _ScriptStepLogicDictionary = new Dictionary<ScriptStepType, IScriptStepLogic> {
-            { ScriptStepType.Check, new CheckOrUncheckStep(Model, SimpleLogger, this, outrapHelper, _OustScriptStatementFactory, ScriptStepType.Check) },
-            { ScriptStepType.CheckSingle, new CheckOrUncheckSingleStep(Model, SimpleLogger, this, _OustScriptStatementFactory, ScriptStepType.CheckSingle) },
+            { ScriptStepType.Check, new CheckOrUncheckStep(Model, SimpleLogger, this, outrapHelper, oustScriptStatementFactory, ScriptStepType.Check) },
+            { ScriptStepType.CheckSingle, new CheckOrUncheckSingleStep(Model, SimpleLogger, this, oustScriptStatementFactory, ScriptStepType.CheckSingle) },
             { ScriptStepType.EndOfScript, new EndOfScriptStep(Model) },
-            { ScriptStepType.GoToUrl, new GoToUrlStep(Model, SimpleLogger, this, _WampLogScanner, _SecuredHttpGate, _SecretRepository, MethodNamesFromStackFramesExtractor, false) },
-            { ScriptStepType.Input, new InputStep(ScriptStepType.Input, Model, SimpleLogger, this, outrapHelper, _FileDialogTrickster, _OustScriptStatementFactory, oustSettingsHelper) },
-            { ScriptStepType.InputIntoSingle, new InputIntoSingleStep(Model, SimpleLogger, this, _OustScriptStatementFactory) },
-            { ScriptStepType.InvokeUrl, new GoToUrlStep(Model, SimpleLogger, this, _WampLogScanner, _SecuredHttpGate, _SecretRepository, MethodNamesFromStackFramesExtractor, true) },
-            { ScriptStepType.NotExpectedIdOrClass, new NotExpectedIdOrClassStep(Model, SimpleLogger, this, outrapHelper, _OustScriptStatementFactory) },
-            { ScriptStepType.NotExpectedContents, new RecognizeOrNotExpectedContentsStep(Model, SimpleLogger, this, outrapHelper, _OustScriptStatementFactory, ScriptStepType.NotExpectedContents) },
-            { ScriptStepType.NotExpectedSelection, new RecognizeOrNotExpectedContentsStep(Model, SimpleLogger, this, outrapHelper, _OustScriptStatementFactory, ScriptStepType.NotExpectedSelection) },
-            { ScriptStepType.Press, new PressStep(Model, SimpleLogger, this, outrapHelper, _WampLogScanner, _OustScriptStatementFactory) },
-            { ScriptStepType.PressSingle, new PressSingleStep(Model, SimpleLogger, this, _WampLogScanner, _OustScriptStatementFactory) },
-            { ScriptStepType.Recognize, new RecognizeOrNotExpectedContentsStep(Model, SimpleLogger, this, outrapHelper, _OustScriptStatementFactory, ScriptStepType.Recognize) },
-            { ScriptStepType.RecognizeSelection, new RecognizeOrNotExpectedContentsStep(Model, SimpleLogger, this, outrapHelper, _OustScriptStatementFactory, ScriptStepType.RecognizeSelection) },
-            { ScriptStepType.Select, new SelectStep(Model, SimpleLogger, this, outrapHelper, _OustScriptStatementFactory, _WampLogScanner) },
+            { ScriptStepType.GoToUrl, new GoToUrlStep(Model, SimpleLogger, this, wampLogScanner, securedHttpGate, secretRepository, MethodNamesFromStackFramesExtractor, false) },
+            { ScriptStepType.Input, new InputStep(ScriptStepType.Input, Model, SimpleLogger, this, outrapHelper, fileDialogTrickster, oustScriptStatementFactory, oustSettingsHelper) },
+            { ScriptStepType.InputIntoSingle, new InputIntoSingleStep(Model, SimpleLogger, this, oustScriptStatementFactory) },
+            { ScriptStepType.InvokeUrl, new GoToUrlStep(Model, SimpleLogger, this, wampLogScanner, securedHttpGate, secretRepository, MethodNamesFromStackFramesExtractor, true) },
+            { ScriptStepType.NotExpectedIdOrClass, new NotExpectedIdOrClassStep(Model, SimpleLogger, this, outrapHelper, oustScriptStatementFactory) },
+            { ScriptStepType.NotExpectedContents, new RecognizeOrNotExpectedContentsStep(Model, SimpleLogger, this, outrapHelper, oustScriptStatementFactory, ScriptStepType.NotExpectedContents) },
+            { ScriptStepType.NotExpectedSelection, new RecognizeOrNotExpectedContentsStep(Model, SimpleLogger, this, outrapHelper, oustScriptStatementFactory, ScriptStepType.NotExpectedSelection) },
+            { ScriptStepType.Press, new PressStep(Model, SimpleLogger, this, outrapHelper, wampLogScanner, oustScriptStatementFactory) },
+            { ScriptStepType.PressSingle, new PressSingleStep(Model, SimpleLogger, this, wampLogScanner, oustScriptStatementFactory) },
+            { ScriptStepType.Recognize, new RecognizeOrNotExpectedContentsStep(Model, SimpleLogger, this, outrapHelper, oustScriptStatementFactory, ScriptStepType.Recognize) },
+            { ScriptStepType.RecognizeSelection, new RecognizeOrNotExpectedContentsStep(Model, SimpleLogger, this, outrapHelper, oustScriptStatementFactory, ScriptStepType.RecognizeSelection) },
+            { ScriptStepType.Select, new SelectStep(Model, SimpleLogger, this, outrapHelper, oustScriptStatementFactory, wampLogScanner) },
             { ScriptStepType.SubScript, new SubScriptStep(Model) },
-            { ScriptStepType.Uncheck, new CheckOrUncheckStep(Model, SimpleLogger, this, outrapHelper, _OustScriptStatementFactory, ScriptStepType.Uncheck) },
-            { ScriptStepType.UncheckSingle, new CheckOrUncheckSingleStep(Model, SimpleLogger, this, _OustScriptStatementFactory, ScriptStepType.UncheckSingle) },
+            { ScriptStepType.Uncheck, new CheckOrUncheckStep(Model, SimpleLogger, this, outrapHelper, oustScriptStatementFactory, ScriptStepType.Uncheck) },
+            { ScriptStepType.UncheckSingle, new CheckOrUncheckSingleStep(Model, SimpleLogger, this, oustScriptStatementFactory, ScriptStepType.UncheckSingle) },
             { ScriptStepType.WaitAMinute, new WaitAMinuteStep(Model) },
             { ScriptStepType.WaitTenSeconds, new WaitTenSecondsStep(Model) },
-            { ScriptStepType.With, new WithStep(Model, SimpleLogger, this, outrapHelper, _OustScriptStatementFactory) },
-            { ScriptStepType.WithIdOrClass, new WithIdOrClassStep(Model, SimpleLogger, this, outrapHelper, _OustScriptStatementFactory) },
-            { ScriptStepType.RecognizeOkay, new RecognizeOkayStep(Model, _OustScriptStatementFactory, this) },
-            { ScriptStepType.ClearInput, new InputStep(ScriptStepType.ClearInput, Model, SimpleLogger, this, outrapHelper, _FileDialogTrickster, _OustScriptStatementFactory, oustSettingsHelper) },
-            { ScriptStepType.EndScriptIfRecognized, new RecognizeOrNotExpectedContentsStep(Model, SimpleLogger, this, outrapHelper, _OustScriptStatementFactory, ScriptStepType.EndScriptIfRecognized) },
+            { ScriptStepType.With, new WithStep(Model, SimpleLogger, this, outrapHelper, oustScriptStatementFactory) },
+            { ScriptStepType.WithIdOrClass, new WithIdOrClassStep(Model, SimpleLogger, this, outrapHelper, oustScriptStatementFactory) },
+            { ScriptStepType.RecognizeOkay, new RecognizeOkayStep(Model, oustScriptStatementFactory, this) },
+            { ScriptStepType.ClearInput, new InputStep(ScriptStepType.ClearInput, Model, SimpleLogger, this, outrapHelper, fileDialogTrickster, oustScriptStatementFactory, oustSettingsHelper) },
+            { ScriptStepType.EndScriptIfRecognized, new RecognizeOrNotExpectedContentsStep(Model, SimpleLogger, this, outrapHelper, oustScriptStatementFactory, ScriptStepType.EndScriptIfRecognized) },
+            { ScriptStepType.StartOfCleanUpSection, new StartOfCleanUpSectionStep(Model) },
         };
 
         var selectedValueSelectorHandler = new SelectedValueSelectorHandler(Model, outrapHelper, this);
-        var subScriptSelectorHandler = new SubScriptSelectorHandler(Model, this, _ContextFactory);
+        var subScriptSelectorHandler = new SubScriptSelectorHandler(Model, this, contextFactory);
         var formOrControlOrIdOrClassHandler = new FormOrControlOrIdOrClassHandler(Model, this, selectedValueSelectorHandler, _ScriptStepLogicDictionary);
         var scriptStepTypeSelectorHandler = new ScriptStepTypeSelectorHandler(Model, this, formOrControlOrIdOrClassHandler, selectedValueSelectorHandler, subScriptSelectorHandler);
-        var scriptStepSelectorHandler = new ScriptStepSelectorHandler(Model, this, _ContextFactory, scriptStepTypeSelectorHandler, formOrControlOrIdOrClassHandler,
+        var scriptStepSelectorHandler = new ScriptStepSelectorHandler(Model, this, contextFactory, scriptStepTypeSelectorHandler, formOrControlOrIdOrClassHandler,
                 subScriptSelectorHandler, selectedValueSelectorHandler, SimpleLogger);
-        var scriptSelectorHandler = new ScriptSelectorHandler(Model, scriptStepSelectorHandler, this, _ContextFactory);
+        var scriptSelectorHandler = new ScriptSelectorHandler(Model, scriptStepSelectorHandler, this, contextFactory);
         Handlers = new ApplicationHandlers {
             ScriptSelectorHandler = scriptSelectorHandler,
             ScriptStepSelectorHandler = scriptStepSelectorHandler,
@@ -129,20 +99,20 @@ public class Application : WebViewApplicationBase<IGuiAndApplicationSynchronizer
                 _ScriptStepLogicDictionary, outrapHelper, MethodNamesFromStackFramesExtractor);
         var stepOverCommand = new StepOverCommand(Model, stepIntoCommand);
         Commands = new ApplicationCommands {
-            AddOrReplaceStepCommand = new AddOrReplaceStepCommand(Model, Handlers.ScriptStepSelectorHandler, this, stepIntoCommand, _ScriptStepLogicDictionary, _ContextFactory),
-            CodeCoverageCommand = new CodeCoverageCommand(this, _LogicalUrlRepository),
-            ConsolidateCommand = new ConsolidateCommand(Model, _ScriptAndSubScriptsConsolidator, _ProgressWindow),
-            DeleteStepCommand = new DeleteStepCommand(Model, Handlers.ScriptStepSelectorHandler, this, _ContextFactory),
-            ExtractSubScriptCommand = new ExtractSubScriptCommand(Model, _ExtractSubScriptPopup, new SubScriptExtractor(_ContextFactory), Handlers.ScriptSelectorHandler, this),
-            MoveUpStepCommand = new MoveUpStepCommand(Model, Handlers.ScriptStepSelectorHandler, this, _ContextFactory),
+            AddOrReplaceStepCommand = new AddOrReplaceStepCommand(Model, Handlers.ScriptStepSelectorHandler, this, stepIntoCommand, _ScriptStepLogicDictionary, contextFactory),
+            CodeCoverageCommand = new CodeCoverageCommand(this, logicalUrlRepository),
+            ConsolidateCommand = new ConsolidateCommand(Model, scriptAndSubScriptsConsolidator, progressWindow),
+            DeleteStepCommand = new DeleteStepCommand(Model, Handlers.ScriptStepSelectorHandler, this, contextFactory),
+            ExtractSubScriptCommand = new ExtractSubScriptCommand(Model, extractSubScriptPopup, new SubScriptExtractor(contextFactory), Handlers.ScriptSelectorHandler, this),
+            MoveUpStepCommand = new MoveUpStepCommand(Model, Handlers.ScriptStepSelectorHandler, this, contextFactory),
             PlayCommand = new PlayCommand(Model, stepOverCommand),
-            RenameCommand = new RenameCommand(Model, Handlers.ScriptSelectorHandler, this, new NewScriptNameValidator(_ContextFactory), _ContextFactory),
-            DuplicateCommand = new DuplicateCommand(Model, Handlers.ScriptSelectorHandler, this, new NewScriptNameValidator(_ContextFactory), _ContextFactory),
-            ShowExecutionStackCommand = new ShowExecutionStackCommand(Model, _ExecutionStackPopupFactory, _ExecutionStackFormatter),
+            RenameCommand = new RenameCommand(Model, Handlers.ScriptSelectorHandler, this, new NewScriptNameValidator(contextFactory), contextFactory),
+            DuplicateCommand = new DuplicateCommand(Model, Handlers.ScriptSelectorHandler, this, new NewScriptNameValidator(contextFactory), contextFactory),
+            ShowExecutionStackCommand = new ShowExecutionStackCommand(Model, executionStackPopupFactory, executionStackFormatter),
             StepIntoCommand = stepIntoCommand,
             StepOverCommand = stepOverCommand,
-            StopCodeCoverageCommand = new StopCodeCoverageCommand(Model, _DumperNameConverter, this, _LogicalUrlRepository),
-            SelectScriptFromListCommand = new SelectScriptFromListCommand(Model, _SelectScriptFromListPopupFactory, scriptSelectorHandler)
+            StopCodeCoverageCommand = new StopCodeCoverageCommand(Model, dumperNameConverter, this, logicalUrlRepository),
+            SelectScriptFromListCommand = new SelectScriptFromListCommand(Model, selectScriptFromListPopupFactory, scriptSelectorHandler)
         };
 
         var selectors = new Dictionary<string, ISelector> {
@@ -151,10 +121,10 @@ public class Application : WebViewApplicationBase<IGuiAndApplicationSynchronizer
             { nameof(IApplicationModel.FormOrControlOrIdOrClass), Model.FormOrControlOrIdOrClass }, { nameof(IApplicationModel.SubScript), Model.SubScript }
         };
 
-        var communicator = new TashCommunicator(_TashAccessor, this, SimpleLogger, MethodNamesFromStackFramesExtractor);
-        var selectorHandler = new TashSelectorHandler(Handlers, _ObsoleteScriptChecker, SimpleLogger, communicator, selectors, MethodNamesFromStackFramesExtractor);
+        var communicator = new TashCommunicator(tashAccessor, this, SimpleLogger, MethodNamesFromStackFramesExtractor);
+        var selectorHandler = new TashSelectorHandler(Handlers, obsoleteScriptChecker, SimpleLogger, communicator, selectors, MethodNamesFromStackFramesExtractor);
         var verifyAndSetHandler = new TashVerifyAndSetHandler(SimpleLogger, selectorHandler, communicator, MethodNamesFromStackFramesExtractor, selectors);
-        TashHandler = new TashHandler(_TashAccessor, SimpleLogger, ButtonNameToCommandMapper, ToggleButtonNameToHandlerMapper, this, verifyAndSetHandler,
+        TashHandler = new TashHandler(tashAccessor, SimpleLogger, ButtonNameToCommandMapper, ToggleButtonNameToHandlerMapper, this, verifyAndSetHandler,
             selectorHandler, communicator, MethodNamesFromStackFramesExtractor);
     }
 
@@ -165,11 +135,11 @@ public class Application : WebViewApplicationBase<IGuiAndApplicationSynchronizer
         Handlers.ScriptStepTypeSelectorHandler.UpdateSelectableScriptStepTypes();
 
         var errorsAndInfos = new ErrorsAndInfos();
-        var oustUtilitiesUrl = await _LogicalUrlRepository.GetUrlAsync("OustUtilitiesJs", errorsAndInfos);
+        string oustUtilitiesUrl = await logicalUrlRepository.GetUrlAsync("OustUtilitiesJs", errorsAndInfos);
         if (errorsAndInfos.AnyErrors()) {
             throw new Exception(errorsAndInfos.ErrorsToString());
         }
-        var jQueryUrl = await _LogicalUrlRepository.GetUrlAsync("JQuery", errorsAndInfos);
+        string jQueryUrl = await logicalUrlRepository.GetUrlAsync("JQuery", errorsAndInfos);
         if (errorsAndInfos.AnyErrors()) {
             throw new Exception(errorsAndInfos.ErrorsToString());
         }
@@ -209,7 +179,7 @@ public class Application : WebViewApplicationBase<IGuiAndApplicationSynchronizer
     }
 
     public async Task UpdateFreeCodeLabelTextAsync() {
-        var stepType = Model.ScriptStepType.SelectionMade ? (ScriptStepType)int.Parse(Model.ScriptStepType.SelectedItem.Guid) : ScriptStepType.EndOfScript;
+        ScriptStepType stepType = Model.ScriptStepType.SelectionMade ? (ScriptStepType)int.Parse(Model.ScriptStepType.SelectedItem.Guid) : ScriptStepType.EndOfScript;
         Model.FreeText.LabelText = _ScriptStepLogicDictionary[stepType].FreeCodeLabelText;
         Model.FreeText.Enabled = Model.FreeText.LabelText != Properties.Resources.FreeTextTitle;
         if (!Model.FreeText.Enabled) {

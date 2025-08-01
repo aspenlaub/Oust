@@ -1,11 +1,11 @@
-using Aspenlaub.Net.GitHub.CSharp.Oust.Application.Interfaces;
+﻿using Aspenlaub.Net.GitHub.CSharp.Oust.Application.Interfaces;
 using Aspenlaub.Net.GitHub.CSharp.Oust.Model.Entities;
 using Aspenlaub.Net.GitHub.CSharp.Oust.Model.Interfaces;
 using Aspenlaub.Net.GitHub.CSharp.VishizhukelNet.Entities;
 
 namespace Aspenlaub.Net.GitHub.CSharp.Oust.Application.StepTypes;
 
-public class WaitTenSecondsStep(IApplicationModel model) : IScriptStepLogic {
+internal class StartOfCleanUpSectionStep(IApplicationModel model) : IScriptStepLogic {
     public string FreeCodeLabelText => Properties.Resources.FreeTextTitle;
 
     public Task<bool> CanBeAddedOrReplaceExistingStepAsync() {
