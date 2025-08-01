@@ -13,7 +13,7 @@ internal class StartOfCleanUpSectionStep(IApplicationModel model) : IScriptStepL
     }
 
     public IScriptStep CreateScriptStepToAdd() {
-        return new ScriptStep { ScriptStepType = ScriptStepType.WaitTenSeconds };
+        return new ScriptStep { ScriptStepType = ScriptStepType.StartOfCleanUpSection };
     }
 
     public async Task<bool> ShouldBeEnabledAsync() {
@@ -21,7 +21,7 @@ internal class StartOfCleanUpSectionStep(IApplicationModel model) : IScriptStepL
     }
 
     public async Task ExecuteAsync() {
-        await Task.Delay(TimeSpan.FromSeconds(12));
+        await Task.CompletedTask;
     }
 
     public void SetFormOrControlOrIdOrClassTitle() {
