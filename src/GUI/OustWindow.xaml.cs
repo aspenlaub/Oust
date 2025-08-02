@@ -131,6 +131,7 @@ public partial class OustWindow : IAsyncDisposable {
         guiToAppGate.WireButtonAndCommand(ExtractSubScript, commands.ExtractSubScriptCommand, buttonNameToCommandMapper);
         guiToAppGate.WireButtonAndCommand(MoveUp, commands.MoveUpStepCommand, buttonNameToCommandMapper);
         guiToAppGate.WireButtonAndCommand(Play, commands.PlayCommand, buttonNameToCommandMapper);
+        guiToAppGate.WireButtonAndCommand(Recover, commands.RecoverCommand, buttonNameToCommandMapper);
         guiToAppGate.WireButtonAndCommand(RenameScript, commands.RenameCommand, buttonNameToCommandMapper);
         guiToAppGate.WireButtonAndCommand(DuplicateScript, commands.DuplicateCommand, buttonNameToCommandMapper);
         guiToAppGate.WireButtonAndCommand(ShowExecutionStack, commands.ShowExecutionStackCommand, buttonNameToCommandMapper);

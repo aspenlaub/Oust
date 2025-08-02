@@ -10,6 +10,7 @@ public interface IApplicationCommands {
     ICommand ExtractSubScriptCommand { get; set; }
     ICommand MoveUpStepCommand { get; set; }
     ICommand PlayCommand { get; set; }
+    ICommand RecoverCommand { get; set; }
     ICommand ShowExecutionStackCommand { get; set; }
     ICommand RenameCommand { get; set; }
     ICommand DuplicateCommand { get; set; }

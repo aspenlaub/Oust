@@ -41,6 +41,7 @@ public class ApplicationModel : WebViewApplicationModelBase, IApplicationModel {
     public Button StepOver { get; } = new();
     public Button StepInto { get; } = new();
     public Button Play { get; } = new();
+    public Button Recover { get; } = new();
     public Button MoveUp { get; } = new();
     public Button Delete { get; } = new();
     public Button CodeCoverage { get; } = new();

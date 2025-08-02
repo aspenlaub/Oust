@@ -106,6 +106,7 @@ public class Application(IButtonNameToCommandMapper buttonNameToCommandMapper,
             ExtractSubScriptCommand = new ExtractSubScriptCommand(Model, extractSubScriptPopup, new SubScriptExtractor(contextFactory), Handlers.ScriptSelectorHandler, this),
             MoveUpStepCommand = new MoveUpStepCommand(Model, Handlers.ScriptStepSelectorHandler, this, contextFactory),
             PlayCommand = new PlayCommand(Model, stepOverCommand),
+            RecoverCommand = new RecoverCommand(Model, stepOverCommand, Handlers.ScriptStepSelectorHandler),
             RenameCommand = new RenameCommand(Model, Handlers.ScriptSelectorHandler, this, new NewScriptNameValidator(contextFactory), contextFactory),
             DuplicateCommand = new DuplicateCommand(Model, Handlers.ScriptSelectorHandler, this, new NewScriptNameValidator(contextFactory), contextFactory),
             ShowExecutionStackCommand = new ShowExecutionStackCommand(Model, executionStackPopupFactory, executionStackFormatter),
@@ -195,6 +196,7 @@ public class Application(IButtonNameToCommandMapper buttonNameToCommandMapper,
         Model.ExtractSubScript.Enabled = await Commands.ExtractSubScriptCommand.ShouldBeEnabledAsync();
         Model.MoveUp.Enabled = await Commands.MoveUpStepCommand.ShouldBeEnabledAsync();
         Model.Play.Enabled = await Commands.PlayCommand.ShouldBeEnabledAsync();
+        Model.Recover.Enabled = await Commands.RecoverCommand.ShouldBeEnabledAsync();
         Model.RenameScript.Enabled = await Commands.RenameCommand.ShouldBeEnabledAsync();
         Model.DuplicateScript.Enabled = await Commands.DuplicateCommand.ShouldBeEnabledAsync();
         Model.ShowExecutionStack.Enabled = await Commands.ShowExecutionStackCommand.ShouldBeEnabledAsync();

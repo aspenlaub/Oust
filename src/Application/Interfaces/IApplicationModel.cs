@@ -41,6 +41,7 @@ public interface IApplicationModel : IWebViewApplicationModelBase {
     Button StepOver { get; }
     Button StepInto { get; }
     Button Play { get; }
+    Button Recover { get; }
     Button MoveUp { get; }
     Button Delete { get; }
     Button CodeCoverage { get; }

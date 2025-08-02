@@ -76,6 +76,9 @@
             <Button x:Name="Play" Height="20" Width="20" Padding="0" Margin="5"  Background="Beige" ToolTip="Play" >
                 <Image Source="Resources/play_20.png" />
             </Button>
+            <Button x:Name="Recover" Height="20" Width="20" Padding="0" Margin="5"  Background="Beige" ToolTip="Play recovery steps" >
+                <Image Source="Resources/recover_20.png" />
+            </Button>
             <Button x:Name="MoveUp" Height="20" Width="20" Padding="0" Margin="5"  Background="Beige" ToolTip="Move up selected script step" >
                 <Image Source="Resources/up_20.png" />
             </Button>

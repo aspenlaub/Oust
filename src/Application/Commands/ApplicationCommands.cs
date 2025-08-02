@@ -11,6 +11,7 @@ public class ApplicationCommands : IApplicationCommands {
     public ICommand ExtractSubScriptCommand { get; set; }
     public ICommand MoveUpStepCommand { get; set; }
     public ICommand PlayCommand { get; set; }
+    public ICommand RecoverCommand { get; set; }
     public ICommand RenameCommand { get; set; }
     public ICommand DuplicateCommand { get; set; }
     public ICommand ShowExecutionStackCommand { get; set; }

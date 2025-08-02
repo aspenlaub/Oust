@@ -237,6 +237,9 @@
   <data name="NoIdOrClassContext" xml:space="preserve">
     <value>No id or class context identified in preceding step/-s</value>
   </data>
+  <data name="NoStepOfTypeStartOfCleanUpSection" xml:space="preserve">
+    <value>No step exists of type 'Start of cleanup section'</value>
+  </data>
   <data name="NotExpectedContentsTitle" xml:space="preserve">
     <value>Unexp. contents</value>
   </data>

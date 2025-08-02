@@ -51,6 +51,7 @@
     <None Remove="GUI\Resources\extract_20.png" />
     <None Remove="GUI\Resources\oust.ico" />
     <None Remove="GUI\Resources\play_20.png" />
+    <None Remove="GUI\Resources\recover_20.png" />
     <None Remove="GUI\Resources\stack_20.png" />
     <None Remove="GUI\Resources\stepinto_20.png" />
     <None Remove="GUI\Resources\stepover_20.png" />
@@ -76,6 +77,9 @@
     <Content Include="GUI\Resources\play_20.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+	<Content Include="GUI\Resources\recover_20.png">
+	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	</Content>
     <Content Include="GUI\Resources\stack_20.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

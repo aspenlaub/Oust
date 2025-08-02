@@ -421,6 +421,15 @@ namespace Aspenlaub.Net.GitHub.CSharp.Oust.Application.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to No step exists of type &apos;Start of cleanup section&apos;.
+        /// </summary>
+        internal static string NoStepOfTypeStartOfCleanUpSection {
+            get {
+                return ResourceManager.GetString("NoStepOfTypeStartOfCleanUpSection", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Unexp. contents.
         /// </summary>
         internal static string NotExpectedContentsTitle {
