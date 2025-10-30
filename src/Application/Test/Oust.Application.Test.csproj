@@ -20,10 +20,10 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.Build.Tasks.Core" Version="17.14.8" />
+    <PackageReference Include="Microsoft.Build.Tasks.Core" Version="17.14.28" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.0" />
-    <PackageReference Include="MSTest.TestAdapter" Version="3.11.0" />
-    <PackageReference Include="MSTest.TestFramework" Version="3.11.0" />
+    <PackageReference Include="MSTest.TestAdapter" Version="4.0.1" />
+    <PackageReference Include="MSTest.TestFramework" Version="4.0.1" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Model\Oust.Model.csproj" />
