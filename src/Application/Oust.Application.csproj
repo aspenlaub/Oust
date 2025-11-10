@@ -37,6 +37,6 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.Build.Tasks.Core" Version="17.14.28" />
-    <PackageReference Include="VishizhukelNetWeb" Version="2.0.2288.870" />
+    <PackageReference Include="VishizhukelNetWeb" Version="2.0.2301.1232" />
   </ItemGroup>
 </Project>
