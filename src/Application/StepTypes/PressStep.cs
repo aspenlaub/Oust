@@ -11,24 +11,16 @@ using Aspenlaub.Net.GitHub.CSharp.VishizhukelNetWeb.Interfaces;
 
 namespace Aspenlaub.Net.GitHub.CSharp.Oust.Application.StepTypes;
 
-public class PressStep : IScriptStepLogic {
-    public IApplicationModel Model { get; init; }
-    public IGuiAndWebViewAppHandler<ApplicationModel> GuiAndAppHandler { get; init; }
-    public ISimpleLogger SimpleLogger { get; init; }
-    private readonly IOutrapHelper _OutrapHelper;
-    private readonly IWampLogScanner _WampLogScanner;
-    private readonly IOustScriptStatementFactory _OustScriptStatementFactory;
+public class PressStep(IApplicationModel model, ISimpleLogger simpleLogger,
+        IGuiAndWebViewAppHandler<ApplicationModel> guiAndAppHandler,
+        IOutrapHelper outrapHelper, IWampLogScanner wampLogScanner,
+        IOustScriptStatementFactory oustScriptStatementFactory)
+            : IScriptStepLogic {
+    public IApplicationModel Model { get; init; } = model;
+    public IGuiAndWebViewAppHandler<ApplicationModel> GuiAndAppHandler { get; init; } = guiAndAppHandler;
+    public ISimpleLogger SimpleLogger { get; init; } = simpleLogger;
 
     public string FreeCodeLabelText => Properties.Resources.FreeTextTitle;
-
-    public PressStep(IApplicationModel model, ISimpleLogger simpleLogger, IGuiAndWebViewAppHandler<ApplicationModel> guiAndAppHandler, IOutrapHelper outrapHelper, IWampLogScanner wampLogScanner, IOustScriptStatementFactory oustScriptStatementFactory) {
-        Model = model;
-        GuiAndAppHandler = guiAndAppHandler;
-        SimpleLogger = simpleLogger;
-        _OutrapHelper = outrapHelper;
-        _WampLogScanner = wampLogScanner;
-        _OustScriptStatementFactory = oustScriptStatementFactory;
-    }
 
     public async Task<bool> CanBeAddedOrReplaceExistingStepAsync() {
         if (!await ShouldBeEnabledAsync()) { return false; }
@@ -50,37 +42,37 @@ public class PressStep : IScriptStepLogic {
 
     public async Task ExecuteAsync() {
         using (SimpleLogger.BeginScope(SimpleLoggingScopeId.Create(nameof(PressStep) + nameof(IScriptStepLogic.ExecuteAsync)))) {
-            var startOfExecutionTimeStamp = DateTime.Now;
+            DateTime startOfExecutionTimeStamp = DateTime.Now;
 
-            var scriptStatement = _OustScriptStatementFactory.CreateDoesDocumentHaveDivLikeWithIdOrNthOccurrenceOfClassStatement(Model.WithScriptStepOutrapForm.Guid, Model.WithScriptStepOutrapFormInstanceNumber, Model.WithScriptStepOutrapForm.Name);
-            var scriptCallResponse = await GuiAndAppHandler.RunScriptAsync<ScriptCallResponse>(scriptStatement, false, true);
+            IScriptStatement scriptStatement = oustScriptStatementFactory.CreateDoesDocumentHaveDivLikeWithIdOrNthOccurrenceOfClassStatement(Model.WithScriptStepOutrapForm.Guid, Model.WithScriptStepOutrapFormInstanceNumber, Model.WithScriptStepOutrapForm.Name);
+            ScriptCallResponse scriptCallResponse = await GuiAndAppHandler.RunScriptAsync<ScriptCallResponse>(scriptStatement, false, true);
             if (scriptCallResponse.Success.Inconclusive || !scriptCallResponse.Success.YesNo) { return; }
 
-            var ancestorDomElementJson = JsonSerializer.Serialize(scriptCallResponse.DomElement);
+            string ancestorDomElementJson = JsonSerializer.Serialize(scriptCallResponse.DomElement);
 
-            scriptStatement = _OustScriptStatementFactory.CreateDoesDocumentContainDescendantElementOfClassStatement(ancestorDomElementJson, Model.ScriptStepOutOfControl.Guid, Model.ScriptStepOutOfControl.Name, Model.WithScriptStepOutrapForm.Name, Model.WithScriptStepOutrapFormInstanceNumber);
+            scriptStatement = oustScriptStatementFactory.CreateDoesDocumentContainDescendantElementOfClassStatement(ancestorDomElementJson, Model.ScriptStepOutOfControl.Guid, Model.ScriptStepOutOfControl.Name, Model.WithScriptStepOutrapForm.Name, Model.WithScriptStepOutrapFormInstanceNumber);
             scriptCallResponse = await GuiAndAppHandler.RunScriptAsync<ScriptCallResponse>(scriptStatement, false, true);
             if (scriptCallResponse.Success.Inconclusive || !scriptCallResponse.Success.YesNo) {
                 return;
             }
 
-            var domElementJson = JsonSerializer.Serialize(scriptCallResponse.DomElement);
-            scriptStatement = _OustScriptStatementFactory.CreateDoesDocumentContainDescendantElementOfIdStatement(domElementJson, "selectuploadfile", "");
+            string domElementJson = JsonSerializer.Serialize(scriptCallResponse.DomElement);
+            scriptStatement = oustScriptStatementFactory.CreateDoesDocumentContainDescendantElementOfIdStatement(domElementJson, "selectuploadfile", "");
             scriptCallResponse = await GuiAndAppHandler.RunScriptAsync<ScriptCallResponse>(scriptStatement, true, true);
-            var isUpload = scriptCallResponse.Success.YesNo && !scriptCallResponse.Success.Inconclusive;
+            bool isUpload = scriptCallResponse.Success.YesNo && !scriptCallResponse.Success.Inconclusive;
 
-            scriptStatement = _OustScriptStatementFactory.CreateDoesDocumentContainAnchorOrSubmitStatement(domElementJson, isUpload ? 2 : 1);
+            scriptStatement = oustScriptStatementFactory.CreateDoesDocumentContainAnchorOrSubmitStatement(domElementJson, isUpload ? 2 : 1);
             scriptCallResponse = await GuiAndAppHandler.RunScriptAsync<ScriptCallResponse>(scriptStatement, false, true);
             if (scriptCallResponse.Success.Inconclusive || !scriptCallResponse.Success.YesNo) { return; }
 
             domElementJson = JsonSerializer.Serialize(scriptCallResponse.DomElement);
-            scriptStatement = _OustScriptStatementFactory.CreateClickAnchorStatement(domElementJson);
+            scriptStatement = oustScriptStatementFactory.CreateClickAnchorStatement(domElementJson);
             scriptCallResponse = await GuiAndAppHandler.RunScriptAsync<ScriptCallResponse>(scriptStatement, false, true);
             if (scriptCallResponse.Success.Inconclusive || !scriptCallResponse.Success.YesNo) { return; }
 
             await GuiAndAppHandler.WaitUntilNotNavigatingAnymoreAsync();
 
-            _WampLogScanner.WaitUntilLogFolderIsStable(startOfExecutionTimeStamp, out var errorMessage);
+            wampLogScanner.WaitUntilLogFolderIsStable(startOfExecutionTimeStamp, out string errorMessage);
 
             await GuiAndAppHandler.WaitUntilNotNavigatingAnymoreAsync();
 
@@ -94,6 +86,6 @@ public class PressStep : IScriptStepLogic {
     }
 
     public async Task<IList<Selectable>> SelectableFormsOrControlsOrIdsOrClassesAsync() {
-        return await _OutrapHelper.OutOfControlChoicesAsync(ScriptStepType.Press, Model.WithScriptStepOutrapForm?.Guid, Model.WithScriptStepOutrapFormInstanceNumber);
+        return await outrapHelper.OutOfControlChoicesAsync(ScriptStepType.Press, Model.WithScriptStepOutrapForm?.Guid, Model.WithScriptStepOutrapFormInstanceNumber);
     }
 }

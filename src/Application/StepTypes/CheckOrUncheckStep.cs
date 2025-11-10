@@ -3,32 +3,21 @@ using Aspenlaub.Net.GitHub.CSharp.Oust.Application.Entities;
 using Aspenlaub.Net.GitHub.CSharp.Oust.Application.Interfaces;
 using Aspenlaub.Net.GitHub.CSharp.Oust.Model.Entities;
 using Aspenlaub.Net.GitHub.CSharp.Oust.Model.Interfaces;
-using Aspenlaub.Net.GitHub.CSharp.Pegh.Interfaces;
 using Aspenlaub.Net.GitHub.CSharp.VishizhukelNet.Entities;
 using Aspenlaub.Net.GitHub.CSharp.VishizhukelNet.Enums;
 using Aspenlaub.Net.GitHub.CSharp.VishizhukelNetWeb.Interfaces;
 
 namespace Aspenlaub.Net.GitHub.CSharp.Oust.Application.StepTypes;
 
-public class CheckOrUncheckStep : IScriptStepLogic {
-    public IApplicationModel Model { get; init; }
-    public IGuiAndWebViewAppHandler<ApplicationModel> GuiAndAppHandler { get; init; }
-    public ISimpleLogger SimpleLogger { get; init; }
-    private readonly IOutrapHelper _OutrapHelper;
-    private readonly IOustScriptStatementFactory _OustScriptStatementFactory;
-
-    private readonly ScriptStepType _ScriptStepType;
+public class CheckOrUncheckStep(IApplicationModel model,
+        IGuiAndWebViewAppHandler<ApplicationModel> guiAndAppHandler,
+        IOutrapHelper outrapHelper, IOustScriptStatementFactory oustScriptStatementFactory,
+        IWampLogScanner wampLogScanner, ScriptStepType stepType)
+            : IScriptStepLogic {
+    public IApplicationModel Model { get; init; } = model;
+    public IGuiAndWebViewAppHandler<ApplicationModel> GuiAndAppHandler { get; init; } = guiAndAppHandler;
 
     public string FreeCodeLabelText => Properties.Resources.FreeTextTitle;
-
-    public CheckOrUncheckStep(IApplicationModel model, ISimpleLogger simpleLogger, IGuiAndWebViewAppHandler<ApplicationModel> guiAndAppHandler, IOutrapHelper outrapHelper, IOustScriptStatementFactory oustScriptStatementFactory, ScriptStepType stepType) {
-        Model = model;
-        GuiAndAppHandler = guiAndAppHandler;
-        SimpleLogger = simpleLogger;
-        _OutrapHelper = outrapHelper;
-        _ScriptStepType = stepType;
-        _OustScriptStatementFactory = oustScriptStatementFactory;
-    }
 
     public async Task<bool> CanBeAddedOrReplaceExistingStepAsync() {
         if (!await ShouldBeEnabledAsync()) { return false; }
@@ -37,34 +26,38 @@ public class CheckOrUncheckStep : IScriptStepLogic {
     }
 
     public IScriptStep CreateScriptStepToAdd() {
-        return new ScriptStep { ScriptStepType = _ScriptStepType,
+        return new ScriptStep { ScriptStepType = stepType,
             ControlGuid = Model.ScriptStepOutOfControl.Guid,
             ControlName = Model.ScriptStepOutOfControl.Name
         };
     }
 
     public async Task<bool> ShouldBeEnabledAsync() {
-        if (_ScriptStepType != ScriptStepType.Check && _ScriptStepType != ScriptStepType.Uncheck) { return false; }
+        if (stepType != ScriptStepType.Check && stepType != ScriptStepType.Uncheck) { return false; }
         return await Task.FromResult(true);
     }
 
     public async Task ExecuteAsync() {
-        var scriptStatement = _OustScriptStatementFactory.CreateDoesDocumentHaveDivLikeWithIdOrNthOccurrenceOfClassStatement(Model.WithScriptStepOutrapForm.Guid, Model.WithScriptStepOutrapFormInstanceNumber, Model.WithScriptStepOutrapForm.Name);
-        var scriptCallResponse = await GuiAndAppHandler.RunScriptAsync<ScriptCallResponse>(scriptStatement, false, true);
+        DateTime startOfExecutionTimeStamp = DateTime.Now;
+
+        IScriptStatement scriptStatement = oustScriptStatementFactory.CreateDoesDocumentHaveDivLikeWithIdOrNthOccurrenceOfClassStatement(Model.WithScriptStepOutrapForm.Guid, Model.WithScriptStepOutrapFormInstanceNumber, Model.WithScriptStepOutrapForm.Name);
+        ScriptCallResponse scriptCallResponse = await GuiAndAppHandler.RunScriptAsync<ScriptCallResponse>(scriptStatement, false, true);
         if (scriptCallResponse.Success.Inconclusive || !scriptCallResponse.Success.YesNo) { return; }
 
-        var ancestorDomElementJson = JsonSerializer.Serialize(scriptCallResponse.DomElement);
-        scriptStatement = _OustScriptStatementFactory.CreateDoesDocumentContainDescendantElementOfClassStatement(ancestorDomElementJson, Model.ScriptStepOutOfControl.Guid, Model.ScriptStepOutOfControl.Name, "", 0);
+        string ancestorDomElementJson = JsonSerializer.Serialize(scriptCallResponse.DomElement);
+        scriptStatement = oustScriptStatementFactory.CreateDoesDocumentContainDescendantElementOfClassStatement(ancestorDomElementJson, Model.ScriptStepOutOfControl.Guid, Model.ScriptStepOutOfControl.Name, "", 0);
         scriptCallResponse = await GuiAndAppHandler.RunScriptAsync<ScriptCallResponse>(scriptStatement, false, true);
         if (scriptCallResponse.Success.Inconclusive || !scriptCallResponse.Success.YesNo) { return; }
 
-        var domElementJson = JsonSerializer.Serialize(scriptCallResponse.DomElement);
-        scriptStatement = _OustScriptStatementFactory.CreateCheckOrUncheckStatement(domElementJson, _ScriptStepType == ScriptStepType.Check);
+        string domElementJson = JsonSerializer.Serialize(scriptCallResponse.DomElement);
+        scriptStatement = oustScriptStatementFactory.CreateCheckOrUncheckStatement(domElementJson, stepType == ScriptStepType.Check);
         scriptCallResponse = await GuiAndAppHandler.RunScriptAsync<ScriptCallResponse>(scriptStatement, false, true);
         if (scriptCallResponse.Success.Inconclusive || !scriptCallResponse.Success.YesNo) { return; }
 
-        Model.Status.Text = "";
-        Model.Status.Type = StatusType.None;
+        wampLogScanner.WaitUntilLogFolderIsStable(startOfExecutionTimeStamp, out string errorMessage);
+
+        Model.Status.Text = errorMessage;
+        Model.Status.Type = string.IsNullOrWhiteSpace(errorMessage) ? StatusType.None : StatusType.Error;
     }
 
     public void SetFormOrControlOrIdOrClassTitle() {
@@ -72,6 +65,6 @@ public class CheckOrUncheckStep : IScriptStepLogic {
     }
 
     public async Task<IList<Selectable>> SelectableFormsOrControlsOrIdsOrClassesAsync() {
-        return await _OutrapHelper.OutOfControlChoicesAsync(_ScriptStepType, Model.WithScriptStepOutrapForm?.Guid, Model.WithScriptStepOutrapFormInstanceNumber);
+        return await outrapHelper.OutOfControlChoicesAsync(stepType, Model.WithScriptStepOutrapForm?.Guid, Model.WithScriptStepOutrapFormInstanceNumber);
     }
 }
