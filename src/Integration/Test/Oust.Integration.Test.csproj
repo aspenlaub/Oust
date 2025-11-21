@@ -19,11 +19,11 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.Build.Tasks.Core" Version="17.14.28" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.0" />
-    <PackageReference Include="MSTest.TestAdapter" Version="4.0.1" />
-    <PackageReference Include="MSTest.TestFramework" Version="4.0.1" />
-    <PackageReference Include="VishnetIntegrationTestTools" Version="2.0.2288.785" />
+    <PackageReference Include="Microsoft.Build.Tasks.Core" Version="18.0.2" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.1" />
+    <PackageReference Include="MSTest.TestAdapter" Version="4.0.2" />
+    <PackageReference Include="MSTest.TestFramework" Version="4.0.2" />
+    <PackageReference Include="VishnetIntegrationTestTools" Version="2.0.2310.1274" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Application\Test\Oust.Application.Test.csproj" />
