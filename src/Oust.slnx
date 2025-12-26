@@ -1,0 +1,7 @@
+<Solution>
+  <Project Path="Application/Oust.Application.csproj" />
+  <Project Path="Application/Test/Oust.Application.Test.csproj" />
+  <Project Path="Integration/Test/Oust.Integration.Test.csproj" />
+  <Project Path="Model/Oust.Model.csproj" />
+  <Project Path="Oust.csproj" />
+</Solution>
