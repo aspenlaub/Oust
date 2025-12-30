@@ -42,7 +42,7 @@ public class SubScriptExtractorTest {
         var script = context.Scripts.Include(s => s.ScriptSteps).SingleOrDefault(s => s.Guid == TestDataGenerator.Script2Guid);
         Assert.IsNotNull(script);
         var orderedScriptSteps = script.OrderedScriptSteps();
-        Assert.AreEqual(4, orderedScriptSteps.Count);
+        Assert.HasCount(4, orderedScriptSteps);
         var sut = new SubScriptExtractor(contextFactory);
         const string subScriptNameTemplate = $"Sub script of {TestDataGenerator.Script2Name}";
         var extractSubScriptSpecification = new ExtractSubScriptSpecification(subScriptNameTemplate, new List<Selectable> {
@@ -58,14 +58,14 @@ public class SubScriptExtractorTest {
         var script = context.Scripts.Include(s => s.ScriptSteps).SingleOrDefault(s => s.Guid == TestDataGenerator.Script2Guid);
         Assert.IsNotNull(script);
         var newOrderedScriptSteps = script.OrderedScriptSteps();
-        Assert.AreEqual(3, newOrderedScriptSteps.Count);
+        Assert.HasCount(3, newOrderedScriptSteps);
         Assert.AreEqual(orderedScriptSteps[0].Guid, newOrderedScriptSteps[0].Guid);
         Assert.AreEqual(ScriptStepType.SubScript, newOrderedScriptSteps[1].ScriptStepType);
         Assert.AreEqual(orderedScriptSteps[3].Guid, newOrderedScriptSteps[2].Guid);
         var subScript = context.Scripts.Include(s => s.ScriptSteps).SingleOrDefault(s => s.Guid == newOrderedScriptSteps[1].SubScriptGuid);
         Assert.IsNotNull(subScript);
         var orderedSubScriptSteps = subScript.OrderedScriptSteps();
-        Assert.AreEqual(3, orderedSubScriptSteps.Count);
+        Assert.HasCount(3, orderedSubScriptSteps);
         Assert.AreEqual(orderedScriptSteps[1].ToString(), orderedSubScriptSteps[0].ToString());
         Assert.AreEqual(orderedScriptSteps[2].ToString(), orderedSubScriptSteps[1].ToString());
         Assert.AreNotEqual(orderedScriptSteps[1].ToString(), orderedSubScriptSteps[0].Guid);

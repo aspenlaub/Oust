@@ -32,7 +32,7 @@ public class OustWindowPressStepTest : OustIntegrationTestBase {
         tasks.Clear();
 
         var paragraphsBefore = (await sut.RemotelyGetValueAsync(process, nameof(IApplicationModel.WebViewParagraphs))).Split('\t').ToList();
-        Assert.AreEqual(11, paragraphsBefore.Count);
+        Assert.HasCount(11, paragraphsBefore);
         await Task.Delay(2000);
 
         tasks.Add(sut.CreateSetValueTask(process, nameof(IApplicationModel.ScriptStepType), Enum.GetName(typeof(ScriptStepType), ScriptStepType.Press)));
@@ -46,7 +46,7 @@ public class OustWindowPressStepTest : OustIntegrationTestBase {
         for (var i = 0; i < 200 && !success; i++) {
             await Task.Delay(50);
             paragraphsAfter = (await sut.RemotelyGetValueAsync(process, nameof(IApplicationModel.WebViewParagraphs))).Split('\t').ToList();
-            Assert.AreEqual(11, paragraphsAfter.Count);
+            Assert.HasCount(11, paragraphsAfter);
             success = paragraphsBefore[3] != paragraphsAfter[3];
         }
         Assert.IsTrue(success);

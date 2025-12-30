@@ -37,7 +37,7 @@ public class OustWindowSelectStepTest : OustIntegrationTestBase {
     }
 
     protected async Task OnTaskCompleted(int i, ControllableProcessTask _) {
-        Assert.IsTrue(i >= 0);
+        Assert.IsGreaterThanOrEqualTo(0, i);
         await Task.CompletedTask;
     }
 }

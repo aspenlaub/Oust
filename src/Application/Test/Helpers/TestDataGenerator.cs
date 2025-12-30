@@ -85,23 +85,23 @@ public class TestDataGenerator {
         await GenerateTestDataAsync();
         await using var context = await FreshContextAsync();
         var scripts = context.Scripts.OrderBy(s => s.Name).Include(s => s.ScriptSteps).ToList();
-        Assert.AreEqual(3, scripts.Count);
+        Assert.HasCount(3, scripts);
         var script = scripts[0];
         var scriptSteps = script.OrderedScriptSteps();
         Assert.AreEqual(Script1Guid, script.Guid);
-        Assert.AreEqual(3, scriptSteps.Count);
+        Assert.HasCount(3, scriptSteps);
         Assert.AreEqual(ScriptStep11Guid, scriptSteps[0].Guid);
         Assert.AreEqual(ScriptStep12Guid, scriptSteps[1].Guid);
         script = scripts[1];
         scriptSteps = script.OrderedScriptSteps();
         Assert.AreEqual(Script2Name, script.Name);
-        Assert.AreEqual(4, scriptSteps.Count);
+        Assert.HasCount(4, scriptSteps);
         Assert.AreEqual(1, scriptSteps[0].StepNumber);
         Assert.AreEqual(await ScriptStep22UrlAsync(), scriptSteps[1].Url);
         script = scripts[2];
         scriptSteps = script.OrderedScriptSteps();
         Assert.AreEqual(Script4Name, script.Name);
-        Assert.AreEqual(2, scriptSteps.Count);
+        Assert.HasCount(2, scriptSteps);
         Assert.AreEqual(await ScriptStep41UrlAsync(), scriptSteps[0].Url);
     }
 

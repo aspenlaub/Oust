@@ -8,6 +8,7 @@ using Aspenlaub.Net.GitHub.CSharp.Tash;
 using Autofac;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
+[assembly: DoNotParallelize]
 namespace Aspenlaub.Net.GitHub.CSharp.Oust.Integration.Test;
 
 [TestClass]

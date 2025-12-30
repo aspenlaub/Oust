@@ -14,6 +14,7 @@ using Autofac;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
+[assembly: DoNotParallelize]
 namespace Aspenlaub.Net.GitHub.CSharp.Oust.Application.Test.Components;
 
 [TestClass]
@@ -62,33 +63,33 @@ public class ImporterTest {
         Assert.IsTrue(File.Exists(InFolder + "Test Script 2.xml"));
         Assert.IsTrue(File.Exists(InFolder + "Test Script 3.xml"));
         var scripts = await ScriptsInDatabaseAsync();
-        Assert.AreEqual(3, scripts.Count);
+        Assert.HasCount(3, scripts);
         Assert.AreEqual("Test Script 2", scripts[1].Name);
-        Assert.IsTrue(scripts[1].OrderedScriptSteps()[0].Url.Contains("unittest"));
+        Assert.Contains("unittest", scripts[1].OrderedScriptSteps()[0].Url);
         Assert.IsTrue(Importer.AnythingToImport(Folder));
         VerifyEndOfScript(scripts);
         var filesNamesToExclude = new List<string>();
         var importAFileResult = await Importer.ImportAFileAsync(InFolder, DoneFolder, filesNamesToExclude);
         Assert.IsTrue(importAFileResult.Success);
-        Assert.AreEqual(0, filesNamesToExclude.Count);
+        Assert.IsEmpty(filesNamesToExclude);
         Assert.IsTrue(importAFileResult.CheckForMore);
         scripts = await ScriptsInDatabaseAsync();
-        Assert.AreEqual(3, scripts.Count);
+        Assert.HasCount(3, scripts);
         Assert.AreEqual("Test Script 2", scripts[1].Name);
-        Assert.IsFalse(scripts[1].OrderedScriptSteps()[0].Url.Contains("unittest"));
+        Assert.DoesNotContain("unittest", scripts[1].OrderedScriptSteps()[0].Url);
         Assert.IsTrue(Importer.AnythingToImport(Folder));
         importAFileResult = await Importer.ImportAFileAsync(InFolder, DoneFolder, filesNamesToExclude);
         Assert.IsTrue(importAFileResult.Success);
-        Assert.AreEqual(0, filesNamesToExclude.Count);
+        Assert.IsEmpty(filesNamesToExclude);
         Assert.IsTrue(importAFileResult.CheckForMore);
         VerifyEndOfScript(scripts);
         scripts = await ScriptsInDatabaseAsync();
-        Assert.AreEqual(4, scripts.Count);
+        Assert.HasCount(4, scripts);
         Assert.IsFalse(Importer.AnythingToImport(Folder));
-        Assert.AreEqual(3, scripts[0].ScriptSteps.Count);
-        Assert.AreEqual(4, scripts[1].ScriptSteps.Count);
+        Assert.HasCount(3, scripts[0].ScriptSteps);
+        Assert.HasCount(4, scripts[1].ScriptSteps);
         Assert.AreEqual("Test Script 3", scripts[2].Name);
-        Assert.AreEqual(3, scripts[2].ScriptSteps.Count);
+        Assert.HasCount(3, scripts[2].ScriptSteps);
     }
 
     private static void VerifyEndOfScript(IEnumerable<Script> scripts) {
