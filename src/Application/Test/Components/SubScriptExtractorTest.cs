@@ -29,19 +29,19 @@ public class SubScriptExtractorTest {
 
     [TestMethod]
     public async Task CanExtractSubScript() {
-        var container = (await new ContainerBuilder().UseVishizhukelNetWebAndPeghAsync("Oust", new DummyCsArgumentPrompter())).Build();
+        IContainer container = (await new ContainerBuilder().UseVishizhukelNetWebAndPeghAsync("Oust")).Build();
         var generator = new TestDataGenerator(_ContextFactory, container.Resolve<ILogicalUrlRepository>());
         await generator.GenerateTestDataAsync();
-        var orderedScriptSteps = await WhenTwoScriptStepsAreExtracted();
+        List<ScriptStep> orderedScriptSteps = await WhenTwoScriptStepsAreExtracted();
         await ThenTheStepsAreReplacedInTheScriptAndTheNewSubScriptContainsThemAsync(orderedScriptSteps);
     }
 
     private static async Task<List<ScriptStep>> WhenTwoScriptStepsAreExtracted() {
         var contextFactory = new ContextFactory();
-        var context = await contextFactory.CreateAsync(EnvironmentType.UnitTest);
-        var script = context.Scripts.Include(s => s.ScriptSteps).SingleOrDefault(s => s.Guid == TestDataGenerator.Script2Guid);
+        Context context = await contextFactory.CreateAsync(EnvironmentType.UnitTest);
+        Script script = context.Scripts.Include(s => s.ScriptSteps).SingleOrDefault(s => s.Guid == TestDataGenerator.Script2Guid);
         Assert.IsNotNull(script);
-        var orderedScriptSteps = script.OrderedScriptSteps();
+        List<ScriptStep> orderedScriptSteps = script.OrderedScriptSteps();
         Assert.HasCount(4, orderedScriptSteps);
         var sut = new SubScriptExtractor(contextFactory);
         const string subScriptNameTemplate = $"Sub script of {TestDataGenerator.Script2Name}";
@@ -54,17 +54,17 @@ public class SubScriptExtractorTest {
     }
 
     private async Task ThenTheStepsAreReplacedInTheScriptAndTheNewSubScriptContainsThemAsync(IReadOnlyList<ScriptStep> orderedScriptSteps) {
-        var context = await _ContextFactory.CreateAsync(EnvironmentType.UnitTest);
-        var script = context.Scripts.Include(s => s.ScriptSteps).SingleOrDefault(s => s.Guid == TestDataGenerator.Script2Guid);
+        Context context = await _ContextFactory.CreateAsync(EnvironmentType.UnitTest);
+        Script script = context.Scripts.Include(s => s.ScriptSteps).SingleOrDefault(s => s.Guid == TestDataGenerator.Script2Guid);
         Assert.IsNotNull(script);
-        var newOrderedScriptSteps = script.OrderedScriptSteps();
+        List<ScriptStep> newOrderedScriptSteps = script.OrderedScriptSteps();
         Assert.HasCount(3, newOrderedScriptSteps);
         Assert.AreEqual(orderedScriptSteps[0].Guid, newOrderedScriptSteps[0].Guid);
         Assert.AreEqual(ScriptStepType.SubScript, newOrderedScriptSteps[1].ScriptStepType);
         Assert.AreEqual(orderedScriptSteps[3].Guid, newOrderedScriptSteps[2].Guid);
-        var subScript = context.Scripts.Include(s => s.ScriptSteps).SingleOrDefault(s => s.Guid == newOrderedScriptSteps[1].SubScriptGuid);
+        Script subScript = context.Scripts.Include(s => s.ScriptSteps).SingleOrDefault(s => s.Guid == newOrderedScriptSteps[1].SubScriptGuid);
         Assert.IsNotNull(subScript);
-        var orderedSubScriptSteps = subScript.OrderedScriptSteps();
+        List<ScriptStep> orderedSubScriptSteps = subScript.OrderedScriptSteps();
         Assert.HasCount(3, orderedSubScriptSteps);
         Assert.AreEqual(orderedScriptSteps[1].ToString(), orderedSubScriptSteps[0].ToString());
         Assert.AreEqual(orderedScriptSteps[2].ToString(), orderedSubScriptSteps[1].ToString());

@@ -19,7 +19,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Oust.Application;
 
 public static class ApplicationContainerBuilder {
     public static async Task<ContainerBuilder> RegisterForOustApplicationAsync(this ContainerBuilder builder, EnvironmentType environmentType) {
-        await builder.UseVishizhukelNetWebDvinAndPeghAsync("Oust", new DummyCsArgumentPrompter());
+        await builder.UseVishizhukelNetWebDvinAndPeghAsync("Oust");
         builder.RegisterType<ButtonNameToCommandMapper>().As<IButtonNameToCommandMapper>().SingleInstance();
         builder.RegisterInstance<IContextFactory>(new ContextFactory());
         builder.RegisterInstance<IDumperNameConverter>(new DumperNameConverter());
@@ -32,7 +32,7 @@ public static class ApplicationContainerBuilder {
         builder.RegisterType<FileDialogTrickster>().As<IFileDialogTrickster>();
         builder.RegisterType<OustScriptStatementFactory>().As<IOustScriptStatementFactory>();
 
-        IContainer container = new ContainerBuilder().UsePegh("Oust", new DummyCsArgumentPrompter()).Build();
+        IContainer container = new ContainerBuilder().UsePegh("Oust").Build();
         IFolderResolver folderResolver = container.Resolve<IFolderResolver>();
         ISecretRepository secretRepository = container.Resolve<ISecretRepository>();
         var errorsAndInfos = new ErrorsAndInfos();

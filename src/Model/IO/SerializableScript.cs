@@ -12,7 +12,7 @@ public class SerializableScript : Script {
     private readonly IXmlSerializer _XmlSerializer;
 
     public SerializableScript() {
-        var container = new ContainerBuilder().UsePegh("Oust", new DummyCsArgumentPrompter()).Build();
+        IContainer container = new ContainerBuilder().UsePegh("Oust").Build();
         _XmlSerializer = container.Resolve<IXmlSerializer>();
     }
 
@@ -22,12 +22,12 @@ public class SerializableScript : Script {
 
     public static Script ReadScriptFromFile(IXmlDeserializer xmlDeserializer, string folder, string fileName) {
         // ReSharper disable once StringLiteralTypo
-        var text = File.ReadAllText(folder + fileName, Encoding.UTF8).Replace("steptype=\"Recognise\"", "steptype=\"Recognize\"");
+        string text = File.ReadAllText(folder + fileName, Encoding.UTF8).Replace("steptype=\"Recognise\"", "steptype=\"Recognize\"");
         return xmlDeserializer.Deserialize<SerializableScript>(text);
     }
 
     public bool Save(string folder, string fileName, bool checkXsiXsd, string backupFolder) {
-        var xml = _XmlSerializer.Serialize(this);
+        string xml = _XmlSerializer.Serialize(this);
         if (string.IsNullOrEmpty(xml)) {
             return false;
         }
@@ -41,7 +41,7 @@ public class SerializableScript : Script {
             lines = lines.Take(2).ToList();
             lines = lines.Where(l => l.StartsWith("<!--") && l.EndsWith("-->")).ToList();
             if (lines.Any()) {
-                var pos = xml.IndexOf("\r\n", StringComparison.Ordinal);
+                int pos = xml.IndexOf("\r\n", StringComparison.Ordinal);
                 xml = xml.Substring(0, pos) + "\r\n" + string.Join("\r\n", lines) + xml.Substring(pos);
             }
 
@@ -49,9 +49,9 @@ public class SerializableScript : Script {
                 return true;
             }
 
-            for (var i = 0; i < 1000; i++) {
-                var ending = "000" + i;
-                var backupFileName = backupFolder + fileName.Substring(0, fileName.Length - 3) + ending.Substring(ending.Length - 3);
+            for (int i = 0; i < 1000; i++) {
+                string ending = "000" + i;
+                string backupFileName = backupFolder + fileName.Substring(0, fileName.Length - 3) + ending.Substring(ending.Length - 3);
                 if (File.Exists(backupFileName)) { continue; }
 
                 File.Copy(folder + fileName, backupFileName);

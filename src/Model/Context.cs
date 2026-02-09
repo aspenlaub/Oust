@@ -34,11 +34,11 @@ public class Context : ContextBase {
     }
 
     public static async Task<DataSources> GetDataSourcesAsync() {
-        var container = new ContainerBuilder().UsePegh("Oust", new DummyCsArgumentPrompter()).Build();
-        var secretRepository = container.Resolve<ISecretRepository>();
+        IContainer container = new ContainerBuilder().UsePegh("Oust").Build();
+        ISecretRepository secretRepository = container.Resolve<ISecretRepository>();
         var secretDataSources = new SecretDataSources();
         var errorsAndInfos = new ErrorsAndInfos();
-        var dataSources = await secretRepository.GetAsync(secretDataSources, errorsAndInfos);
+        DataSources dataSources = await secretRepository.GetAsync(secretDataSources, errorsAndInfos);
         if (errorsAndInfos.AnyErrors()) {
             throw new Exception(string.Join("\r\n", errorsAndInfos.Errors));
         }

@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -35,7 +36,7 @@ public class TestDataGenerator {
     }
 
     private static ILogicalUrlRepository CreateLogicalUrlRepository() {
-        var container = new ContainerBuilder().UsePegh("Oust", new DummyCsArgumentPrompter()).Build();
+        IContainer container = new ContainerBuilder().UsePegh("Oust").Build();
         return new LogicalUrlRepository(container.Resolve<ISecretRepository>());
     }
 
@@ -53,14 +54,14 @@ public class TestDataGenerator {
     }
 
     public async Task GenerateTestDataAsync() {
-        await using (var context = await FreshContextAsync()) {
+        await using (Context context = await FreshContextAsync()) {
             context.Migrate();
             context.ScriptSteps.RemoveRange(context.ScriptSteps);
             context.Scripts.RemoveRange(context.Scripts);
             context.SaveChanges();
         }
 
-        await using (var context = await FreshContextAsync()) {
+        await using (Context context = await FreshContextAsync()) {
             var script1 = new Script { Guid = Script1Guid, Name = Script1Name };
             script1.ScriptSteps.Add(new ScriptStep { Guid = ScriptStep11Guid, ScriptStepType = ScriptStepType.GoToUrl, StepNumber = 1, Url = await ScriptStep11UrlAsync() });
             script1.ScriptSteps.Add(new ScriptStep { Guid = ScriptStep12Guid, ScriptStepType = ScriptStepType.GoToUrl, StepNumber = 2, Url = await ScriptStep12UrlAsync() });
@@ -83,11 +84,11 @@ public class TestDataGenerator {
     [TestMethod]
     public async Task CanGenerateTestData() {
         await GenerateTestDataAsync();
-        await using var context = await FreshContextAsync();
+        await using Context context = await FreshContextAsync();
         var scripts = context.Scripts.OrderBy(s => s.Name).Include(s => s.ScriptSteps).ToList();
         Assert.HasCount(3, scripts);
-        var script = scripts[0];
-        var scriptSteps = script.OrderedScriptSteps();
+        Script script = scripts[0];
+        List<ScriptStep> scriptSteps = script.OrderedScriptSteps();
         Assert.AreEqual(Script1Guid, script.Guid);
         Assert.HasCount(3, scriptSteps);
         Assert.AreEqual(ScriptStep11Guid, scriptSteps[0].Guid);
@@ -107,42 +108,42 @@ public class TestDataGenerator {
 
     public async Task<string> ScriptStep11UrlAsync() {
         var errorsAndInfos = new ErrorsAndInfos();
-        var url = await _LogicalUrlRepository.GetUrlAsync("ViperAdmin", errorsAndInfos);
+        string url = await _LogicalUrlRepository.GetUrlAsync("ViperAdmin", errorsAndInfos);
         Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsToString());
         return url;
     }
 
     public async Task<string> ScriptStep12UrlAsync() {
         var errorsAndInfos = new ErrorsAndInfos();
-        var url = await _LogicalUrlRepository.GetUrlAsync("SodWat", errorsAndInfos);
+        string url = await _LogicalUrlRepository.GetUrlAsync("SodWat", errorsAndInfos);
         Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsToString());
         return url;
     }
 
     public async Task<string> ScriptStep21UrlAsync() {
         var errorsAndInfos = new ErrorsAndInfos();
-        var url = await _LogicalUrlRepository.GetUrlAsync("ViperUnitTest", errorsAndInfos);
+        string url = await _LogicalUrlRepository.GetUrlAsync("ViperUnitTest", errorsAndInfos);
         Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsToString());
         return url;
     }
 
     public async Task<string> ScriptStep22UrlAsync() {
         var errorsAndInfos = new ErrorsAndInfos();
-        var url = await _LogicalUrlRepository.GetUrlAsync("Rhönlamas", errorsAndInfos);
+        string url = await _LogicalUrlRepository.GetUrlAsync("Rhönlamas", errorsAndInfos);
         Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsToString());
         return url;
     }
 
     public async Task<string> ScriptStep23UrlAsync() {
         var errorsAndInfos = new ErrorsAndInfos();
-        var url = await _LogicalUrlRepository.GetUrlAsync("Viperfisch", errorsAndInfos);
+        string url = await _LogicalUrlRepository.GetUrlAsync("Viperfisch", errorsAndInfos);
         Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsToString());
         return url;
     }
 
     public async Task<string> ScriptStep41UrlAsync() {
         var errorsAndInfos = new ErrorsAndInfos();
-        var url = await _LogicalUrlRepository.GetUrlAsync("GutLookForms", errorsAndInfos);
+        string url = await _LogicalUrlRepository.GetUrlAsync("GutLookForms", errorsAndInfos);
         Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsToString());
         return url;
     }

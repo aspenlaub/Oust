@@ -20,7 +20,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Oust.Integration.Test;
 public class OustWindowRemoteControlFailureTest : OustIntegrationTestBase {
     [TestInitialize]
     public async Task Initialize() {
-        var container = (await new ContainerBuilder().UseVishizhukelNetWebAndPeghAsync("Oust", new DummyCsArgumentPrompter())).Build();
+        IContainer container = (await new ContainerBuilder().UseVishizhukelNetWebAndPeghAsync("Oust")).Build();
         var generator = new FlawedTestDataGenerator(new ContextFactory(), container.Resolve<ILogicalUrlRepository>());
         await generator.GenerateTestDataAsync();
     }
@@ -30,17 +30,17 @@ public class OustWindowRemoteControlFailureTest : OustIntegrationTestBase {
         var contextFactory = new ContextFactory();
         var obsoleteScriptChecker = new ObsoleteScriptChecker(new ApplicationModel(EnvironmentType.UnitTest), contextFactory);
         Assert.IsTrue(await obsoleteScriptChecker.IsTopLevelScriptObsoleteAsync(FlawedTestDataGenerator.SubScriptName));
-        using var sut = await CreateOustWindowUnderTestAsync();
-        var process = await sut.FindIdleProcessAsync();
-        var task = sut.CreateSetValueTask(process, nameof(IApplicationModel.SelectedScript), FlawedTestDataGenerator.SubScriptName);
-        var errorMessage = await sut.SubmitNewTaskAndAwaitCompletionAsync(task, false);
+        using OustWindowUnderTest sut = await CreateOustWindowUnderTestAsync();
+        ControllableProcess process = await sut.FindIdleProcessAsync();
+        ControllableProcessTask task = sut.CreateSetValueTask(process, nameof(IApplicationModel.SelectedScript), FlawedTestDataGenerator.SubScriptName);
+        string errorMessage = await sut.SubmitNewTaskAndAwaitCompletionAsync(task, false);
         Assert.AreEqual((object)Application.Properties.Resources.ScriptIsObsoleteOrSubScript, errorMessage);
     }
 
     [TestMethod]
     public async Task ProperErrorMessageWhenScriptProducesInvalidHtml() {
-        using var sut = await CreateOustWindowUnderTestAsync();
-        var process = await sut.FindIdleProcessAsync();
+        using OustWindowUnderTest sut = await CreateOustWindowUnderTestAsync();
+        ControllableProcess process = await sut.FindIdleProcessAsync();
         var tasks = new List<ControllableProcessTask> {
             sut.CreateSetValueTask(process, nameof(IApplicationModel.SelectedScript), FlawedTestDataGenerator.FailingScriptName),
             sut.CreateVerifyValueTask(process, nameof(IApplicationModel.SelectedScript), FlawedTestDataGenerator.FailingScriptName)

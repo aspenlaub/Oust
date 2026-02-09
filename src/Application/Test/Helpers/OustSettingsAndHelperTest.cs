@@ -2,7 +2,6 @@ using System;
 using System.Threading.Tasks;
 using Aspenlaub.Net.GitHub.CSharp.Dvin.Components;
 using Aspenlaub.Net.GitHub.CSharp.Oust.Application.Helpers;
-using Aspenlaub.Net.GitHub.CSharp.Pegh.Components;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Entities;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Extensions;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Interfaces;
@@ -15,10 +14,10 @@ namespace Aspenlaub.Net.GitHub.CSharp.Oust.Application.Test.Helpers;
 public class OustSettingsAndHelperTest {
     [TestMethod]
     public async Task CanGetOustSettingsUsingHelper() {
-        var container = new ContainerBuilder().UseDvinAndPegh("Oust", new DummyCsArgumentPrompter()).Build();
+        IContainer container = new ContainerBuilder().UseDvinAndPegh("Oust").Build();
         var helper = new OustSettingsHelper(container.Resolve<ISecretRepository>());
         var errorsAndInfos = new ErrorsAndInfos();
-        var shouldWindows11BeAssumed = await helper.ShouldWindows11BeAssumedAsync(errorsAndInfos);
+        YesNoInconclusive shouldWindows11BeAssumed = await helper.ShouldWindows11BeAssumedAsync(errorsAndInfos);
         Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsToString());
         Assert.IsFalse(shouldWindows11BeAssumed.Inconclusive);
         if (Environment.OSVersion.Version.Build >= 22000) {

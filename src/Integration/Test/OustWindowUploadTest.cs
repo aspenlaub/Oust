@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using Aspenlaub.Net.GitHub.CSharp.Dvin.Components;
@@ -12,6 +13,7 @@ using Aspenlaub.Net.GitHub.CSharp.Pegh.Components;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Entities;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Extensions;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Interfaces;
+using Aspenlaub.Net.GitHub.CSharp.Tash;
 using Autofac;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -26,10 +28,10 @@ public class OustWindowUploadTest : OustIntegrationTestBase {
             await File.WriteAllTextAsync(fileName, fileName);
         }
 
-        var container = new ContainerBuilder().UseDvinAndPegh("Oust", new DummyCsArgumentPrompter()).Build();
+        IContainer container = new ContainerBuilder().UseDvinAndPegh("Oust").Build();
         var helper = new OustSettingsHelper(container.Resolve<ISecretRepository>());
         var errorsAndInfos = new ErrorsAndInfos();
-        var shouldWindows11BeAssumed = (await helper.ShouldWindows11BeAssumedAsync(errorsAndInfos)).YesNo;
+        bool shouldWindows11BeAssumed = (await helper.ShouldWindows11BeAssumedAsync(errorsAndInfos)).YesNo;
         Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsToString());
         if (shouldWindows11BeAssumed) {
             Assert.Inconclusive("Upload currently is bypassed in Windows 11, therefore not tested here");
@@ -38,9 +40,9 @@ public class OustWindowUploadTest : OustIntegrationTestBase {
         var generator = new TestDataGenerator(Container.Resolve<IContextFactory>(), LogicalUrlRepository);
         await generator.GenerateTestDataAsync();
 
-        using var sut = await CreateOustWindowUnderTestAsync();
-        var process = await sut.FindIdleProcessAsync();
-        var tasks = CreateNewScriptTaskList(sut, process, "Load Me Up!");
+        using OustWindowUnderTest sut = await CreateOustWindowUnderTestAsync();
+        ControllableProcess process = await sut.FindIdleProcessAsync();
+        List<ControllableProcessTask> tasks = CreateNewScriptTaskList(sut, process, "Load Me Up!");
         tasks.AddRange(await CreateGoToGutLookStepTaskListAsync(sut, process));
         tasks.Add(sut.CreateSetValueTask(process, nameof(IApplicationModel.ScriptStepType), Enum.GetName(typeof(ScriptStepType), ScriptStepType.With)));
         tasks.Add(sut.CreateSetValueTask(process, nameof(IApplicationModel.FormOrControlOrIdOrClass), "GutLookForm"));
