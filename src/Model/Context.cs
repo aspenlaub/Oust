@@ -1,3 +1,6 @@
+using System;
+using System.Threading;
+using System.Threading.Tasks;
 using Aspenlaub.Net.GitHub.CSharp.Oust.Model.Entities;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Components;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Entities;
@@ -39,11 +42,7 @@ public class Context : ContextBase {
         var secretDataSources = new SecretDataSources();
         var errorsAndInfos = new ErrorsAndInfos();
         DataSources dataSources = await secretRepository.GetAsync(secretDataSources, errorsAndInfos);
-        if (errorsAndInfos.AnyErrors()) {
-            throw new Exception(string.Join("\r\n", errorsAndInfos.Errors));
-        }
-
-        return dataSources;
+        return errorsAndInfos.AnyErrors() ? throw new Exception(string.Join("\r\n", errorsAndInfos.Errors)) : dataSources;
     }
 
     public static DataSources DefaultDataSources() {

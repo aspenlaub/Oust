@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using Aspenlaub.Net.GitHub.CSharp.VishizhukelNet.Interfaces;
 
 namespace Aspenlaub.Net.GitHub.CSharp.Oust.Application.Interfaces;

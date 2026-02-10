@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace Aspenlaub.Net.GitHub.CSharp.Oust.Application.Interfaces;
 
 public interface IOutOfControl {

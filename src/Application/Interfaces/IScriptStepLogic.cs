@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using Aspenlaub.Net.GitHub.CSharp.Oust.Model.Interfaces;
 using Aspenlaub.Net.GitHub.CSharp.VishizhukelNet.Entities;
 

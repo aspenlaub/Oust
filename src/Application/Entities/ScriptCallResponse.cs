@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Aspenlaub.Net.GitHub.CSharp.VishizhukelNetWeb.Entities;
 
 namespace Aspenlaub.Net.GitHub.CSharp.Oust.Application.Entities;

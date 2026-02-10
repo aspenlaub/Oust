@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Entities;
 
 // ReSharper disable UnusedMember.Global

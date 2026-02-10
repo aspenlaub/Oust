@@ -1,3 +1,6 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Xml;
 using Aspenlaub.Net.GitHub.CSharp.Oust.Application.Interfaces;
 
