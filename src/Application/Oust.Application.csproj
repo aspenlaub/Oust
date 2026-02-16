@@ -36,7 +36,7 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.Build.Tasks.Core" Version="18.0.2" />
-    <PackageReference Include="VishizhukelNetWeb" Version="2.0.2392.1332" />
+    <PackageReference Include="Microsoft.Build.Tasks.Core" Version="18.3.3" />
+    <PackageReference Include="VishizhukelNetWeb" Version="2.0.2399.1073" />
   </ItemGroup>
 </Project>
