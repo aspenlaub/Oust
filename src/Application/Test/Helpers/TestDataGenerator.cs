@@ -129,7 +129,7 @@ public class TestDataGenerator {
 
     public async Task<string> ScriptStep22UrlAsync() {
         var errorsAndInfos = new ErrorsAndInfos();
-        string url = await _LogicalUrlRepository.GetUrlAsync("Rh�nlamas", errorsAndInfos);
+        string url = await _LogicalUrlRepository.GetUrlAsync("Rhönlamas", errorsAndInfos);
         Assert.That.ThereWereNoErrors(errorsAndInfos);
         return url;
     }
