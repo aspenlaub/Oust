@@ -3,9 +3,9 @@ using System.Threading.Tasks;
 using Aspenlaub.Net.GitHub.CSharp.Oust.Model;
 using Aspenlaub.Net.GitHub.CSharp.Oust.Model.Entities;
 using Aspenlaub.Net.GitHub.CSharp.Oust.Model.Interfaces;
-using Aspenlaub.Net.GitHub.CSharp.Pegh.Entities;
-using Aspenlaub.Net.GitHub.CSharp.Pegh.Extensions;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Interfaces;
+using Aspenlaub.Net.GitHub.CSharp.Seoa.Extensions;
+using Aspenlaub.Net.GitHub.CSharp.Skladasu.Entities;
 using Aspenlaub.Net.GitHub.CSharp.VishizhukelNetWeb.Interfaces;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -67,14 +67,14 @@ public class FlawedTestDataGenerator {
     public async Task<string> FailingScriptStepUrlAsync() {
         var errorsAndInfos = new ErrorsAndInfos();
         var url = await _LogicalUrlRepository.GetUrlAsync("InvalidMarkupOnWrongCount", errorsAndInfos);
-        Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsToString());
+        Assert.That.ThereWereNoErrors(errorsAndInfos);
         return url + "?n=4711";
     }
 
     public async Task<string> SubScriptStepUrlAsync() {
         var errorsAndInfos = new ErrorsAndInfos();
         var url = await _LogicalUrlRepository.GetUrlAsync("ViperAdmin", errorsAndInfos);
-        Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsToString());
+        Assert.That.ThereWereNoErrors(errorsAndInfos);
         return url;
     }
 }

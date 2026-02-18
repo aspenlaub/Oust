@@ -17,6 +17,8 @@ using Aspenlaub.Net.GitHub.CSharp.Oust.Model.Interfaces;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Entities;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Extensions;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Interfaces;
+using Aspenlaub.Net.GitHub.CSharp.Skladasu.Entities;
+using Aspenlaub.Net.GitHub.CSharp.Skladasu.Extensions;
 using Aspenlaub.Net.GitHub.CSharp.TashClient.Interfaces;
 using Aspenlaub.Net.GitHub.CSharp.Vishizhukel.Interfaces.Web;
 using Aspenlaub.Net.GitHub.CSharp.VishizhukelNet.GUI;

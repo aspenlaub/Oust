@@ -5,8 +5,8 @@ using System.Threading.Tasks;
 using Aspenlaub.Net.GitHub.CSharp.Oust.Application.Interfaces;
 using Aspenlaub.Net.GitHub.CSharp.Oust.GUI;
 using Aspenlaub.Net.GitHub.CSharp.Oust.Model.Entities;
-using Aspenlaub.Net.GitHub.CSharp.Pegh.Entities;
-using Aspenlaub.Net.GitHub.CSharp.Pegh.Extensions;
+using Aspenlaub.Net.GitHub.CSharp.Seoa.Extensions;
+using Aspenlaub.Net.GitHub.CSharp.Skladasu.Entities;
 using Aspenlaub.Net.GitHub.CSharp.Tash;
 using Aspenlaub.Net.GitHub.CSharp.Vishizhukel.Web;
 using Aspenlaub.Net.GitHub.CSharp.VishizhukelNetWeb.Interfaces;
@@ -46,28 +46,28 @@ public class OustIntegrationTestBase {
 
         var errorsAndInfos = new ErrorsAndInfos();
         var url = await LogicalUrlRepository.GetUrlAsync("GutLookForms", errorsAndInfos);
-        Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsToString());
+        Assert.That.ThereWereNoErrors(errorsAndInfos);
         return CreateGoToStepTaskList(sut, process, url);
     }
 
     protected async Task<List<ControllableProcessTask>> CreateGoToSodwatStepTaskListAsync(OustWindowUnderTest sut, ControllableProcess process) {
         var errorsAndInfos = new ErrorsAndInfos();
         var url = await LogicalUrlRepository.GetUrlAsync("SodWat", errorsAndInfos);
-        Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsToString());
+        Assert.That.ThereWereNoErrors(errorsAndInfos);
         return CreateGoToStepTaskList(sut, process, url);
     }
 
     protected async Task<List<ControllableProcessTask>> CreateGoToHockeyStepTaskListAsync(OustWindowUnderTest sut, ControllableProcess process) {
         var errorsAndInfos = new ErrorsAndInfos();
         var url = await LogicalUrlRepository.GetUrlAsync("Crawler", errorsAndInfos);
-        Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsToString());
+        Assert.That.ThereWereNoErrors(errorsAndInfos);
         return CreateGoToStepTaskList(sut, process, url);
     }
 
     protected async Task<List<ControllableProcessTask>> CreateGoToViperAdminStepTaskListAsync(OustWindowUnderTest sut, ControllableProcess process) {
         var errorsAndInfos = new ErrorsAndInfos();
         var url = await LogicalUrlRepository.GetUrlAsync("ViperAdmin", errorsAndInfos);
-        Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsToString());
+        Assert.That.ThereWereNoErrors(errorsAndInfos);
         return CreateGoToStepTaskList(sut, process, url);
     }
 
@@ -93,7 +93,7 @@ public class OustIntegrationTestBase {
     protected async Task<List<ControllableProcessTask>> CreateGoToInvalidMarkUpOnWrongCountTaskListAsync(OustWindowUnderTest sut, ControllableProcess process, int n) {
         var errorsAndInfos = new ErrorsAndInfos();
         var url = await LogicalUrlRepository.GetUrlAsync("InvalidMarkupOnWrongCount", errorsAndInfos);
-        Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsToString());
+        Assert.That.ThereWereNoErrors(errorsAndInfos);
         return CreateGoToStepTaskList(sut, process, url + "?n=" + n);
     }
 
@@ -110,7 +110,7 @@ public class OustIntegrationTestBase {
 
         var errorsAndInfos = new ErrorsAndInfos();
         var url = await LogicalUrlRepository.GetUrlAsync("GutLookForms", errorsAndInfos);
-        Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsToString());
+        Assert.That.ThereWereNoErrors(errorsAndInfos);
         var client = new HttpClient();
         await client.GetAsync(url);
         _GutLookCalledOnce = true;

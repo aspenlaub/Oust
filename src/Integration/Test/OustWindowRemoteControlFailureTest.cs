@@ -6,7 +6,6 @@ using Aspenlaub.Net.GitHub.CSharp.Oust.Application.Interfaces;
 using Aspenlaub.Net.GitHub.CSharp.Oust.Application.Test.Helpers;
 using Aspenlaub.Net.GitHub.CSharp.Oust.GUI;
 using Aspenlaub.Net.GitHub.CSharp.Oust.Model;
-using Aspenlaub.Net.GitHub.CSharp.Pegh.Components;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Interfaces;
 using Aspenlaub.Net.GitHub.CSharp.Tash;
 using Aspenlaub.Net.GitHub.CSharp.VishizhukelNetWeb;

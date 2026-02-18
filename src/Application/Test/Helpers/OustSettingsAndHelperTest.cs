@@ -3,8 +3,9 @@ using System.Threading.Tasks;
 using Aspenlaub.Net.GitHub.CSharp.Dvin.Components;
 using Aspenlaub.Net.GitHub.CSharp.Oust.Application.Helpers;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Entities;
-using Aspenlaub.Net.GitHub.CSharp.Pegh.Extensions;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Interfaces;
+using Aspenlaub.Net.GitHub.CSharp.Seoa.Extensions;
+using Aspenlaub.Net.GitHub.CSharp.Skladasu.Entities;
 using Autofac;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -18,7 +19,7 @@ public class OustSettingsAndHelperTest {
         var helper = new OustSettingsHelper(container.Resolve<ISecretRepository>());
         var errorsAndInfos = new ErrorsAndInfos();
         YesNoInconclusive shouldWindows11BeAssumed = await helper.ShouldWindows11BeAssumedAsync(errorsAndInfos);
-        Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsToString());
+        Assert.That.ThereWereNoErrors(errorsAndInfos);
         Assert.IsFalse(shouldWindows11BeAssumed.Inconclusive);
         if (Environment.OSVersion.Version.Build >= 22000) {
             Assert.IsTrue(shouldWindows11BeAssumed.YesNo, "This is Windows 11, so the setting should be true");

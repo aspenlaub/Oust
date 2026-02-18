@@ -6,9 +6,9 @@ using Aspenlaub.Net.GitHub.CSharp.Oust.Model;
 using Aspenlaub.Net.GitHub.CSharp.Oust.Model.Entities;
 using Aspenlaub.Net.GitHub.CSharp.Oust.Model.Interfaces;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Components;
-using Aspenlaub.Net.GitHub.CSharp.Pegh.Entities;
-using Aspenlaub.Net.GitHub.CSharp.Pegh.Extensions;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Interfaces;
+using Aspenlaub.Net.GitHub.CSharp.Seoa.Extensions;
+using Aspenlaub.Net.GitHub.CSharp.Skladasu.Entities;
 using Aspenlaub.Net.GitHub.CSharp.VishizhukelNetWeb.Components;
 using Aspenlaub.Net.GitHub.CSharp.VishizhukelNetWeb.Interfaces;
 using Autofac;
@@ -109,42 +109,42 @@ public class TestDataGenerator {
     public async Task<string> ScriptStep11UrlAsync() {
         var errorsAndInfos = new ErrorsAndInfos();
         string url = await _LogicalUrlRepository.GetUrlAsync("ViperAdmin", errorsAndInfos);
-        Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsToString());
+        Assert.That.ThereWereNoErrors(errorsAndInfos);
         return url;
     }
 
     public async Task<string> ScriptStep12UrlAsync() {
         var errorsAndInfos = new ErrorsAndInfos();
         string url = await _LogicalUrlRepository.GetUrlAsync("SodWat", errorsAndInfos);
-        Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsToString());
+        Assert.That.ThereWereNoErrors(errorsAndInfos);
         return url;
     }
 
     public async Task<string> ScriptStep21UrlAsync() {
         var errorsAndInfos = new ErrorsAndInfos();
         string url = await _LogicalUrlRepository.GetUrlAsync("ViperUnitTest", errorsAndInfos);
-        Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsToString());
+        Assert.That.ThereWereNoErrors(errorsAndInfos);
         return url;
     }
 
     public async Task<string> ScriptStep22UrlAsync() {
         var errorsAndInfos = new ErrorsAndInfos();
-        string url = await _LogicalUrlRepository.GetUrlAsync("Rhönlamas", errorsAndInfos);
-        Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsToString());
+        string url = await _LogicalUrlRepository.GetUrlAsync("Rhï¿½nlamas", errorsAndInfos);
+        Assert.That.ThereWereNoErrors(errorsAndInfos);
         return url;
     }
 
     public async Task<string> ScriptStep23UrlAsync() {
         var errorsAndInfos = new ErrorsAndInfos();
         string url = await _LogicalUrlRepository.GetUrlAsync("Viperfisch", errorsAndInfos);
-        Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsToString());
+        Assert.That.ThereWereNoErrors(errorsAndInfos);
         return url;
     }
 
     public async Task<string> ScriptStep41UrlAsync() {
         var errorsAndInfos = new ErrorsAndInfos();
         string url = await _LogicalUrlRepository.GetUrlAsync("GutLookForms", errorsAndInfos);
-        Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsToString());
+        Assert.That.ThereWereNoErrors(errorsAndInfos);
         return url;
     }
 }

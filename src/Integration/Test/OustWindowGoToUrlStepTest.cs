@@ -6,8 +6,8 @@ using Aspenlaub.Net.GitHub.CSharp.Oust.Application.Test.Helpers;
 using Aspenlaub.Net.GitHub.CSharp.Oust.GUI;
 using Aspenlaub.Net.GitHub.CSharp.Oust.Model.Entities;
 using Aspenlaub.Net.GitHub.CSharp.Oust.Model.Interfaces;
-using Aspenlaub.Net.GitHub.CSharp.Pegh.Entities;
-using Aspenlaub.Net.GitHub.CSharp.Pegh.Extensions;
+using Aspenlaub.Net.GitHub.CSharp.Seoa.Extensions;
+using Aspenlaub.Net.GitHub.CSharp.Skladasu.Entities;
 using Autofac;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -35,7 +35,7 @@ public class OustWindowGoToUrlStepTest : OustIntegrationTestBase {
 
         var errorsAndInfos = new ErrorsAndInfos();
         var url = await LogicalUrlRepository.GetUrlAsync("GutLookForms", errorsAndInfos);
-        Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsToString());
+        Assert.That.ThereWereNoErrors(errorsAndInfos);
 
         using var sut = await CreateOustWindowUnderTestAsync();
         var process = await sut.FindIdleProcessAsync();

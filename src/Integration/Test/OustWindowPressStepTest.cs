@@ -7,8 +7,8 @@ using Aspenlaub.Net.GitHub.CSharp.Oust.Application.Test.Helpers;
 using Aspenlaub.Net.GitHub.CSharp.Oust.GUI;
 using Aspenlaub.Net.GitHub.CSharp.Oust.Model.Entities;
 using Aspenlaub.Net.GitHub.CSharp.Oust.Model.Interfaces;
-using Aspenlaub.Net.GitHub.CSharp.Pegh.Entities;
-using Aspenlaub.Net.GitHub.CSharp.Pegh.Extensions;
+using Aspenlaub.Net.GitHub.CSharp.Seoa.Extensions;
+using Aspenlaub.Net.GitHub.CSharp.Skladasu.Entities;
 using Autofac;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -74,7 +74,7 @@ public class OustWindowPressStepTest : OustIntegrationTestBase {
 
         var errorsAndInfos = new ErrorsAndInfos();
         var url = await LogicalUrlRepository.GetUrlAsync("Brainstick", errorsAndInfos);
-        Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsToString());
+        Assert.That.ThereWereNoErrors(errorsAndInfos);
         tasks.AddRange(CreateGoToStepTaskList(sut, process, url));
         tasks.Add(sut.CreateSetValueTask(process, nameof(IApplicationModel.ScriptStepType), Enum.GetName(typeof(ScriptStepType), ScriptStepType.WithIdOrClass)));
         tasks.Add(sut.CreateSetValueTask(process, nameof(IApplicationModel.FormOrControlOrIdOrClass), ".imagemenu"));

@@ -6,9 +6,11 @@ using System.Threading.Tasks;
 using Aspenlaub.Net.GitHub.CSharp.Oust.Application.Interfaces;
 using Aspenlaub.Net.GitHub.CSharp.Oust.GUI;
 using Aspenlaub.Net.GitHub.CSharp.Oust.Model.Entities;
-using Aspenlaub.Net.GitHub.CSharp.Pegh.Entities;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Extensions;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Interfaces;
+using Aspenlaub.Net.GitHub.CSharp.Seoa.Extensions;
+using Aspenlaub.Net.GitHub.CSharp.Skladasu.Entities;
+using Aspenlaub.Net.GitHub.CSharp.Skladasu.Interfaces;
 using Aspenlaub.Net.GitHub.CSharp.Tash;
 using Aspenlaub.Net.GitHub.CSharp.TashClient.Interfaces;
 using Aspenlaub.Net.GitHub.CSharp.VishnetIntegrationTestTools;
@@ -27,7 +29,7 @@ public class OustWindowUnderTest : OustWindowUnderTestActions, IDisposable {
         _OustStarterAndStopper = oustStarterAndStopper;
         var errorsAndInfos = new ErrorsAndInfos();
         CleanupUnitTestDumpFolder(errorsAndInfos);
-        Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsToString());
+        Assert.That.ThereWereNoErrors(errorsAndInfos);
     }
 
     public override async Task InitializeAsync() {
@@ -62,6 +64,6 @@ public class OustWindowUnderTest : OustWindowUnderTestActions, IDisposable {
         Thread.Sleep(TimeSpan.FromSeconds(2));
         var errorsAndInfos = new ErrorsAndInfos();
         CleanupUnitTestDumpFolder(errorsAndInfos);
-        Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsToString());
+        Assert.That.ThereWereNoErrors(errorsAndInfos);
     }
 }

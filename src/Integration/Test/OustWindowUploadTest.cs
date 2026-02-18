@@ -9,10 +9,9 @@ using Aspenlaub.Net.GitHub.CSharp.Oust.Application.Test.Helpers;
 using Aspenlaub.Net.GitHub.CSharp.Oust.GUI;
 using Aspenlaub.Net.GitHub.CSharp.Oust.Model.Entities;
 using Aspenlaub.Net.GitHub.CSharp.Oust.Model.Interfaces;
-using Aspenlaub.Net.GitHub.CSharp.Pegh.Components;
-using Aspenlaub.Net.GitHub.CSharp.Pegh.Entities;
-using Aspenlaub.Net.GitHub.CSharp.Pegh.Extensions;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Interfaces;
+using Aspenlaub.Net.GitHub.CSharp.Seoa.Extensions;
+using Aspenlaub.Net.GitHub.CSharp.Skladasu.Entities;
 using Aspenlaub.Net.GitHub.CSharp.Tash;
 using Autofac;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -32,7 +31,7 @@ public class OustWindowUploadTest : OustIntegrationTestBase {
         var helper = new OustSettingsHelper(container.Resolve<ISecretRepository>());
         var errorsAndInfos = new ErrorsAndInfos();
         bool shouldWindows11BeAssumed = (await helper.ShouldWindows11BeAssumedAsync(errorsAndInfos)).YesNo;
-        Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsToString());
+        Assert.That.ThereWereNoErrors(errorsAndInfos);
         if (shouldWindows11BeAssumed) {
             Assert.Inconclusive("Upload currently is bypassed in Windows 11, therefore not tested here");
         }

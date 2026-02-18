@@ -7,9 +7,9 @@ using Aspenlaub.Net.GitHub.CSharp.Oust.Application.Interfaces;
 using Aspenlaub.Net.GitHub.CSharp.Oust.Application.Test.Helpers;
 using Aspenlaub.Net.GitHub.CSharp.Oust.GUI;
 using Aspenlaub.Net.GitHub.CSharp.Oust.Model.Interfaces;
-using Aspenlaub.Net.GitHub.CSharp.Pegh.Entities;
-using Aspenlaub.Net.GitHub.CSharp.Pegh.Extensions;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Interfaces;
+using Aspenlaub.Net.GitHub.CSharp.Seoa.Extensions;
+using Aspenlaub.Net.GitHub.CSharp.Skladasu.Entities;
 using Autofac;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -48,7 +48,7 @@ public class OustWindowCodeCoverageTest : OustIntegrationTestBase {
 
         const int expectedNumberOfLogFiles = 13;
         var resultFile = (await folderResolver.ResolveAsync(@"$(WampRoot)\temp\coverage", errorsAndInfos)).FullName + "\\" + dumperNameConverter.ScriptFileFriendlyShortName("Code Coverage") + ".txt";
-        Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsToString());
+        Assert.That.ThereWereNoErrors(errorsAndInfos);
         Assert.IsTrue(File.Exists(resultFile));
         File.Delete(resultFile);
         Assert.AreEqual(expectedNumberOfLogFiles, FilesChangedSince(logFolder, extendedLogFolder, startTime));

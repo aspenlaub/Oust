@@ -1,9 +1,9 @@
 using System.IO;
 using System.Threading.Tasks;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Components;
-using Aspenlaub.Net.GitHub.CSharp.Pegh.Entities;
-using Aspenlaub.Net.GitHub.CSharp.Pegh.Extensions;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Interfaces;
+using Aspenlaub.Net.GitHub.CSharp.Seoa.Extensions;
+using Aspenlaub.Net.GitHub.CSharp.Skladasu.Entities;
 using Autofac;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -15,7 +15,7 @@ public static class TestFolderHelper {
     public static async Task<string> TestFolderNameAsync(bool empty) {
         var errorsAndInfos = new ErrorsAndInfos();
         IFolder folder = await Container.Resolve<IFolderResolver>().ResolveAsync(@"$(GitHub)\Oust\src\Test\Temp", errorsAndInfos);
-        Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsToString());
+        Assert.That.ThereWereNoErrors(errorsAndInfos);
         if (!empty) {
             return folder.FullName + '\\';
         }
@@ -29,7 +29,7 @@ public static class TestFolderHelper {
 
         Directory.CreateDirectory(folder.FullName);
         IFolder archiveFolder = await Container.Resolve<IFolderResolver>().ResolveAsync(@"$(GitHub)\Oust\src\Test\TempArchive", errorsAndInfos);
-        Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsToString());
+        Assert.That.ThereWereNoErrors(errorsAndInfos);
         if (!Directory.Exists(archiveFolder.FullName)) {
             return folder.FullName + '\\';
         }
@@ -44,14 +44,14 @@ public static class TestFolderHelper {
     public static async Task<string> ImportTestFolderNameAsync() {
         var errorsAndInfos = new ErrorsAndInfos();
         string result = (await Container.Resolve<IFolderResolver>().ResolveAsync(@"$(GitHub)\Oust\src\Application\Test\ImportTest\", errorsAndInfos)).FullName + "\\";
-        Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsToString());
+        Assert.That.ThereWereNoErrors(errorsAndInfos);
         return result;
     }
 
     public static async Task CleanUpAsync() {
         var errorsAndInfos = new ErrorsAndInfos();
         IFolder folder = await Container.Resolve<IFolderResolver>().ResolveAsync(@"$(GitHub)\Oust\src\Test", errorsAndInfos);
-        Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsToString());
+        Assert.That.ThereWereNoErrors(errorsAndInfos);
         var deleter = new FolderDeleter();
         Assert.IsTrue(deleter.CanDeleteFolder(folder));
         deleter.DeleteFolder(folder);
