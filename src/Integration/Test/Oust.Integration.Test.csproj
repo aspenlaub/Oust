@@ -20,8 +20,8 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.Build.Tasks.Core" Version="18.3.3" />
-    <PackageReference Include="Seoa" Version="2.0.2401.911" />
-    <PackageReference Include="VishnetIntegrationTestTools" Version="2.0.2401.1010" />
+    <PackageReference Include="Seoa" Version="2.0.2405.915" />
+    <PackageReference Include="VishnetIntegrationTestTools" Version="2.0.2405.945" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Application\Test\Oust.Application.Test.csproj" />
