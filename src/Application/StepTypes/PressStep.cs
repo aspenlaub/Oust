@@ -7,6 +7,7 @@ using Aspenlaub.Net.GitHub.CSharp.Oust.Application.Interfaces;
 using Aspenlaub.Net.GitHub.CSharp.Oust.Model.Entities;
 using Aspenlaub.Net.GitHub.CSharp.Oust.Model.Interfaces;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Entities;
+using Aspenlaub.Net.GitHub.CSharp.Pegh.Helpers;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Interfaces;
 using Aspenlaub.Net.GitHub.CSharp.VishizhukelNet.Entities;
 using Aspenlaub.Net.GitHub.CSharp.VishizhukelNet.Enums;
@@ -26,9 +27,8 @@ public class PressStep(IApplicationModel model, ISimpleLogger simpleLogger,
     public string FreeCodeLabelText => Properties.Resources.FreeTextTitle;
 
     public async Task<bool> CanBeAddedOrReplaceExistingStepAsync() {
-        if (!await ShouldBeEnabledAsync()) { return false; }
-
-        return !string.IsNullOrWhiteSpace(Model.ScriptStepOutOfControl?.Guid);
+        return await ShouldBeEnabledAsync()
+               && !string.IsNullOrWhiteSpace(Model.ScriptStepOutOfControl?.Guid);
     }
 
     public IScriptStep CreateScriptStepToAdd() {
@@ -59,21 +59,39 @@ public class PressStep(IApplicationModel model, ISimpleLogger simpleLogger,
                 return;
             }
 
-            string domElementJson = JsonSerializer.Serialize(scriptCallResponse.DomElement);
-            scriptStatement = oustScriptStatementFactory.CreateDoesDocumentContainDescendantElementOfIdStatement(domElementJson, "selectuploadfile", "");
+            string outerDomElementJson = JsonSerializer.Serialize(scriptCallResponse.DomElement);
+            scriptStatement = oustScriptStatementFactory.CreateDoesDocumentContainDescendantElementOfIdStatement(outerDomElementJson, "selectuploadfile", "");
             scriptCallResponse = await GuiAndAppHandler.RunScriptAsync<ScriptCallResponse>(scriptStatement, true, true);
             bool isUpload = scriptCallResponse.Success.YesNo && !scriptCallResponse.Success.Inconclusive;
 
-            scriptStatement = oustScriptStatementFactory.CreateDoesDocumentContainAnchorOrSubmitStatement(domElementJson, isUpload ? 2 : 1);
+            scriptStatement = oustScriptStatementFactory.CreateDoesDocumentContainAnchorOrSubmitStatement(outerDomElementJson, isUpload ? 2 : 1);
             scriptCallResponse = await GuiAndAppHandler.RunScriptAsync<ScriptCallResponse>(scriptStatement, false, true);
             if (scriptCallResponse.Success.Inconclusive || !scriptCallResponse.Success.YesNo) { return; }
 
-            domElementJson = JsonSerializer.Serialize(scriptCallResponse.DomElement);
-            scriptStatement = oustScriptStatementFactory.CreateClickAnchorStatement(domElementJson);
+            string uploadFileDisplayed = "";
+            if (isUpload) {
+                IScriptStatement scriptStatement2 = oustScriptStatementFactory.CreateDoesDocumentContainDescendantElementOfIdStatement(outerDomElementJson, "uploadfiledisplayed", "");
+                ScriptCallResponse scriptCallResponse2 = await GuiAndAppHandler.RunScriptAsync<ScriptCallResponse>(scriptStatement2, true, true);
+                if (scriptCallResponse.Success.Inconclusive || !scriptCallResponse.Success.YesNo) { return; }
+                uploadFileDisplayed = scriptCallResponse2.InnerHtml;
+            }
+
+            string innerDomElementJson = JsonSerializer.Serialize(scriptCallResponse.DomElement);
+            scriptStatement = oustScriptStatementFactory.CreateClickAnchorStatement(innerDomElementJson);
             scriptCallResponse = await GuiAndAppHandler.RunScriptAsync<ScriptCallResponse>(scriptStatement, false, true);
             if (scriptCallResponse.Success.Inconclusive || !scriptCallResponse.Success.YesNo) { return; }
 
             await GuiAndAppHandler.WaitUntilNotNavigatingAnymoreAsync();
+
+            if (isUpload) {
+                await Wait.UntilAsync(async () => {
+                    IScriptStatement scriptStatement2 = oustScriptStatementFactory.CreateDoesDocumentContainDescendantElementOfIdStatement(outerDomElementJson, "uploadfiledisplayed", "");
+                    ScriptCallResponse scriptCallResponse2 = await GuiAndAppHandler.RunScriptAsync<ScriptCallResponse>(scriptStatement2, true, true);
+                    return !scriptCallResponse.Success.Inconclusive
+                           && scriptCallResponse.Success.YesNo
+                           && scriptCallResponse2.InnerHtml != uploadFileDisplayed;
+                }, TimeSpan.FromSeconds(30));
+            }
 
             wampLogScanner.WaitUntilLogFolderIsStable(startOfExecutionTimeStamp, out string errorMessage);
 
