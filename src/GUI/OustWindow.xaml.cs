@@ -123,7 +123,7 @@ public partial class OustWindow : IAsyncDisposable {
         IGuiToWebViewApplicationGate guiToAppGate = Container.Resolve<IGuiToWebViewApplicationGate>();
         IButtonNameToCommandMapper buttonNameToCommandMapper = Container.Resolve<IButtonNameToCommandMapper>();
 
-        guiToAppGate.WireWebView(WebView);
+        await guiToAppGate.WireWebViewAsync(WebView);
 
         IApplicationCommands commands = _OustApp.Commands;
         guiToAppGate.WireButtonAndCommand(AddOrReplaceStep, commands.AddOrReplaceStepCommand, buttonNameToCommandMapper);
