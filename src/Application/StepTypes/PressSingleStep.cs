@@ -14,22 +14,14 @@ using Aspenlaub.Net.GitHub.CSharp.VishizhukelNetWeb.Interfaces;
 
 namespace Aspenlaub.Net.GitHub.CSharp.Oust.Application.StepTypes;
 
-public class PressSingleStep : IScriptStepLogic {
-    public IApplicationModel Model { get; init; }
-    public IGuiAndWebViewAppHandler<ApplicationModel> GuiAndAppHandler { get; init; }
-    public ISimpleLogger SimpleLogger { get; init; }
-    private readonly IWampLogScanner _WampLogScanner;
-    private readonly IOustScriptStatementFactory _OustScriptStatementFactory;
+public class PressSingleStep(IApplicationModel model, ISimpleLogger simpleLogger, IGuiAndWebViewAppHandler<ApplicationModel> guiAndAppHandler,
+        IWampLogScanner wampLogScanner, IOustScriptStatementFactory oustScriptStatementFactory)
+            : IScriptStepLogic {
+    public IApplicationModel Model { get; init; } = model;
+    public IGuiAndWebViewAppHandler<ApplicationModel> GuiAndAppHandler { get; init; } = guiAndAppHandler;
+    public ISimpleLogger SimpleLogger { get; init; } = simpleLogger;
 
     public string FreeCodeLabelText => Properties.Resources.FreeTextTitle;
-
-    public PressSingleStep(IApplicationModel model, ISimpleLogger simpleLogger, IGuiAndWebViewAppHandler<ApplicationModel> guiAndAppHandler, IWampLogScanner wampLogScanner, IOustScriptStatementFactory oustScriptStatementFactory) {
-        Model = model;
-        GuiAndAppHandler = guiAndAppHandler;
-        SimpleLogger = simpleLogger;
-        _WampLogScanner = wampLogScanner;
-        _OustScriptStatementFactory = oustScriptStatementFactory;
-    }
 
     public async Task<bool> CanBeAddedOrReplaceExistingStepAsync() {
         return await ShouldBeEnabledAsync();
@@ -41,22 +33,22 @@ public class PressSingleStep : IScriptStepLogic {
 
     public async Task ExecuteAsync() {
         using (SimpleLogger.BeginScope(SimpleLoggingScopeId.Create(nameof(PressSingleStep) + nameof(IScriptStepLogic.ExecuteAsync)))) {
-            var startOfExecutionTimeStamp = DateTime.Now;
-            var scriptStatement = _OustScriptStatementFactory.CreateDoesDocumentHaveNthOccurrenceOfIdOrClassStatement(Model.WithScriptStepIdOrClass, Model.WithScriptStepIdOrClassInstanceNumber);
-            var scriptCallResponse = await GuiAndAppHandler.RunScriptAsync<ScriptCallResponse>(scriptStatement, false, true);
+            DateTime startOfExecutionTimeStamp = wampLogScanner.WaitUntilLogFolderIsErrorFreeReturnStartOfExecutionTimeStamp();
+            IScriptStatement scriptStatement = oustScriptStatementFactory.CreateDoesDocumentHaveNthOccurrenceOfIdOrClassStatement(Model.WithScriptStepIdOrClass, Model.WithScriptStepIdOrClassInstanceNumber);
+            ScriptCallResponse scriptCallResponse = await GuiAndAppHandler.RunScriptAsync<ScriptCallResponse>(scriptStatement, false, true);
             if (scriptCallResponse.Success.Inconclusive || !scriptCallResponse.Success.YesNo) {
                 return;
             }
 
-            var domElementJson = JsonSerializer.Serialize(scriptCallResponse.DomElement);
-            scriptStatement = _OustScriptStatementFactory.CreateDoesDocumentContainAnchorOrSubmitStatement(domElementJson, 1);
+            string domElementJson = JsonSerializer.Serialize(scriptCallResponse.DomElement);
+            scriptStatement = oustScriptStatementFactory.CreateDoesDocumentContainAnchorOrSubmitStatement(domElementJson, 1);
             scriptCallResponse = await GuiAndAppHandler.RunScriptAsync<ScriptCallResponse>(scriptStatement, false, true);
             if (scriptCallResponse.Success.Inconclusive || !scriptCallResponse.Success.YesNo) {
                 return;
             }
 
             domElementJson = JsonSerializer.Serialize(scriptCallResponse.DomElement);
-            scriptStatement = _OustScriptStatementFactory.CreateClickAnchorStatement(domElementJson);
+            scriptStatement = oustScriptStatementFactory.CreateClickAnchorStatement(domElementJson);
             scriptCallResponse = await GuiAndAppHandler.RunScriptAsync<ScriptCallResponse>(scriptStatement, false, true);
             if (scriptCallResponse.Success.Inconclusive || !scriptCallResponse.Success.YesNo) {
                 return;
@@ -64,7 +56,7 @@ public class PressSingleStep : IScriptStepLogic {
 
             await GuiAndAppHandler.WaitUntilNotNavigatingAnymoreAsync();
 
-            _WampLogScanner.WaitUntilLogFolderIsStable(startOfExecutionTimeStamp, out var errorMessage);
+            wampLogScanner.WaitUntilLogFolderIsStable(startOfExecutionTimeStamp, out string errorMessage);
 
             await GuiAndAppHandler.WaitUntilNotNavigatingAnymoreAsync();
 

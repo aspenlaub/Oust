@@ -36,7 +36,7 @@ public class CheckOrUncheckSingleStep(IApplicationModel model,
     }
 
     public async Task ExecuteAsync() {
-        DateTime startOfExecutionTimeStamp = DateTime.Now;
+        DateTime startOfExecutionTimeStamp = wampLogScanner.WaitUntilLogFolderIsErrorFreeReturnStartOfExecutionTimeStamp();
 
         IScriptStatement scriptStatement = oustScriptStatementFactory.CreateDoesDocumentHaveNthOccurrenceOfIdOrClassStatement(Model.WithScriptStepIdOrClass, Model.WithScriptStepIdOrClassInstanceNumber);
         ScriptCallResponse scriptCallResponse = await GuiAndAppHandler.RunScriptAsync<ScriptCallResponse>(scriptStatement, false, true);

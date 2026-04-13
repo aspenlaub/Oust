@@ -11,6 +11,7 @@ using Aspenlaub.Net.GitHub.CSharp.Pegh.Entities;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Extensions;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Interfaces;
 using Aspenlaub.Net.GitHub.CSharp.Skladasu.Entities;
+using Aspenlaub.Net.GitHub.CSharp.Vishizhukel.Entities.Web;
 using Aspenlaub.Net.GitHub.CSharp.Vishizhukel.Interfaces.Web;
 using Aspenlaub.Net.GitHub.CSharp.VishizhukelNet.Entities;
 using Aspenlaub.Net.GitHub.CSharp.VishizhukelNet.Enums;
@@ -19,38 +20,18 @@ using Aspenlaub.Net.GitHub.CSharp.VishizhukelNetWeb.Interfaces;
 
 namespace Aspenlaub.Net.GitHub.CSharp.Oust.Application.StepTypes;
 
-public class GoToUrlStep : IScriptStepLogic {
-    private readonly IApplicationModel _Model;
-    private readonly IGuiAndWebViewAppHandler<ApplicationModel> _GuiAndAppHandler;
-    private readonly ISimpleLogger _SimpleLogger;
-    private readonly IWampLogScanner _WampLogScanner;
-    private readonly ISecuredHttpGate _SecuredHttpGate;
-    private readonly ISecretRepository _SecretRepository;
-    private readonly bool _JustInvoke;
-    private readonly IMethodNamesFromStackFramesExtractor _MethodNamesFromStackFramesExtractor;
-
+public class GoToUrlStep(IApplicationModel model, ISimpleLogger simpleLogger, IGuiAndWebViewAppHandler<ApplicationModel> guiAndAppHandler,
+        IWampLogScanner wampLogScanner, ISecuredHttpGate securedHttpGate, ISecretRepository secretRepository,
+        IMethodNamesFromStackFramesExtractor methodNamesFromStackFramesExtractor, bool justInvoke)
+            : IScriptStepLogic {
     public string FreeCodeLabelText => Properties.Resources.UrlTitle;
-
-    public GoToUrlStep(IApplicationModel model, ISimpleLogger simpleLogger,
-                IGuiAndWebViewAppHandler<ApplicationModel> guiAndAppHandler, IWampLogScanner wampLogScanner, ISecuredHttpGate securedHttpGate,
-                ISecretRepository secretRepository,
-                IMethodNamesFromStackFramesExtractor methodNamesFromStackFramesExtractor, bool justInvoke) {
-        _Model = model;
-        _SimpleLogger = simpleLogger;
-        _GuiAndAppHandler = guiAndAppHandler;
-        _WampLogScanner = wampLogScanner;
-        _SecuredHttpGate = securedHttpGate;
-        _SecretRepository = secretRepository;
-        _JustInvoke = justInvoke;
-        _MethodNamesFromStackFramesExtractor = methodNamesFromStackFramesExtractor;
-    }
 
     public async Task<bool> CanBeAddedOrReplaceExistingStepAsync() {
         return await Task.FromResult(ShouldBeEnabled());
     }
 
     public IScriptStep CreateScriptStepToAdd() {
-        return new ScriptStep { ScriptStepType = _JustInvoke ? ScriptStepType.InvokeUrl : ScriptStepType.GoToUrl, Url = _Model.ScriptStepUrl.Text };
+        return new ScriptStep { ScriptStepType = justInvoke ? ScriptStepType.InvokeUrl : ScriptStepType.GoToUrl, Url = model.ScriptStepUrl.Text };
     }
 
     public async Task<bool> ShouldBeEnabledAsync() {
@@ -58,50 +39,50 @@ public class GoToUrlStep : IScriptStepLogic {
     }
 
     private bool ShouldBeEnabled() {
-        if (!_Model.SelectedScript.SelectionMade) { return false; }
+        if (!model.SelectedScript.SelectionMade) { return false; }
 
-        return _Model.SelectedScript.SelectedItem.Name != Script.NewScriptName && _Model.ScriptStepUrl.Text.StartsWith("http://localhost/");
+        return model.SelectedScript.SelectedItem.Name != Script.NewScriptName && model.ScriptStepUrl.Text.StartsWith("http://localhost/");
     }
 
     public async Task ExecuteAsync() {
-        using (_SimpleLogger.BeginScope(SimpleLoggingScopeId.Create(nameof(GoToUrlStep) + nameof(IScriptStepLogic.ExecuteAsync)))) {
-            var methodNamesFromStack = _MethodNamesFromStackFramesExtractor.ExtractMethodNamesFromStackFrames();
+        using (simpleLogger.BeginScope(SimpleLoggingScopeId.Create(nameof(GoToUrlStep) + nameof(IScriptStepLogic.ExecuteAsync)))) {
+            IList<string> methodNamesFromStack = methodNamesFromStackFramesExtractor.ExtractMethodNamesFromStackFrames();
 
-            if (!_JustInvoke) {
-                _Model.WithScriptStepOutrapForm = null;
-                _Model.WithScriptStepIdOrClass = null;
-                _Model.WithScriptStepOutOfControl = null;
-                _Model.WithScriptStepOutrapFormInstanceNumber = 0;
-                _Model.WithScriptStepIdOrClassInstanceNumber = 0;
+            if (!justInvoke) {
+                model.WithScriptStepOutrapForm = null;
+                model.WithScriptStepIdOrClass = null;
+                model.WithScriptStepOutOfControl = null;
+                model.WithScriptStepOutrapFormInstanceNumber = 0;
+                model.WithScriptStepIdOrClassInstanceNumber = 0;
             }
 
-            var startOfExecutionTimeStamp = DateTime.Now;
+            DateTime startOfExecutionTimeStamp = wampLogScanner.WaitUntilLogFolderIsErrorFreeReturnStartOfExecutionTimeStamp();
             string errorMessage;
 
-            if (_JustInvoke) {
-                _SimpleLogger.LogInformationWithCallStack($"Invoking {_Model.ScriptStepUrl.Text}", methodNamesFromStack);
+            if (justInvoke) {
+                simpleLogger.LogInformationWithCallStack($"Invoking {model.ScriptStepUrl.Text}", methodNamesFromStack);
             } else {
-                var url = _Model.ScriptStepUrl.Text;
-                var result = await _GuiAndAppHandler.NavigateToUrlAsync(url);
+                string url = model.ScriptStepUrl.Text;
+                NavigationResult result = await guiAndAppHandler.NavigateToUrlAsync(url);
                 if (!result.Succeeded) {
-                    _SimpleLogger.LogInformationWithCallStack($"Could not navigate to {url}", methodNamesFromStack);
-                    _Model.Status.Text = string.Format(Properties.Resources.CouldNotNavigateToUrl, url);
-                    _Model.Status.Type = StatusType.Error;
+                    simpleLogger.LogInformationWithCallStack($"Could not navigate to {url}", methodNamesFromStack);
+                    model.Status.Text = string.Format(Properties.Resources.CouldNotNavigateToUrl, url);
+                    model.Status.Type = StatusType.Error;
                     return;
                 }
 
-                _SimpleLogger.LogInformationWithCallStack($"App navigated to {_Model.ScriptStepUrl.Text}", methodNamesFromStack);
+                simpleLogger.LogInformationWithCallStack($"App navigated to {model.ScriptStepUrl.Text}", methodNamesFromStack);
 
-                var oucidAggregatedResponse = result.OucidResponse;
+                OucidResponse oucidAggregatedResponse = result.OucidResponse;
                 if (oucidAggregatedResponse.WaitForLocalhostLogs) {
-                    _SimpleLogger.LogInformationWithCallStack("Waiting for stable log folder", methodNamesFromStack);
-                    _GuiAndAppHandler.IndicateBusy(true);
+                    simpleLogger.LogInformationWithCallStack("Waiting for stable log folder", methodNamesFromStack);
+                    guiAndAppHandler.IndicateBusy(true);
 
-                    _WampLogScanner.WaitUntilLogFolderIsStable(startOfExecutionTimeStamp, out errorMessage);
+                    wampLogScanner.WaitUntilLogFolderIsStable(startOfExecutionTimeStamp, out errorMessage);
                     if (errorMessage != "") {
-                        _SimpleLogger.LogInformationWithCallStack("Error in wamp log", methodNamesFromStack);
-                        _Model.Status.Text = errorMessage;
-                        _Model.Status.Type = StatusType.Error;
+                        simpleLogger.LogInformationWithCallStack("Error in wamp log", methodNamesFromStack);
+                        model.Status.Text = errorMessage;
+                        model.Status.Type = StatusType.Error;
                         return;
                     }
                 }
@@ -109,129 +90,129 @@ public class GoToUrlStep : IScriptStepLogic {
                 startOfExecutionTimeStamp = DateTime.Now;
 
                 if (oucidAggregatedResponse.WaitUntilNotNavigating) {
-                    _SimpleLogger.LogInformationWithCallStack("Waiting for navigation end", methodNamesFromStack);
-                    await _GuiAndAppHandler.WaitUntilNotNavigatingAnymoreAsync();
+                    simpleLogger.LogInformationWithCallStack("Waiting for navigation end", methodNamesFromStack);
+                    await guiAndAppHandler.WaitUntilNotNavigatingAnymoreAsync();
                 }
 
                 if (oucidAggregatedResponse.BasicValidation) {
-                    _SimpleLogger.LogInformationWithCallStack("Validating deprecated bootstrap classes", methodNamesFromStack);
+                    simpleLogger.LogInformationWithCallStack("Validating deprecated bootstrap classes", methodNamesFromStack);
 
                     var scriptStatement = new ScriptStatement {
                         Statement = "OustUtilities.DoesDocumentContainDeprecatedBootstrapClasses()",
                         NoSuccessErrorMessage = Properties.Resources.CouldNotVerifyIfDocumentContainsDeprecatedBootstrapClasses
                     };
-                    var scriptCallResponse = await _GuiAndAppHandler.RunScriptAsync<ScriptCallResponse>(scriptStatement, true, true);
+                    ScriptCallResponse scriptCallResponse = await guiAndAppHandler.RunScriptAsync<ScriptCallResponse>(scriptStatement, true, true);
                     if (scriptCallResponse.Success.Inconclusive || !scriptCallResponse.Success.YesNo) {
                         await Task.Delay(TimeSpan.FromSeconds(5));
-                        scriptCallResponse = await _GuiAndAppHandler.RunScriptAsync<ScriptCallResponse>(scriptStatement, false, true);
+                        scriptCallResponse = await guiAndAppHandler.RunScriptAsync<ScriptCallResponse>(scriptStatement, false, true);
                         if (scriptCallResponse.Success.Inconclusive || !scriptCallResponse.Success.YesNo) {
                             return;
                         }
                     }
                     if (scriptCallResponse.Dictionary.Keys.Count != 0) {
-                        _SimpleLogger.LogInformationWithCallStack("Deprecated bootstrap class/-es found", methodNamesFromStack);
-                        _Model.Status.Text = string.Format(Properties.Resources.DocumentContainsDeprecatedBootstrapClasses, "." + string.Join(", .", scriptCallResponse.Dictionary.Values));
-                        _Model.Status.Type = StatusType.Error;
+                        simpleLogger.LogInformationWithCallStack("Deprecated bootstrap class/-es found", methodNamesFromStack);
+                        model.Status.Text = string.Format(Properties.Resources.DocumentContainsDeprecatedBootstrapClasses, "." + string.Join(", .", scriptCallResponse.Dictionary.Values));
+                        model.Status.Type = StatusType.Error;
                         return;
                     }
                 }
 
-                _GuiAndAppHandler.IndicateBusy(true);
+                guiAndAppHandler.IndicateBusy(true);
 
                 if (oucidAggregatedResponse.WaitAgainForLocalhostLogs) {
-                    _SimpleLogger.LogInformationWithCallStack("App waiting for stable log folder", methodNamesFromStack);
-                    _WampLogScanner.WaitUntilLogFolderIsStable(startOfExecutionTimeStamp, out errorMessage);
+                    simpleLogger.LogInformationWithCallStack("App waiting for stable log folder", methodNamesFromStack);
+                    wampLogScanner.WaitUntilLogFolderIsStable(startOfExecutionTimeStamp, out errorMessage);
                     if (errorMessage != "") {
-                        _SimpleLogger.LogInformationWithCallStack("Error in wamp log", methodNamesFromStack);
-                        _Model.Status.Text = errorMessage;
-                        _Model.Status.Type = StatusType.Error;
+                        simpleLogger.LogInformationWithCallStack("Error in wamp log", methodNamesFromStack);
+                        model.Status.Text = errorMessage;
+                        model.Status.Type = StatusType.Error;
                         return;
                     }
                 }
 
                 if (oucidAggregatedResponse.WaitAgainUntilNotNavigating) {
-                    _SimpleLogger.LogInformationWithCallStack("Waiting for navigation end", methodNamesFromStack);
-                    await _GuiAndAppHandler.WaitUntilNotNavigatingAnymoreAsync();
+                    simpleLogger.LogInformationWithCallStack("Waiting for navigation end", methodNamesFromStack);
+                    await guiAndAppHandler.WaitUntilNotNavigatingAnymoreAsync();
                 }
 
-                _GuiAndAppHandler.IndicateBusy(true);
+                guiAndAppHandler.IndicateBusy(true);
 
                 if (oucidAggregatedResponse.MarkupValidation) {
                     if (!await DoWebClientValidationAsync()) {
-                        _Model.Status.Text = string.Format(Properties.Resources.OucidResponseShouldNotSayMarkupValidation, url);
-                        _Model.Status.Type = StatusType.Error;
+                        model.Status.Text = string.Format(Properties.Resources.OucidResponseShouldNotSayMarkupValidation, url);
+                        model.Status.Type = StatusType.Error;
                         return;
                     }
-                    _SimpleLogger.LogInformationWithCallStack("App validating markup", methodNamesFromStack);
+                    simpleLogger.LogInformationWithCallStack("App validating markup", methodNamesFromStack);
                     try {
-                        var validationResult = await _SecuredHttpGate.IsHtmlMarkupValidAsync(_Model.WebViewContentSource.Text);
+                        HtmlValidationResult validationResult = await securedHttpGate.IsHtmlMarkupValidAsync(model.WebViewContentSource.Text);
                         if (!validationResult.Success) {
-                            _SimpleLogger.LogInformationWithCallStack(Properties.Resources.MarkupValidationFailed, methodNamesFromStack);
-                            _Model.Status.Text = validationResult.ErrorMessage;
-                            _Model.Status.Type = StatusType.Error;
+                            simpleLogger.LogInformationWithCallStack(Properties.Resources.MarkupValidationFailed, methodNamesFromStack);
+                            model.Status.Text = validationResult.ErrorMessage;
+                            model.Status.Type = StatusType.Error;
                             return;
                         }
                     } catch {
-                        _SimpleLogger.LogInformationWithCallStack(Properties.Resources.MarkupValidationFailed, methodNamesFromStack);
-                        _Model.Status.Text = Properties.Resources.MarkupValidationFailed;
-                        _Model.Status.Type = StatusType.Error;
+                        simpleLogger.LogInformationWithCallStack(Properties.Resources.MarkupValidationFailed, methodNamesFromStack);
+                        model.Status.Text = Properties.Resources.MarkupValidationFailed;
+                        model.Status.Type = StatusType.Error;
                         return;
                     }
                 }
             }
 
-            if (_JustInvoke) {
+            if (justInvoke) {
                 using var client = new HttpClient();
                 try {
                     string markup;
-                    using (var response = await client.GetAsync(_Model.ScriptStepUrl.Text)) {
-                        using (var content = response.Content) {
+                    using (HttpResponseMessage response = await client.GetAsync(model.ScriptStepUrl.Text)) {
+                        using (HttpContent content = response.Content) {
                             markup = await content.ReadAsStringAsync();
                         }
                     }
-                    var validationResult = await _SecuredHttpGate.IsHtmlMarkupValidAsync(markup);
+                    HtmlValidationResult validationResult = await securedHttpGate.IsHtmlMarkupValidAsync(markup);
                     if (!validationResult.Success) {
-                        _SimpleLogger.LogInformationWithCallStack(Properties.Resources.MarkupValidationFailed, methodNamesFromStack);
-                        _Model.Status.Text = validationResult.ErrorMessage;
-                        _Model.Status.Type = StatusType.Error;
+                        simpleLogger.LogInformationWithCallStack(Properties.Resources.MarkupValidationFailed, methodNamesFromStack);
+                        model.Status.Text = validationResult.ErrorMessage;
+                        model.Status.Type = StatusType.Error;
                         return;
                     }
                 } catch {
-                    _SimpleLogger.LogInformationWithCallStack(Properties.Resources.MarkupValidationFailed, methodNamesFromStack);
-                    _Model.Status.Text = Properties.Resources.MarkupValidationFailed;
-                    _Model.Status.Type = StatusType.Error;
+                    simpleLogger.LogInformationWithCallStack(Properties.Resources.MarkupValidationFailed, methodNamesFromStack);
+                    model.Status.Text = Properties.Resources.MarkupValidationFailed;
+                    model.Status.Type = StatusType.Error;
                     return;
                 }
             }
 
-            _WampLogScanner.WaitUntilLogFolderIsStable(startOfExecutionTimeStamp, out errorMessage);
+            wampLogScanner.WaitUntilLogFolderIsStable(startOfExecutionTimeStamp, out errorMessage);
             if (errorMessage != "") {
-                _SimpleLogger.LogInformationWithCallStack("Error in wamp log", methodNamesFromStack);
-                _Model.Status.Text = errorMessage;
-                _Model.Status.Type = StatusType.Error;
+                simpleLogger.LogInformationWithCallStack("Error in wamp log", methodNamesFromStack);
+                model.Status.Text = errorMessage;
+                model.Status.Type = StatusType.Error;
                 return;
             }
 
-            _SimpleLogger.LogInformationWithCallStack($"{_Model.ScriptStepUrl.Text} loaded and validated", methodNamesFromStack);
+            simpleLogger.LogInformationWithCallStack($"{model.ScriptStepUrl.Text} loaded and validated", methodNamesFromStack);
 
-            _Model.Status.Text = "";
-            _Model.Status.Type = StatusType.None;
+            model.Status.Text = "";
+            model.Status.Type = StatusType.None;
         }
     }
 
     private async Task<bool> DoWebClientValidationAsync() {
         var secretDenyWebClientValidationCriteria = new DenyWebClientValidationCriteriaSecret();
         var errorsAndInfos = new ErrorsAndInfos();
-        var criteria = await _SecretRepository.GetAsync(secretDenyWebClientValidationCriteria, errorsAndInfos);
+        DenyWebClientValidationCriteria criteria = await secretRepository.GetAsync(secretDenyWebClientValidationCriteria, errorsAndInfos);
         if (errorsAndInfos.AnyErrors()) {
             return true;
         }
 
-        return !criteria.Any(c => _Model.ScriptStepUrl.Text.Contains(c.UrlPart));
+        return !criteria.Any(c => model.ScriptStepUrl.Text.Contains(c.UrlPart));
     }
 
     public void SetFormOrControlOrIdOrClassTitle() {
-        _Model.FormOrControlOrIdOrClass.LabelText = Properties.Resources.FormOrControlOrIdOrClassTitle;
+        model.FormOrControlOrIdOrClass.LabelText = Properties.Resources.FormOrControlOrIdOrClassTitle;
     }
 
     public async Task<IList<Selectable>> SelectableFormsOrControlsOrIdsOrClassesAsync() {

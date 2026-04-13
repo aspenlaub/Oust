@@ -76,7 +76,7 @@ public class WampLogScanner : IWampLogScanner {
     private DateTime NewestFileChangeTimeStamp(DateTime minTimeStamp) {
         return Directory.GetFiles(LogFolder.FullName, "*.log").Select(File.GetLastWriteTime)
             .Union(Directory.GetFiles(ExtendedLogFolder.FullName, "*.log").Select(File.GetLastWriteTime))
-            .Union(new[] { minTimeStamp }).Max();
+            .Union([minTimeStamp]).Max();
     }
 
     public void WaitUntilLogFolderIsStable(DateTime startOfExecutionTimeStamp, out string errorMessage) {
@@ -103,10 +103,21 @@ public class WampLogScanner : IWampLogScanner {
         }
 
         string fileName = WampLogFolder.FullName + @"\php_error.log";
-        if (!File.Exists(fileName)) {
-            return $"Wamp php error log does not exist: {fileName}";
-        }
+        return !File.Exists(fileName)
+            ? $"Wamp php error log does not exist: {fileName}"
+            : File.GetLastWriteTime(fileName) < executionTimeStamp
+                ? ""
+                : File.ReadAllLines(fileName).Last();
+    }
 
-        return File.GetLastWriteTime(fileName) < executionTimeStamp ? "" : File.ReadAllLines(fileName).Last();
+    public DateTime WaitUntilLogFolderIsErrorFreeReturnStartOfExecutionTimeStamp() {
+        string errorMessage;
+        DateTime startOfExecutionTimeStamp;
+        do {
+            startOfExecutionTimeStamp = DateTime.Now;
+            WaitUntilLogFolderIsStable(startOfExecutionTimeStamp, out errorMessage);
+        } while (!string.IsNullOrEmpty(errorMessage));
+
+        return startOfExecutionTimeStamp;
     }
 }
