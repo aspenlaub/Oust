@@ -117,6 +117,8 @@ public partial class OustWindow : IAsyncDisposable {
             Environment.Exit(0);
         }
 
+        await WebView.CoreWebView2.Profile.ClearBrowsingDataAsync();
+
         _OustApp = Container.Resolve<IApplication>(new NamedParameter("extractSubScriptPopup", _ExtractSubScriptPopup), new NamedParameter("progressWindow", _ProgressWindow));
         await _OustApp.OnLoadedAsync();
 
@@ -210,11 +212,7 @@ public partial class OustWindow : IAsyncDisposable {
         ILogicalUrlRepository logicalUrlRepository = Container.Resolve<ILogicalUrlRepository>();
         var errorsAndInfos = new ErrorsAndInfos();
         string url = await logicalUrlRepository.GetUrlAsync("ClearWinIdCookie", errorsAndInfos);
-        if (errorsAndInfos.AnyErrors()) {
-            throw new Exception(errorsAndInfos.ErrorsToString());
-        }
-
-        return url;
+        return errorsAndInfos.AnyErrors() ? throw new Exception(errorsAndInfos.ErrorsToString()) : url;
     }
 
 
