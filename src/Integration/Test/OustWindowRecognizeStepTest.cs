@@ -22,8 +22,8 @@ public class OustWindowRecognizeStepTest : OustIntegrationTestBase {
 
     [TestMethod]
     public async Task FreeTextForRecognizeStepIsLabeledExpectedContents() {
-        using var sut = await CreateOustWindowUnderTestAsync();
-        var process = await sut.FindIdleProcessAsync();
+        using OustWindowUnderTest sut = await CreateOustWindowUnderTestAsync();
+        ControllableProcess process = await sut.FindIdleProcessAsync();
         var tasks = new List<ControllableProcessTask> {
             sut.CreateSetValueTask(process, nameof(IApplicationModel.ScriptStepType), Enum.GetName(typeof(ScriptStepType), ScriptStepType.Recognize)),
             sut.CreateVerifyLabelTask(process, nameof(IApplicationModel.FreeText), Properties.Resources.FreeTextExpectedContents)
@@ -33,10 +33,10 @@ public class OustWindowRecognizeStepTest : OustIntegrationTestBase {
 
     [TestMethod]
     public async Task OutOfControlChoicesAreAvailableForAPageWithOutrapForms() {
-        using var sut = await CreateOustWindowUnderTestAsync();
-        var process = await sut.FindIdleProcessAsync();
+        using OustWindowUnderTest sut = await CreateOustWindowUnderTestAsync();
+        ControllableProcess process = await sut.FindIdleProcessAsync();
         const string newName = "OutOfControl Choices Are Available For A Page With Outrap Forms";
-        var tasks = CreateNewScriptTaskList(sut, process, newName);
+        List<ControllableProcessTask> tasks = CreateNewScriptTaskList(sut, process, newName);
         tasks.AddRange(await CreateGoToGutLookStepTaskListAsync(sut, process));
         tasks.Add(sut.CreateSetValueTask(process, nameof(IApplicationModel.ScriptStepType), Enum.GetName(typeof(ScriptStepType), ScriptStepType.With)));
         tasks.Add(sut.CreateSetValueTask(process, nameof(IApplicationModel.FormOrControlOrIdOrClass), "GutLookSubForm"));
@@ -57,9 +57,9 @@ public class OustWindowRecognizeStepTest : OustIntegrationTestBase {
     public async Task CanRecognizeControl() {
         var generator = new TestDataGenerator(Container.Resolve<IContextFactory>(), LogicalUrlRepository);
         await generator.GenerateTestDataAsync();
-        using var sut = await CreateOustWindowUnderTestAsync();
-        var process = await sut.FindIdleProcessAsync();
-        var tasks = CreateNewScriptTaskList(sut, process, "Recognize Control");
+        using OustWindowUnderTest sut = await CreateOustWindowUnderTestAsync();
+        ControllableProcess process = await sut.FindIdleProcessAsync();
+        List<ControllableProcessTask> tasks = CreateNewScriptTaskList(sut, process, "Recognize Control");
         tasks.AddRange(await CreateGoToGutLookStepTaskListAsync(sut, process));
         tasks.Add(sut.CreateSetValueTask(process, nameof(IApplicationModel.ScriptStepType), Enum.GetName(typeof(ScriptStepType), ScriptStepType.With)));
         tasks.Add(sut.CreateSetValueTask(process, nameof(IApplicationModel.FormOrControlOrIdOrClass), "GutLookSubForm"));

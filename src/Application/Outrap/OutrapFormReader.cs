@@ -10,8 +10,8 @@ public class OutrapFormReader : IOutrapFormReader {
     public IOutrapForm Read(string fileName, bool isOutrap) {
         var doc = new XmlDocument();
         doc.Load(fileName);
-        var root = doc.DocumentElement;
-        var classAttributeValue = root?.Attributes["class"]?.Value;
+        XmlElement root = doc.DocumentElement;
+        string classAttributeValue = root?.Attributes["class"]?.Value;
         if (classAttributeValue == null) { return null; }
 
         var form = new OutrapForm {
@@ -20,9 +20,9 @@ public class OutrapFormReader : IOutrapFormReader {
             Type = OutrapControlTypes.OutrapFormDefinition
         };
         XmlNode formDoc = null, guidsOrUidsDoc = null;
-        var found = false;
-        for (var i = 0; i < doc.ChildNodes.Count; i++) {
-            var subDoc = doc.ChildNodes[i];
+        bool found = false;
+        for (int i = 0; i < doc.ChildNodes.Count; i++) {
+            XmlNode subDoc = doc.ChildNodes[i];
             if (subDoc == null) { continue; }
 
             switch (subDoc.Name) {
@@ -51,7 +51,7 @@ public class OutrapFormReader : IOutrapFormReader {
 
         if (guidsOrUidsDoc == null) { return form; }
 
-        var guidsOrUids = ReadGuidsOrUids(guidsOrUidsDoc, form.Type);
+        Dictionary<string, string> guidsOrUids = ReadGuidsOrUids(guidsOrUidsDoc, form.Type);
         if (!guidsOrUids.ContainsKey(form.Name)) { return form; }
 
         form.Id = guidsOrUids[form.Name];
@@ -61,8 +61,8 @@ public class OutrapFormReader : IOutrapFormReader {
 
     protected Dictionary<string, string> ReadGuidsOrUids(XmlNode doc, OutrapControlTypes controlType) {
         var guidsOrUids = new Dictionary<string, string>();
-        for (var i = 0; i < doc.ChildNodes.Count; i++) {
-            var subDoc = doc.ChildNodes[i];
+        for (int i = 0; i < doc.ChildNodes.Count; i++) {
+            XmlNode subDoc = doc.ChildNodes[i];
             if (subDoc?.Attributes?["name"] == null || subDoc.Attributes["id"] == null) { continue; }
 
             guidsOrUids[subDoc.Attributes["name"].Value] = subDoc.Attributes["id"].Value;
@@ -72,13 +72,13 @@ public class OutrapFormReader : IOutrapFormReader {
     }
 
     protected void ReadChildNodes(OutOfControl parentControl, XmlNode doc, Dictionary<string, string> guids, bool isOutrap) {
-        for (var i = 0; i < doc.ChildNodes.Count; i++) {
-            var subDoc = doc.ChildNodes[i];
+        for (int i = 0; i < doc.ChildNodes.Count; i++) {
+            XmlNode subDoc = doc.ChildNodes[i];
             if (subDoc == null || subDoc.Name == "guids" || subDoc.Name == "pseudo" || subDoc.Name == "uids" || subDoc.Name == "onetoones") { continue; }
 
-            var attributes = AttributeDictionary(subDoc);
+            Dictionary<string, string> attributes = AttributeDictionary(subDoc);
             string name;
-            if (attributes.TryGetValue("name", out var attribute)) {
+            if (attributes.TryGetValue("name", out string attribute)) {
                 name = attribute;
             } else if (subDoc.Name == "upload") {
                 name = "UploadControl";
@@ -90,8 +90,8 @@ public class OutrapFormReader : IOutrapFormReader {
                 continue;
             }
 
-            var guid = guids[name];
-            var oclass = attributes.TryGetValue("class", out var attribute1) ? attribute1 : "";
+            string guid = guids[name];
+            string oclass = attributes.TryGetValue("class", out string attribute1) ? attribute1 : "";
             if (guid.Length == 0) {
                 throw new NotImplementedException();
             }
@@ -139,7 +139,7 @@ public class OutrapFormReader : IOutrapFormReader {
         var attributes = new Dictionary<string, string>();
         if (doc.Attributes == null) { return attributes; }
 
-        for (var i = 0; i < doc.Attributes.Count; i++) {
+        for (int i = 0; i < doc.Attributes.Count; i++) {
             attributes[doc.Attributes[i].Name] = doc.Attributes[i].Value;
         }
 

@@ -22,8 +22,8 @@ public class OustWindowWithStepTest : OustIntegrationTestBase {
 
     [TestMethod]
     public async Task FormOrControlIdOrClassForWithStepIsLabeledForm() {
-        using var sut = await CreateOustWindowUnderTestAsync();
-        var process = await sut.FindIdleProcessAsync();
+        using OustWindowUnderTest sut = await CreateOustWindowUnderTestAsync();
+        ControllableProcess process = await sut.FindIdleProcessAsync();
         var tasks = new List<ControllableProcessTask> {
             sut.CreateSetValueTask(process, nameof(IApplicationModel.ScriptStepType), Enum.GetName(typeof(ScriptStepType), ScriptStepType.With)),
             sut.CreateVerifyLabelTask(process, nameof(IApplicationModel.FormOrControlOrIdOrClass), Properties.Resources.Form)
@@ -33,9 +33,9 @@ public class OustWindowWithStepTest : OustIntegrationTestBase {
 
     [TestMethod]
     public async Task FormChoicesAreAvailableForAPageWithOutrapForms() {
-        using var sut = await CreateOustWindowUnderTestAsync();
-        var process = await sut.FindIdleProcessAsync();
-        var tasks = sut.CreateNewScriptTaskList(process, "Form Choices Are Available For A Page With Outrap Forms");
+        using OustWindowUnderTest sut = await CreateOustWindowUnderTestAsync();
+        ControllableProcess process = await sut.FindIdleProcessAsync();
+        List<ControllableProcessTask> tasks = sut.CreateNewScriptTaskList(process, "Form Choices Are Available For A Page With Outrap Forms");
         tasks.AddRange(await CreateGoToGutLookStepTaskListAsync(sut, process));
         tasks.Add(sut.CreateSetValueTask(process, nameof(IApplicationModel.ScriptStepType), Enum.GetName(typeof(ScriptStepType), ScriptStepType.With)));
         tasks.Add(sut.CreateVerifyNumberOfItemsTask(process, nameof(IApplicationModel.FormOrControlOrIdOrClass), 4));
@@ -50,12 +50,12 @@ public class OustWindowWithStepTest : OustIntegrationTestBase {
     public async Task CanRecognizeForm() {
         var generator = new TestDataGenerator(Container.Resolve<IContextFactory>(), LogicalUrlRepository);
         await generator.GenerateTestDataAsync();
-        using var sut = await CreateOustWindowUnderTestAsync();
-        var process = await sut.FindIdleProcessAsync();
-        var tasks = sut.CreateNewScriptTaskList(process, "Recognize Form");
-        var addTasks = await CreateGoToGutLookStepTaskListAsync(sut, process);
+        using OustWindowUnderTest sut = await CreateOustWindowUnderTestAsync();
+        ControllableProcess process = await sut.FindIdleProcessAsync();
+        List<ControllableProcessTask> tasks = sut.CreateNewScriptTaskList(process, "Recognize Form");
+        List<ControllableProcessTask> addTasks = await CreateGoToGutLookStepTaskListAsync(sut, process);
         tasks.AddRange(addTasks);
-        var goToGutLookStepText = "\u2192 " + addTasks[1].Text;
+        string goToGutLookStepText = "\u2192 " + addTasks[1].Text;
         tasks.Add(sut.CreateSetValueTask(process, nameof(IApplicationModel.ScriptStepType), Enum.GetName(typeof(ScriptStepType), ScriptStepType.With)));
         tasks.Add(sut.CreateSetValueTask(process, nameof(IApplicationModel.FormOrControlOrIdOrClass), "GutLookSubForm"));
         tasks.Add(sut.CreatePressButtonTask(process, nameof(OustWindow.AddOrReplaceStep)));
@@ -71,7 +71,7 @@ public class OustWindowWithStepTest : OustIntegrationTestBase {
         tasks.Add(sut.CreateVerifyValueTask(process, nameof(IApplicationModel.ScriptSteps), withFormStepText));
         addTasks = await CreateGoToSodwatStepTaskListAsync(sut, process);
         tasks.AddRange(addTasks);
-        var goToSodwatStepText = "\u2192 " + addTasks[1].Text;
+        string goToSodwatStepText = "\u2192 " + addTasks[1].Text;
         tasks.Add(sut.CreateVerifyValueTask(process, nameof(IApplicationModel.Status), ""));
         tasks.Add(sut.CreateSetValueTask(process, nameof(IApplicationModel.ScriptSteps), goToGutLookStepText));
         tasks.Add(sut.CreatePressButtonTask(process, nameof(OustWindow.StepInto)));

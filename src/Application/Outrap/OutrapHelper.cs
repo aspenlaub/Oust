@@ -14,27 +14,19 @@ using Aspenlaub.Net.GitHub.CSharp.VishizhukelNetWeb.Interfaces;
 
 namespace Aspenlaub.Net.GitHub.CSharp.Oust.Application.Outrap;
 
-public class OutrapHelper : IOutrapHelper {
-    public IApplicationModel Model { get; init; }
-    public IGuiAndWebViewAppHandler<ApplicationModel> GuiAndAppHandler { get; init; }
-    public ISimpleLogger SimpleLogger { get; init; }
-    private readonly OutrapFormCollector _OutrapFormCollector;
-    private readonly IOustScriptStatementFactory _OustScriptStatementFactory;
-    private readonly IMethodNamesFromStackFramesExtractor _MethodNamesFromStackFramesExtractor;
+public class OutrapHelper(IApplicationModel model, IGuiAndWebViewAppHandler<ApplicationModel> guiAndAppHandler,
+        ISimpleLogger simpleLogger, IFolderResolver folderResolver, IOustScriptStatementFactory oustScriptStatementFactory,
+        IMethodNamesFromStackFramesExtractor methodNamesFromStackFramesExtractor)
+            : IOutrapHelper {
+    public IApplicationModel Model { get; init; } = model;
+    public IGuiAndWebViewAppHandler<ApplicationModel> GuiAndAppHandler { get; init; } = guiAndAppHandler;
+    public ISimpleLogger SimpleLogger { get; init; } = simpleLogger;
+    private readonly OutrapFormCollector _OutrapFormCollector = new(new OutrapFormReader(), folderResolver);
 
     protected static List<IOutrapForm> Forms;
 
-    public OutrapHelper(IApplicationModel model, IGuiAndWebViewAppHandler<ApplicationModel> guiAndAppHandler, ISimpleLogger simpleLogger, IFolderResolver folderResolver, IOustScriptStatementFactory oustScriptStatementFactory, IMethodNamesFromStackFramesExtractor methodNamesFromStackFramesExtractor) {
-        Model = model;
-        GuiAndAppHandler = guiAndAppHandler;
-        SimpleLogger = simpleLogger;
-        _OutrapFormCollector = new OutrapFormCollector(new OutrapFormReader(), folderResolver);
-        _OustScriptStatementFactory = oustScriptStatementFactory;
-        _MethodNamesFromStackFramesExtractor = methodNamesFromStackFramesExtractor;
-    }
-
     public async Task<List<Selectable>> FormChoicesAsync() {
-        var methodNamesFromStack = _MethodNamesFromStackFramesExtractor.ExtractMethodNamesFromStackFrames();
+        IList<string> methodNamesFromStack = methodNamesFromStackFramesExtractor.ExtractMethodNamesFromStackFrames();
         SimpleLogger.LogInformationWithCallStack("Form choices requested", methodNamesFromStack);
 
         await SetFormsIfNecessaryAsync();
@@ -43,13 +35,13 @@ public class OutrapHelper : IOutrapHelper {
         var formIds = new List<string>();
 
         var scriptStatement = new ScriptStatement { Statement = "OustUtilities.OutrapFormIds()" };
-        var scriptCallResponse = await GuiAndAppHandler.RunScriptAsync<ScriptCallResponse>(scriptStatement, false, true);
+        ScriptCallResponse scriptCallResponse = await GuiAndAppHandler.RunScriptAsync<ScriptCallResponse>(scriptStatement, false, true);
         if (scriptCallResponse.Success.Inconclusive || !scriptCallResponse.Success.YesNo) {
             SimpleLogger.LogInformationWithCallStack("Form choices not available", methodNamesFromStack);
             return new List<Selectable>();
         }
 
-        foreach (var form in Forms.Where(form => scriptCallResponse.Dictionary.Any(h => h.Key.StartsWith(form.Id, StringComparison.InvariantCulture))).Where(form => !formIds.Contains(form.Id))) {
+        foreach (IOutrapForm form in Forms.Where(form => scriptCallResponse.Dictionary.Any(h => h.Key.StartsWith(form.Id, StringComparison.InvariantCulture))).Where(form => !formIds.Contains(form.Id))) {
             formIds.Add(form.Id);
             choices.Add(new Selectable { Guid = form.Id, Name = form.Name });
         }
@@ -60,29 +52,29 @@ public class OutrapHelper : IOutrapHelper {
     }
 
     public async Task<List<Selectable>> OutOfControlChoicesAsync(ScriptStepType scriptStepType, string outrapFormGuid, int outrapFormInstanceNumber) {
-        var methodNamesFromStack = _MethodNamesFromStackFramesExtractor.ExtractMethodNamesFromStackFrames();
+        IList<string> methodNamesFromStack = methodNamesFromStackFramesExtractor.ExtractMethodNamesFromStackFrames();
         SimpleLogger.LogInformationWithCallStack("Out-of-control choices requested", methodNamesFromStack);
 
         await SetFormsIfNecessaryAsync();
 
         var choices = new List<Selectable> {new() {Guid = "", Name = ""}};
-        var form = Forms.FirstOrDefault(f => f.Id == outrapFormGuid);
+        IOutrapForm form = Forms.FirstOrDefault(f => f.Id == outrapFormGuid);
         if (form == null) {
             SimpleLogger.LogInformationWithCallStack("Out-of-control choices not available (form not available", methodNamesFromStack);
             return new List<Selectable>();
         }
 
-        var scriptStatement = _OustScriptStatementFactory.CreateDoesDocumentHaveDivLikeWithIdOrNthOccurrenceOfClassStatement(outrapFormGuid, outrapFormInstanceNumber, outrapFormGuid);
-        var scriptCallResponse = await GuiAndAppHandler.RunScriptAsync<ScriptCallResponse>(scriptStatement, true, true);
+        IScriptStatement scriptStatement = oustScriptStatementFactory.CreateDoesDocumentHaveDivLikeWithIdOrNthOccurrenceOfClassStatement(outrapFormGuid, outrapFormInstanceNumber, outrapFormGuid);
+        ScriptCallResponse scriptCallResponse = await GuiAndAppHandler.RunScriptAsync<ScriptCallResponse>(scriptStatement, true, true);
         if (!scriptCallResponse.Success.YesNo || scriptCallResponse.Success.Inconclusive) {
             SimpleLogger.LogInformationWithCallStack("Out-of-control choices not available (div not found", methodNamesFromStack);
             return new List<Selectable>();
         }
 
-        var ancestorDomElementJson = JsonSerializer.Serialize(scriptCallResponse.DomElement);
+        string ancestorDomElementJson = JsonSerializer.Serialize(scriptCallResponse.DomElement);
 
-        foreach (var outOfControl in form.TraverseChildren().Where(outOfControl => DoesControlMatchScriptStepType(outOfControl, scriptStepType))) {
-            scriptStatement = _OustScriptStatementFactory.CreateDoesDocumentContainDescendantElementOfClassStatement(ancestorDomElementJson, outOfControl.Id, "", "", 0);
+        foreach (IOutOfControl outOfControl in form.TraverseChildren().Where(outOfControl => DoesControlMatchScriptStepType(outOfControl, scriptStepType))) {
+            scriptStatement = oustScriptStatementFactory.CreateDoesDocumentContainDescendantElementOfClassStatement(ancestorDomElementJson, outOfControl.Id, "", "", 0);
             scriptCallResponse = await GuiAndAppHandler.RunScriptAsync<ScriptCallResponse>(scriptStatement, true, true);
             if (scriptCallResponse.Success.Inconclusive|| !scriptCallResponse.Success.YesNo) {
                 continue;
@@ -112,14 +104,14 @@ public class OutrapHelper : IOutrapHelper {
     }
 
     public async Task<List<Selectable>> IdOrClassChoicesAsync() {
-        var methodNamesFromStack = _MethodNamesFromStackFramesExtractor.ExtractMethodNamesFromStackFrames();
+        IList<string> methodNamesFromStack = methodNamesFromStackFramesExtractor.ExtractMethodNamesFromStackFrames();
         SimpleLogger.LogInformationWithCallStack("Id-or-class choices requested", methodNamesFromStack);
 
         var choices = new List<Selectable> { new() {Guid = "", Name = ""} };
         var scriptStatement = new ScriptStatement {
             Statement = "OustUtilities.IdsAndClasses()"
         };
-        var scriptCallResponse = await GuiAndAppHandler.RunScriptAsync<ScriptCallResponse>(scriptStatement, true, true);
+        ScriptCallResponse scriptCallResponse = await GuiAndAppHandler.RunScriptAsync<ScriptCallResponse>(scriptStatement, true, true);
         if (scriptCallResponse.Success.Inconclusive || !scriptCallResponse.Success.YesNo) { return new List<Selectable>(); }
 
         choices.AddRange(scriptCallResponse.Dictionary
@@ -131,31 +123,31 @@ public class OutrapHelper : IOutrapHelper {
     }
 
     public async Task<List<Selectable>> SelectionChoicesAsync(string outrapFormGuid, int outrapFormInstanceNumber, string outOfControlGuid) {
-        var methodNamesFromStack = _MethodNamesFromStackFramesExtractor.ExtractMethodNamesFromStackFrames();
+        IList<string> methodNamesFromStack = methodNamesFromStackFramesExtractor.ExtractMethodNamesFromStackFrames();
         SimpleLogger.LogInformationWithCallStack("Selection choices requested", methodNamesFromStack);
 
         await SetFormsIfNecessaryAsync();
 
         var choices = new List<Selectable>() { new() { Guid = "", Name = "" } };
-        var form = Forms.FirstOrDefault(f => f.Id == outrapFormGuid);
+        IOutrapForm form = Forms.FirstOrDefault(f => f.Id == outrapFormGuid);
         if (form == null) { return choices; }
 
-        var scriptStatement = _OustScriptStatementFactory.CreateDoesDocumentHaveDivLikeWithIdOrNthOccurrenceOfClassStatement(outrapFormGuid, outrapFormInstanceNumber, outrapFormGuid);
-        var scriptCallResponse = await GuiAndAppHandler.RunScriptAsync<ScriptCallResponse>(scriptStatement, true, true);
+        IScriptStatement scriptStatement = oustScriptStatementFactory.CreateDoesDocumentHaveDivLikeWithIdOrNthOccurrenceOfClassStatement(outrapFormGuid, outrapFormInstanceNumber, outrapFormGuid);
+        ScriptCallResponse scriptCallResponse = await GuiAndAppHandler.RunScriptAsync<ScriptCallResponse>(scriptStatement, true, true);
         if (scriptCallResponse.Success.Inconclusive || !scriptCallResponse.Success.YesNo) {
             SimpleLogger.LogInformationWithCallStack("Selection choices not available (div not found)", methodNamesFromStack);
             return choices;
         }
 
-        var ancestorDomElementJson = JsonSerializer.Serialize(scriptCallResponse.DomElement);
-        scriptStatement = _OustScriptStatementFactory.CreateDoesDocumentContainDescendantElementOfClassStatement(ancestorDomElementJson, outOfControlGuid, "", "", 0);
+        string ancestorDomElementJson = JsonSerializer.Serialize(scriptCallResponse.DomElement);
+        scriptStatement = oustScriptStatementFactory.CreateDoesDocumentContainDescendantElementOfClassStatement(ancestorDomElementJson, outOfControlGuid, "", "", 0);
         scriptCallResponse = await GuiAndAppHandler.RunScriptAsync<ScriptCallResponse>(scriptStatement, true, true);
         if (scriptCallResponse.Success.Inconclusive || !scriptCallResponse.Success.YesNo) {
             SimpleLogger.LogInformationWithCallStack("Selection choices not available (select not found)", methodNamesFromStack);
             return choices;
         }
 
-        var selectElementJson = JsonSerializer.Serialize(scriptCallResponse.DomElement);
+        string selectElementJson = JsonSerializer.Serialize(scriptCallResponse.DomElement);
         scriptStatement = new ScriptStatement {
             Statement = "OustUtilities.SelectOptions(" + selectElementJson + ")"
         };
@@ -182,7 +174,7 @@ public class OutrapHelper : IOutrapHelper {
         var scriptStatement = new ScriptStatement {
             Statement = "OustUtilities.AuxiliaryDictionary()"
         };
-        var scriptCallResponse = await GuiAndAppHandler.RunScriptAsync<ScriptCallResponse>(scriptStatement, true, true);
+        ScriptCallResponse scriptCallResponse = await GuiAndAppHandler.RunScriptAsync<ScriptCallResponse>(scriptStatement, true, true);
         if (scriptCallResponse.Success.Inconclusive || !scriptCallResponse.Success.YesNo || scriptCallResponse.Dictionary.Count == 0) {
             return new Dictionary<string, string> {
                 { "WebViewCheckBoxesChecked", "" }, { "WebViewParagraphs", "" }, { "WebViewInputValues", "" }, { "WebViewSelectedValues", "" }

@@ -11,34 +11,25 @@ using Aspenlaub.Net.GitHub.CSharp.VishizhukelNetWeb.Interfaces;
 
 namespace Aspenlaub.Net.GitHub.CSharp.Oust.Application.StepTypes;
 
-public class WithStep : IScriptStepLogic {
-    public IApplicationModel Model { get; init; }
-    public IGuiAndWebViewAppHandler<ApplicationModel> GuiAndAppHandler { get; init; }
-    public ISimpleLogger SimpleLogger { get; init; }
-    private readonly IOutrapHelper _OutrapHelper;
-    private readonly IOustScriptStatementFactory _OustScriptStatementFactory;
+public class WithStep(IApplicationModel model, ISimpleLogger simpleLogger, IGuiAndWebViewAppHandler<ApplicationModel> guiAndAppHandler,
+        IOutrapHelper outrapHelper, IOustScriptStatementFactory oustScriptStatementFactory) : IScriptStepLogic {
+    public IApplicationModel Model { get; init; } = model;
+    public IGuiAndWebViewAppHandler<ApplicationModel> GuiAndAppHandler { get; init; } = guiAndAppHandler;
+    public ISimpleLogger SimpleLogger { get; init; } = simpleLogger;
 
     public string FreeCodeLabelText => Properties.Resources.FreeTextTitle;
 
-    public WithStep(IApplicationModel model, ISimpleLogger simpleLogger, IGuiAndWebViewAppHandler<ApplicationModel> guiAndAppHandler, IOutrapHelper outrapHelper, IOustScriptStatementFactory oustScriptStatementFactory) {
-        Model = model;
-        SimpleLogger = simpleLogger;
-        GuiAndAppHandler = guiAndAppHandler;
-        _OutrapHelper = outrapHelper;
-        _OustScriptStatementFactory = oustScriptStatementFactory;
-    }
-
     public async Task<bool> CanBeAddedOrReplaceExistingStepAsync() {
-        if (!ShouldBeEnabled(out var instanceNumber)) { return false; }
+        if (!ShouldBeEnabled(out int instanceNumber)) { return false; }
         if (!Model.FormOrControlOrIdOrClass.SelectionMade) { return false; }
 
-        var scriptStatement = _OustScriptStatementFactory.CreateDoesDocumentHaveDivLikeWithIdOrNthOccurrenceOfClassStatement(Model.ScriptStepOutrapForm.Guid, instanceNumber, Model.ScriptStepOutrapForm.Name);
-        var scriptCallResponse = await GuiAndAppHandler.RunScriptAsync<ScriptCallResponse>(scriptStatement, true, true);
+        IScriptStatement scriptStatement = oustScriptStatementFactory.CreateDoesDocumentHaveDivLikeWithIdOrNthOccurrenceOfClassStatement(Model.ScriptStepOutrapForm.Guid, instanceNumber, Model.ScriptStepOutrapForm.Name);
+        ScriptCallResponse scriptCallResponse = await GuiAndAppHandler.RunScriptAsync<ScriptCallResponse>(scriptStatement, true, true);
         return scriptCallResponse.Success.YesNo && !scriptCallResponse.Success.Inconclusive;
     }
 
     public IScriptStep CreateScriptStepToAdd() {
-        var instanceNumber = int.Parse(Model.FormOrIdOrClassInstanceNumber.Text);
+        int instanceNumber = int.Parse(Model.FormOrIdOrClassInstanceNumber.Text);
         return new ScriptStep { ScriptStepType = ScriptStepType.With, FormGuid = Model.FormOrControlOrIdOrClass.SelectedItem.Guid, FormName = Model.FormOrControlOrIdOrClass.SelectedItem.Name, FormInstanceNumber = instanceNumber };
     }
 
@@ -59,9 +50,9 @@ public class WithStep : IScriptStepLogic {
     }
 
     public async Task ExecuteAsync() {
-        var instanceNumber = int.Parse(Model.FormOrIdOrClassInstanceNumber.Text);
-        var scriptStatement = _OustScriptStatementFactory.CreateDoesDocumentHaveDivLikeWithIdOrNthOccurrenceOfClassStatement(Model.ScriptStepOutrapForm.Guid, instanceNumber, Model.ScriptStepOutrapForm.Name);
-        var scriptCallResponse = await GuiAndAppHandler.RunScriptAsync<ScriptCallResponse>(scriptStatement, false, true);
+        int instanceNumber = int.Parse(Model.FormOrIdOrClassInstanceNumber.Text);
+        IScriptStatement scriptStatement = oustScriptStatementFactory.CreateDoesDocumentHaveDivLikeWithIdOrNthOccurrenceOfClassStatement(Model.ScriptStepOutrapForm.Guid, instanceNumber, Model.ScriptStepOutrapForm.Name);
+        ScriptCallResponse scriptCallResponse = await GuiAndAppHandler.RunScriptAsync<ScriptCallResponse>(scriptStatement, false, true);
         if (scriptCallResponse.Success.Inconclusive || !scriptCallResponse.Success.YesNo) { return; }
 
         Model.WithScriptStepOutrapForm = new Selectable { Guid = Model.ScriptStepOutrapForm.Guid, Name = Model.ScriptStepOutrapForm.Name };
@@ -72,6 +63,6 @@ public class WithStep : IScriptStepLogic {
     }
 
     public async Task<IList<Selectable>> SelectableFormsOrControlsOrIdsOrClassesAsync() {
-        return await _OutrapHelper.FormChoicesAsync();
+        return await outrapHelper.FormChoicesAsync();
     }
 }
