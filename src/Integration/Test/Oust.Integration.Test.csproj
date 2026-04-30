@@ -19,9 +19,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.Build.Tasks.Core" Version="18.4.0" />
     <PackageReference Include="Seoa" Version="2.0.2470.1061" />
-    <PackageReference Include="System.Security.Cryptography.Xml" Version="10.0.7" />
     <PackageReference Include="VishnetIntegrationTestTools" Version="2.0.2470.1191" />
   </ItemGroup>
   <ItemGroup>
