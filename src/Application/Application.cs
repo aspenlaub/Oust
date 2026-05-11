@@ -80,6 +80,7 @@ public class Application(IButtonNameToCommandMapper buttonNameToCommandMapper,
             { ScriptStepType.RecognizeOkay, new RecognizeOkayStep(Model, oustScriptStatementFactory, this) },
             { ScriptStepType.ClearInput, new InputStep(ScriptStepType.ClearInput, Model, SimpleLogger, this, outrapHelper, fileDialogTrickster, oustScriptStatementFactory, oustSettingsHelper) },
             { ScriptStepType.EndScriptIfRecognized, new RecognizeOrNotExpectedContentsStep(Model, SimpleLogger, this, outrapHelper, oustScriptStatementFactory, ScriptStepType.EndScriptIfRecognized) },
+            { ScriptStepType.EndScriptIfNotRecognized, new RecognizeOrNotExpectedContentsStep(Model, SimpleLogger, this, outrapHelper, oustScriptStatementFactory, ScriptStepType.EndScriptIfNotRecognized) },
             { ScriptStepType.StartOfCleanUpSection, new StartOfCleanUpSectionStep(Model) },
         };
 

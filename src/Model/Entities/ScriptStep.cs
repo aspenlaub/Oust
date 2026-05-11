@@ -133,6 +133,10 @@ public class ScriptStep : IGuid, ISetGuid, IScriptStep {
                 return string.IsNullOrWhiteSpace(ControlName)
                     ? string.Format(Properties.Resources.EndScriptIfRecognizeIdOrClassContents, ExpectedContents)
                     : string.Format(Properties.Resources.EndScriptIfRecognizeWithContents, ControlName, ExpectedContents);
+            case ScriptStepType.EndScriptIfNotRecognized:
+                return string.IsNullOrWhiteSpace(ControlName)
+                    ? string.Format(Properties.Resources.EndScriptIfNotRecognizeIdOrClassContents, ExpectedContents)
+                    : string.Format(Properties.Resources.EndScriptIfNotRecognizeWithContents, ControlName, ExpectedContents);
             case ScriptStepType.NotExpectedContents:
             case ScriptStepType.NotExpectedSelection: {
                 if (string.IsNullOrWhiteSpace(ControlName)) {

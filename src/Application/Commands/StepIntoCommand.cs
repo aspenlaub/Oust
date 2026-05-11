@@ -60,7 +60,7 @@ public class StepIntoCommand : ICommand {
 
     private async Task ExecuteAccordingToStepLogicAsync(ScriptStepType scriptStepType) {
         using (_SimpleLogger.BeginScope(SimpleLoggingScopeId.Create(nameof(IScriptStepLogic.ExecuteAsync) + scriptStepType))) {
-            var methodNamesFromStack = _MethodNamesFromStackFramesExtractor.ExtractMethodNamesFromStackFrames();
+            IList<string> methodNamesFromStack = _MethodNamesFromStackFramesExtractor.ExtractMethodNamesFromStackFrames();
             if (_ScriptStepLogicDictionary[scriptStepType] == null) {
                 _Model.Status.Type = StatusType.Error;
                 _Model.Status.Text = Properties.Resources.ScriptStepTypeNotFoundInLogicDictionary;
@@ -68,7 +68,7 @@ public class StepIntoCommand : ICommand {
             }
             await _ScriptStepLogicDictionary[scriptStepType].ExecuteAsync();
 
-            var dictionary = await _OutrapHelper.AuxiliaryDictionaryAsync();
+            Dictionary<string, string> dictionary = await _OutrapHelper.AuxiliaryDictionaryAsync();
             _Model.WebViewCheckBoxesChecked.Text = dictionary["WebViewCheckBoxesChecked"];
             _Model.WebViewParagraphs.Text = dictionary["WebViewParagraphs"];
             _Model.WebViewInputValues.Text = dictionary["WebViewInputValues"];
@@ -78,8 +78,17 @@ public class StepIntoCommand : ICommand {
                 return;
             }
 
-            var nextStepIndex = _Model.ScriptSteps.SelectedIndex + 1;
+            int nextStepIndex = _Model.ScriptSteps.SelectedIndex + 1;
             if (scriptStepType == ScriptStepType.EndScriptIfRecognized && _Model.Status.Text == Properties.Resources.ContentsFoundEndScript) {
+                nextStepIndex = _Model.ScriptSteps.Selectables.Count - 1;
+
+                if (_Model.ScriptSteps.Selectables[nextStepIndex].Name != ModelResources.EndOfScript) {
+                    _Model.Status.Type = StatusType.Error;
+                    _Model.Status.Text = Properties.Resources.LastStepIsNotEndOfScript;
+                    return;
+                }
+            }
+            if (scriptStepType == ScriptStepType.EndScriptIfNotRecognized && _Model.Status.Text == Properties.Resources.ContentsNotFoundEndScript) {
                 nextStepIndex = _Model.ScriptSteps.Selectables.Count - 1;
 
                 if (_Model.ScriptSteps.Selectables[nextStepIndex].Name != ModelResources.EndOfScript) {
@@ -98,7 +107,7 @@ public class StepIntoCommand : ICommand {
     private async Task PushToExecutionStackAndSelectSubScriptAsync() {
         _Model.ExecutionStackItems.Push(new ExecutionStackItem(_Model.SelectedScript.SelectedItem.Guid, _Model.SelectedScript.SelectedItem.Name, _Model.ScriptSteps.SelectedItem.Guid, true));
 
-        var selectedIndex = _Model.SelectedScript.Selectables.FindIndex(s => s.Guid == _Model.SubScript.SelectedItem.Guid);
+        int selectedIndex = _Model.SelectedScript.Selectables.FindIndex(s => s.Guid == _Model.SubScript.SelectedItem.Guid);
         if (selectedIndex < 0) {
             _Model.Status.Text = string.Format(Properties.Resources.SubScriptNotFound, _Model.SubScript.SelectedItem.Name);
             _Model.Status.Type = StatusType.Error;
@@ -111,9 +120,9 @@ public class StepIntoCommand : ICommand {
     }
 
     private async Task PopFromExecutionStackAndSelectParentScriptStepAsync() {
-        var stackItem = _Model.ExecutionStackItems.Pop();
+        IExecutionStackItem stackItem = _Model.ExecutionStackItems.Pop();
 
-        var selectedIndex = _Model.SelectedScript.Selectables.FindIndex(s => s.Guid == stackItem.ScriptGuid);
+        int selectedIndex = _Model.SelectedScript.Selectables.FindIndex(s => s.Guid == stackItem.ScriptGuid);
         if (selectedIndex < 0) {
             _Model.Status.Text = string.Format(Properties.Resources.CallingScriptNotFound, stackItem.ScriptName);
             _Model.Status.Type = StatusType.Error;

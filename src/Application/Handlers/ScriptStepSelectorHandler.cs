@@ -109,6 +109,7 @@ public class ScriptStepSelectorHandler(IApplicationModel model, IGuiAndWebViewAp
                     case ScriptStepType.NotExpectedContents:
                     case ScriptStepType.NotExpectedSelection:
                     case ScriptStepType.EndScriptIfRecognized:
+                    case ScriptStepType.EndScriptIfNotRecognized:
                         model.ExpectedContents.Text = scriptStep.ExpectedContents;
                         break;
                     case ScriptStepType.Input:
@@ -139,6 +140,7 @@ public class ScriptStepSelectorHandler(IApplicationModel model, IGuiAndWebViewAp
                     case ScriptStepType.NotExpectedSelection:
                     case ScriptStepType.RecognizeSelection:
                     case ScriptStepType.EndScriptIfRecognized:
+                    case ScriptStepType.EndScriptIfNotRecognized:
                         selectedIndex = model.FormOrControlOrIdOrClass.Selectables.FindIndex(s => s.Guid == scriptStep.ControlGuid);
                         await formOrControlOrIdOrClassHandler.FormOrControlOrIdOrClassSelectedIndexChangedAsync(selectedIndex, false);
                         model.ScriptStepOutOfControl = new Selectable { Guid = scriptStep.ControlGuid, Name = scriptStep.ControlName };

@@ -19,7 +19,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Oust.Model.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "18.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resources {
@@ -97,6 +97,24 @@ namespace Aspenlaub.Net.GitHub.CSharp.Oust.Model.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to End script if contents &apos;{0}&apos; is not recognized.
+        /// </summary>
+        internal static string EndScriptIfNotRecognizeIdOrClassContents {
+            get {
+                return ResourceManager.GetString("EndScriptIfNotRecognizeIdOrClassContents", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to End script if contents &apos;{1}&apos; is recognized in {0}.
+        /// </summary>
+        internal static string EndScriptIfNotRecognizeWithContents {
+            get {
+                return ResourceManager.GetString("EndScriptIfNotRecognizeWithContents", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to End script if contents &apos;{0}&apos; is recognized.
         /// </summary>
         internal static string EndScriptIfRecognizeIdOrClassContents {
@@ -106,7 +124,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Oust.Model.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to End script if contents &apos;{1}&apos; is recognized in {0}.
+        ///   Looks up a localized string similar to End script if contents &apos;{1}&apos; is not recognized in {0}.
         /// </summary>
         internal static string EndScriptIfRecognizeWithContents {
             get {
