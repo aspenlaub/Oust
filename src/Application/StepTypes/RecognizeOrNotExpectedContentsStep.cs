@@ -12,34 +12,24 @@ using Aspenlaub.Net.GitHub.CSharp.VishizhukelNetWeb.Interfaces;
 
 namespace Aspenlaub.Net.GitHub.CSharp.Oust.Application.StepTypes;
 
-public class RecognizeOrNotExpectedContentsStep : IScriptStepLogic {
-    public IApplicationModel Model { get; init; }
-    public IGuiAndWebViewAppHandler<ApplicationModel> GuiAndAppHandler { get; init; }
-    public ISimpleLogger SimpleLogger { get; init; }
-    private readonly IOutrapHelper _OutrapHelper;
-    private readonly IOustScriptStatementFactory _OustScriptStatementFactory;
+public class RecognizeOrNotExpectedContentsStep(IApplicationModel model, ISimpleLogger simpleLogger,
+        IGuiAndWebViewAppHandler<ApplicationModel> guiAndAppHandler, IOutrapHelper outrapHelper,
+        IOustScriptStatementFactory oustScriptStatementFactory, ScriptStepType stepType)
+            : IScriptStepLogic {
+    public IApplicationModel Model { get; init; } = model;
+    public IGuiAndWebViewAppHandler<ApplicationModel> GuiAndAppHandler { get; init; } = guiAndAppHandler;
+    public ISimpleLogger SimpleLogger { get; init; } = simpleLogger;
 
-    private readonly ScriptStepType _ScriptStepType;
-
-    public string FreeCodeLabelText => _ScriptStepType == ScriptStepType.RecognizeSelection
+    public string FreeCodeLabelText => stepType == ScriptStepType.RecognizeSelection
         ? Properties.Resources.FreeTextTitle
-        : _ScriptStepType == ScriptStepType.Recognize
+        : stepType == ScriptStepType.Recognize
                 ? Properties.Resources.ExpectedContentsTitle
                 : Properties.Resources.NotExpectedContentsTitle;
-
-    public RecognizeOrNotExpectedContentsStep(IApplicationModel model, ISimpleLogger simpleLogger, IGuiAndWebViewAppHandler<ApplicationModel> guiAndAppHandler, IOutrapHelper outrapHelper, IOustScriptStatementFactory oustScriptStatementFactory, ScriptStepType stepType) {
-        Model = model;
-        GuiAndAppHandler = guiAndAppHandler;
-        SimpleLogger = simpleLogger;
-        _OutrapHelper = outrapHelper;
-        _OustScriptStatementFactory = oustScriptStatementFactory;
-        _ScriptStepType = stepType;
-    }
 
     public async Task<bool> CanBeAddedOrReplaceExistingStepAsync() {
         if (!await ShouldBeEnabledAsync()) { return false; }
 
-        if ((_ScriptStepType == ScriptStepType.EndScriptIfRecognized || _ScriptStepType == ScriptStepType.EndScriptIfNotRecognized)
+        if ((stepType == ScriptStepType.EndScriptIfRecognized || stepType == ScriptStepType.EndScriptIfNotRecognized)
                 && string.IsNullOrEmpty(Model.ExpectedContents.Text)) {
             return false;
         }
@@ -50,19 +40,22 @@ public class RecognizeOrNotExpectedContentsStep : IScriptStepLogic {
     public IScriptStep CreateScriptStepToAdd() {
         bool haveSelectedIndex = Model.FormOrControlOrIdOrClass.SelectedIndex >= 0;
         return new ScriptStep {
-            ScriptStepType = _ScriptStepType,
+            ScriptStepType = stepType,
             ControlGuid = haveSelectedIndex ? Model.ScriptStepOutOfControl?.Guid ?? "" : "",
             ControlName = haveSelectedIndex ? Model.ScriptStepOutOfControl?.Name ?? "" : "",
-            ExpectedContents = _ScriptStepType == ScriptStepType.RecognizeSelection ? Model.SelectedValue.SelectedItem.Name : Model.ExpectedContents.Text
+            ExpectedContents = stepType == ScriptStepType.RecognizeSelection ? Model.SelectedValue.SelectedItem.Name : Model.ExpectedContents.Text
         };
 
     }
 
     public async Task<bool> ShouldBeEnabledAsync() {
-        if (_ScriptStepType != ScriptStepType.Recognize && _ScriptStepType != ScriptStepType.NotExpectedContents
-            && _ScriptStepType != ScriptStepType.RecognizeSelection && _ScriptStepType != ScriptStepType.NotExpectedSelection
-            && _ScriptStepType != ScriptStepType.EndScriptIfRecognized && _ScriptStepType != ScriptStepType.EndScriptIfNotRecognized) { return false; }
-        return await Task.FromResult(true);
+        return await Task.FromResult(stepType == ScriptStepType.Recognize ||
+             stepType == ScriptStepType.NotExpectedContents ||
+             stepType == ScriptStepType.RecognizeSelection ||
+             stepType == ScriptStepType.NotExpectedSelection ||
+             stepType == ScriptStepType.EndScriptIfRecognized ||
+             stepType == ScriptStepType.EndScriptIfNotRecognized
+        );
     }
 
     public void SetFormOrControlOrIdOrClassTitle() {
@@ -71,8 +64,8 @@ public class RecognizeOrNotExpectedContentsStep : IScriptStepLogic {
 
     public async Task ExecuteAsync() {
         IScriptStatement scriptStatement = string.IsNullOrWhiteSpace(Model.WithScriptStepOutrapForm?.Guid)
-            ? _OustScriptStatementFactory.CreateDoesDocumentHaveNthOccurrenceOfIdOrClassStatement(Model.WithScriptStepIdOrClass, Model.WithScriptStepIdOrClassInstanceNumber)
-            : _OustScriptStatementFactory.CreateDoesDocumentHaveDivLikeWithIdOrNthOccurrenceOfClassStatement(Model.WithScriptStepOutrapForm.Guid, Model.WithScriptStepOutrapFormInstanceNumber, Model.WithScriptStepOutrapForm.Name);
+            ? oustScriptStatementFactory.CreateDoesDocumentHaveNthOccurrenceOfIdOrClassStatement(Model.WithScriptStepIdOrClass, Model.WithScriptStepIdOrClassInstanceNumber)
+            : oustScriptStatementFactory.CreateDoesDocumentHaveDivLikeWithIdOrNthOccurrenceOfClassStatement(Model.WithScriptStepOutrapForm.Guid, Model.WithScriptStepOutrapFormInstanceNumber, Model.WithScriptStepOutrapForm.Name);
 
         ScriptCallResponse scriptCallResponse = await GuiAndAppHandler.RunScriptAsync<ScriptCallResponse>(scriptStatement, false, true);
         if (scriptCallResponse.Success.Inconclusive || !scriptCallResponse.Success.YesNo) {
@@ -86,7 +79,7 @@ public class RecognizeOrNotExpectedContentsStep : IScriptStepLogic {
         if (string.IsNullOrWhiteSpace(Model.ScriptStepOutOfControl?.Guid)) {
             html = ancestorDomElementInnerHtml;
         } else {
-            scriptStatement = _OustScriptStatementFactory.CreateDoesDocumentContainDescendantElementOfClassStatement(ancestorDomElementJson, Model.ScriptStepOutOfControl.Guid, Model.ScriptStepOutOfControl.Name, Model.WithScriptStepOutrapForm?.Name, Model.WithScriptStepOutrapFormInstanceNumber);
+            scriptStatement = oustScriptStatementFactory.CreateDoesDocumentContainDescendantElementOfClassStatement(ancestorDomElementJson, Model.ScriptStepOutOfControl.Guid, Model.ScriptStepOutOfControl.Name, Model.WithScriptStepOutrapForm?.Name, Model.WithScriptStepOutrapFormInstanceNumber);
             scriptCallResponse = await GuiAndAppHandler.RunScriptAsync<ScriptCallResponse>(scriptStatement, false, true);
             if (scriptCallResponse.Success.Inconclusive || !scriptCallResponse.Success.YesNo) { return; }
 
@@ -97,18 +90,18 @@ public class RecognizeOrNotExpectedContentsStep : IScriptStepLogic {
         Model.Status.Text = "";
         Model.Status.Type = StatusType.None;
 
-        if (_ScriptStepType != ScriptStepType.RecognizeSelection && Model.ExpectedContents.Text == "") { return; }
-        if (_ScriptStepType == ScriptStepType.RecognizeSelection && !Model.SelectedValue.SelectionMade) { return; }
+        if (stepType != ScriptStepType.RecognizeSelection && Model.ExpectedContents.Text == "") { return; }
+        if (stepType == ScriptStepType.RecognizeSelection && !Model.SelectedValue.SelectionMade) { return; }
 
-        switch (_ScriptStepType) {
+        switch (stepType) {
             case ScriptStepType.RecognizeSelection or ScriptStepType.NotExpectedSelection: {
-                scriptStatement = _OustScriptStatementFactory.CreateIsOptionSelectedOrNot(domElementJson,
-                    _ScriptStepType == ScriptStepType.RecognizeSelection ? Model.SelectedValue.SelectedItem.Guid : Model.ExpectedContents.Text,
-                    _ScriptStepType == ScriptStepType.RecognizeSelection);
+                scriptStatement = oustScriptStatementFactory.CreateIsOptionSelectedOrNot(domElementJson,
+                    stepType == ScriptStepType.RecognizeSelection ? Model.SelectedValue.SelectedItem.Guid : Model.ExpectedContents.Text,
+                    stepType == ScriptStepType.RecognizeSelection);
                 scriptCallResponse = await GuiAndAppHandler.RunScriptAsync<ScriptCallResponse>(scriptStatement, false, true);
                 if (scriptCallResponse.Success.Inconclusive || scriptCallResponse.Success.YesNo) { return; }
 
-                Model.Status.Text = _ScriptStepType == ScriptStepType.RecognizeSelection
+                Model.Status.Text = stepType == ScriptStepType.RecognizeSelection
                     ? Properties.Resources.AnotherValueIsSelected
                     : Properties.Resources.ValueIsSelectedThisIsUnexpected;
                 break;
@@ -118,15 +111,13 @@ public class RecognizeOrNotExpectedContentsStep : IScriptStepLogic {
             case ScriptStepType.Recognize when html.Contains(Model.ExpectedContents.Text.Replace("\\n", "\n")):
             case ScriptStepType.EndScriptIfRecognized when html.Contains(Model.ExpectedContents.Text):
             case ScriptStepType.EndScriptIfRecognized when html.Contains(Model.ExpectedContents.Text.Replace("'", "\"")):
-                if (_ScriptStepType == ScriptStepType.EndScriptIfRecognized) {
+                if (stepType == ScriptStepType.EndScriptIfRecognized) {
                     Model.Status.Text = Properties.Resources.ContentsFoundEndScript;
                 }
                 return;
             case ScriptStepType.EndScriptIfNotRecognized when !html.Contains(Model.ExpectedContents.Text)
                     && !html.Contains(Model.ExpectedContents.Text.Replace("'", "\"")):
-                if (_ScriptStepType == ScriptStepType.EndScriptIfNotRecognized) {
-                    Model.Status.Text = Properties.Resources.ContentsNotFoundEndScript;
-                }
+                Model.Status.Text = Properties.Resources.ContentsNotFoundEndScript;
                 return;
             case ScriptStepType.Recognize when html.Length < 20:
                 Model.Status.Text = string.IsNullOrWhiteSpace(Model.WithScriptStepOutrapForm?.Guid)
@@ -135,14 +126,14 @@ public class RecognizeOrNotExpectedContentsStep : IScriptStepLogic {
                 break;
             case ScriptStepType.Recognize:
             case ScriptStepType.EndScriptIfRecognized:
-                if (_ScriptStepType == ScriptStepType.EndScriptIfRecognized) { return; }
+                if (stepType == ScriptStepType.EndScriptIfRecognized) { return; }
 
                 Model.Status.Text = string.IsNullOrWhiteSpace(Model.WithScriptStepOutrapForm?.Guid)
                     ? string.Format(Properties.Resources.ExpectedContentsNotFound, Model.WithScriptStepIdOrClass, Model.WithScriptStepIdOrClassInstanceNumber, Model.WithScriptStepIdOrClass, Model.ExpectedContents.Text)
                     : string.Format(Properties.Resources.ExpectedContentsNotFound, Model.ScriptStepOutOfControl?.Name, Model.WithScriptStepOutrapFormInstanceNumber, Model.WithScriptStepOutrapForm.Name, Model.ExpectedContents.Text);
                 break;
             case ScriptStepType.EndScriptIfNotRecognized:
-                break;
+                return;
             default: {
                 if (html.Contains(Model.ExpectedContents.Text)) {
                     Model.Status.Text = string.IsNullOrWhiteSpace(Model.WithScriptStepOutrapForm?.Guid)
@@ -161,6 +152,6 @@ public class RecognizeOrNotExpectedContentsStep : IScriptStepLogic {
     }
 
     public async Task<IList<Selectable>> SelectableFormsOrControlsOrIdsOrClassesAsync() {
-        return await _OutrapHelper.OutOfControlChoicesAsync(_ScriptStepType, Model.WithScriptStepOutrapForm?.Guid, Model.WithScriptStepOutrapFormInstanceNumber);
+        return await outrapHelper.OutOfControlChoicesAsync(stepType, Model.WithScriptStepOutrapForm?.Guid, Model.WithScriptStepOutrapFormInstanceNumber);
     }
 }
