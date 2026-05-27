@@ -3,7 +3,9 @@
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net10.0-windows</TargetFramework>
-    <Nullable>disable</Nullable>
+    <RestoreEnablePackagePruning>false</RestoreEnablePackagePruning>
+    <AssetTargetFallback>net10.0</AssetTargetFallback>
+<Nullable>disable</Nullable>
     <UseWPF>true</UseWPF>
     <GenerateBuildInfoConfigFile>false</GenerateBuildInfoConfigFile>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
