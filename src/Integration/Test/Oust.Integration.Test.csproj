@@ -2,7 +2,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net10.0-windows</TargetFramework>
-	<Nullable>disable</Nullable>
+    <Nullable>disable</Nullable>
     <IsPackable>false</IsPackable>
     <GenerateBuildInfoConfigFile>false</GenerateBuildInfoConfigFile>
     <AssemblyName>Aspenlaub.Net.GitHub.CSharp.Oust.Integration.Test</AssemblyName>
@@ -11,6 +11,7 @@
     <Deterministic>false</Deterministic>
     <AssemblyTitle>Aspenlaub.Net.GitHub.CSharp.Oust.Integration.Test</AssemblyTitle>
     <AssemblyProduct>Aspenlaub.Net.GitHub.CSharp.Oust.Integration.Test</AssemblyProduct>
+    <MSBuildEnableWorkloadResolver>false</MSBuildEnableWorkloadResolver>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'" />

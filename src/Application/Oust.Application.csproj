@@ -2,7 +2,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net10.0-windows</TargetFramework>
-	<UseWPF>true</UseWPF>
+    <UseWPF>true</UseWPF>
     <Nullable>disable</Nullable>
     <GenerateBuildInfoConfigFile>false</GenerateBuildInfoConfigFile>
     <AssemblyName>Aspenlaub.Net.GitHub.CSharp.Oust.Application</AssemblyName>
@@ -11,6 +11,7 @@
     <Deterministic>false</Deterministic>
     <AssemblyTitle>Aspenlaub.Net.GitHub.CSharp.Oust.Application</AssemblyTitle>
     <AssemblyProduct>Aspenlaub.Net.GitHub.CSharp.Oust.Application</AssemblyProduct>
+    <MSBuildEnableWorkloadResolver>false</MSBuildEnableWorkloadResolver>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'" />

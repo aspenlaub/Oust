@@ -5,7 +5,7 @@
     <TargetFramework>net10.0-windows</TargetFramework>
     <RestoreEnablePackagePruning>false</RestoreEnablePackagePruning>
     <AssetTargetFallback>net10.0</AssetTargetFallback>
-<Nullable>disable</Nullable>
+    <Nullable>disable</Nullable>
     <UseWPF>true</UseWPF>
     <GenerateBuildInfoConfigFile>false</GenerateBuildInfoConfigFile>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
@@ -23,6 +23,7 @@
     <RepositoryBranch>master</RepositoryBranch>
     <PackageId>Oust</PackageId>
     <StartupObject>Aspenlaub.Net.GitHub.CSharp.Oust.App</StartupObject>
+    <MSBuildEnableWorkloadResolver>false</MSBuildEnableWorkloadResolver>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
@@ -79,9 +80,9 @@
     <Content Include="GUI\Resources\play_20.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-	<Content Include="GUI\Resources\recover_20.png">
-	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	</Content>
+    <Content Include="GUI\Resources\recover_20.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="GUI\Resources\stack_20.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
