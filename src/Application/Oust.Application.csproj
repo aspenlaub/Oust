@@ -37,6 +37,6 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="VishizhukelNetWeb" Version="2.0.2544.707" />
+    <PackageReference Include="VishizhukelNetWeb" Version="2.0.2550.596" />
   </ItemGroup>
 </Project>
