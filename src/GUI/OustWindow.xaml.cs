@@ -26,6 +26,7 @@ using Aspenlaub.Net.GitHub.CSharp.VishizhukelNet.Helpers;
 using Aspenlaub.Net.GitHub.CSharp.VishizhukelNet.Interfaces;
 using Aspenlaub.Net.GitHub.CSharp.VishizhukelNetWeb.Interfaces;
 using Autofac;
+using Microsoft.Web.WebView2.Core;
 using IContainer = Autofac.IContainer;
 using WindowsApplication = System.Windows.Application;
 
@@ -61,6 +62,20 @@ public partial class OustWindow : IAsyncDisposable {
         Name = environmentType == EnvironmentType.UnitTest ? Properties.Resources.OustUnitTestWindowName : Properties.Resources.OustWindowName;
         AutomationProperties.SetAutomationId(this, Name);
         AutomationProperties.SetName(this, Name);
+
+#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+        InitializeBrowserAsync();
+#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+    }
+
+    private async Task InitializeBrowserAsync() {
+        IFolder cacheFolder = new Folder(Path.GetTempPath()).SubFolder("AspenlaubTemp").SubFolder("WebViewCache");
+        cacheFolder.CreateIfNecessary();
+        var options = new CoreWebView2EnvironmentOptions {
+            AdditionalBrowserArguments = "--force-color-profile=sRGB"
+        };
+        CoreWebView2Environment webView2Environment = await CoreWebView2Environment.CreateAsync(null, cacheFolder.FullName, options);
+        await WebView.EnsureCoreWebView2Async(webView2Environment);
     }
 
     public async ValueTask DisposeAsync() {
