@@ -126,7 +126,7 @@
                 <Label Width="75" Background="Beige">Task State</Label>
                 <TextBox Padding="2,3,2,3" Name="CurrentTaskState" IsReadOnly="True" Width="120" Background="Beige" />
             </StackPanel>
-            <wpf:WebView2 Name="WebView" Source="http://localhost" />
+            <wpf:WebView2 Name="WebView"/>
         </DockPanel>
     </Grid>
 </Window>
