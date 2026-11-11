@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net10.0-windows</TargetFramework>
+    <TargetFramework>net11.0-windows</TargetFramework>
     <Nullable>disable</Nullable>
     <IsPackable>false</IsPackable>
     <GenerateBuildInfoConfigFile>false</GenerateBuildInfoConfigFile>
@@ -16,12 +16,12 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'" />
   <ItemGroup>
-    <PackageReference Include="coverlet.collector" Version="10.0.1">
+    <PackageReference Include="coverlet.collector" Version="10.1.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Seoa" Version="2.0.2653.632" />
-    <PackageReference Include="VishnetIntegrationTestTools" Version="2.0.2653.692" />
+    <PackageReference Include="Seoa" Version="2.0.2666.1373" />
+    <PackageReference Include="VishnetIntegrationTestTools" Version="2.0.2666.1408" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Application\Test\Oust.Application.Test.csproj" />
