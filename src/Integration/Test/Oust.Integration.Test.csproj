@@ -20,8 +20,8 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Seoa" Version="2.0.2666.1373" />
-    <PackageReference Include="VishnetIntegrationTestTools" Version="2.0.2666.1408" />
+    <PackageReference Include="Seoa" Version="2.0.2667.1288" />
+    <PackageReference Include="VishnetIntegrationTestTools" Version="2.0.2667.1305" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Application\Test\Oust.Application.Test.csproj" />
